@@ -1,0 +1,4 @@
+# Ignore maven build output directory
+target
+# Ignore custom venv directory
+venv
