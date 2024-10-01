@@ -1,0 +1,15 @@
+.classpath
+.DS_Store
+.factorypath
+.gradle
+.idea
+.project
+.settings
+*.iml
+*.ipr
+*.iprof
+*.iws
+build/
+out/
+target/
+Thumbs.db
