@@ -8,6 +8,7 @@ This directory contains demo applications and guides for [GraalPy](https://www.g
 
 - [Minimal Java application that embeds GraalPy](graalpy-starter/README.md)
 - [Minimal Java application that embeds `openai` Python package with GraalPy](graalpy-openai-starter/README.md)
+- [Embed `qrcode` Python package with GraalPy in JBang](graalpy-jbang-qrcode/README.md)
 
 ## Guides
 
