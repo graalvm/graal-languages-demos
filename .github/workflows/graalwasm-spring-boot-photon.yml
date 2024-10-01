@@ -1,0 +1,38 @@
+name: Test GraalWasm Spring Boot Photon Demo
+on:
+  push:
+    paths:
+      - 'graalwasm/graalwasm-spring-boot-photon/**'
+      - '.github/workflows/graalwasm-spring-boot-photon.yml'
+  pull_request:
+    paths:
+      - 'graalwasm/graalwasm-spring-boot-photon/**'
+      - '.github/workflows/graalwasm-spring-boot-photon.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graalwasm-spring-boot-photon'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '23.0.0'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+          native-image-job-reports: 'true'
+      - name: Package 'graalwasm-spring-boot-photon'
+        run: |
+          cd graalwasm/graalwasm-spring-boot-photon
+          ./mvnw --no-transfer-progress clean package
+      - name: Build native 'graalwasm/graalwasm-spring-boot-photon'
+        run: |
+          cd graalwasm/graalwasm-spring-boot-photon
+          ./mvnw --no-transfer-progress clean -Pnative native:compile
+          ./target/demo &
+          sleep 10
+          curl -s -D - -o /dev/null http://localhost:8080/photo/flipv

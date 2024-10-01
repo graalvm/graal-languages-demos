@@ -1,0 +1,38 @@
+name: Test GraalWasm Micronaut Photon Demo
+on:
+  push:
+    paths:
+      - 'graalwasm/graalwasm-micronaut-photon/**'
+      - '.github/workflows/graalwasm-micronaut-photon.yml'
+  pull_request:
+    paths:
+      - 'graalwasm/graalwasm-micronaut-photon/**'
+      - '.github/workflows/graalwasm-micronaut-photon.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graalwasm-micronaut-photon'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '23.0.0'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+          native-image-job-reports: 'true'
+      - name: Package 'graalwasm-micronaut-photon'
+        run: |
+          cd graalwasm/graalwasm-micronaut-photon
+          ./mvnw --no-transfer-progress clean package
+      - name: Build native 'graalwasm/graalwasm-micronaut-photon'
+        run: |
+          cd graalwasm/graalwasm-micronaut-photon
+          ./mvnw --no-transfer-progress clean package -Dpackaging=native-image
+          ./target/demo &
+          sleep 10
+          curl -s -D - -o /dev/null http://localhost:8080/photo/flipv
