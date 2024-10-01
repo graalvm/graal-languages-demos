@@ -24,7 +24,6 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
-          native-image-job-reports: 'true'
       - name: Build, test, and run 'graalpy-starter' using Maven
         run: |
           cd graalpy/graalpy-starter

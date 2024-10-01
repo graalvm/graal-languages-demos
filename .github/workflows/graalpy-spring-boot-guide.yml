@@ -1,0 +1,47 @@
+name: Test GraalPy Spring Boot Guide
+on:
+  push:
+    paths:
+      - 'graalpy/graalpy-spring-boot-guide/**'
+      - '.github/workflows/graalpy-spring-boot-guide.yml'
+  pull_request:
+    paths:
+      - 'graalpy/graalpy-spring-boot-guide/**'
+      - '.github/workflows/graalpy-spring-boot-guide.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  NATIVE_IMAGE_OPTIONS: '-J-Xmx16g'
+jobs:
+  run:
+    name: 'graalpy-spring-boot-guide'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '23.0.0'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+          native-image-job-reports: 'true'
+      - name: Build, test, and run 'graalpy-spring-boot-guide' using Maven
+        run: |
+          cd graalpy/graalpy-spring-boot-guide
+          ./mvnw --no-transfer-progress clean test -Dspring.mvc.async.request-timeout=60000
+          ./mvnw --no-transfer-progress spring-boot:run &
+          sbpid="$!"
+          sleep 30
+          curl -s -D - -o /dev/null http://localhost:8080/
+          kill $sbpid
+      - name: Build and run native 'graalpy-spring-boot-guide' using Maven
+        run: |
+          cd graalpy/graalpy-spring-boot-guide
+          ./mvnw --no-transfer-progress clean -DskipTests -Pnative native:compile
+          ./target/graalpy-springboot &
+          sbpid="$!"
+          sleep 20
+          curl -s -D - -o /dev/null http://localhost:8080/
+          kill $sbpid
