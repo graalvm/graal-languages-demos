@@ -1,6 +1,6 @@
 # Graal Languages - Demos and Guides
 
-This repository contains demo applications and guides for [GraalPy](https://www.graalvm.org/python/), [GraalJS](https://www.graalvm.org/javascript/), [GraalWasm](https://www.graalvm.org/webassembly/), and other Graal Languages.
+This repository contains demo applications and guides for [GraalJS](./graaljs), [GraalPy](./graalpy/), [GraalWasm](./graalwasm), and other Graal Languages.
 Each demo and guide includes a _README.md_ that explains how to run the application and how it works in more detail.
 
 ## Help
