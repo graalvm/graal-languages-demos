@@ -12,4 +12,5 @@
 build/
 out/
 target/
+node_modules/
 Thumbs.db
