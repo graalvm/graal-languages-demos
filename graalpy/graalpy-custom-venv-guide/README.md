@@ -1,7 +1,7 @@
 # Using Custom GraalPy Virtual Environment in a Java Application
 
-While GraalPy provides a [python-embedding](https://central.sonatype.com/artifact/org.graalvm.python/python-embedding) package and GraalPy [Maven plugin](https://www.graalvm.org/latest/reference-manual/python/Embedding-Build-Tools/) simplify the required setup to ship Python packages
-as Java resources or in separate folders, sometimes users may want to install the Python packages manually
+While GraalPy provides a [python-embedding](https://central.sonatype.com/artifact/org.graalvm.python/python-embedding) package and GraalPy [Maven plugin](https://www.graalvm.org/latest/reference-manual/python/Embedding-Build-Tools/) to simplify the required setup to ship Python packages
+as Java resources or in separate folders, sometimes developers may want to install the Python packages manually
 using the GraalPy standalone distribution and then use the manually installed packages in Java.
 
 This approach requires more effort, but may be useful in the following scenarios:
@@ -180,7 +180,7 @@ If you followed along with the example, you can now compile and run your applica
 ```
 
 Make sure to replace the `/path/to/myvenv` with the actual path where you created
-the virtual filesystem on your system.
+the virtual environment on your system.
 
 ## 6. Next steps
 
