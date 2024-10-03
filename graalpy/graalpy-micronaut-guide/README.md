@@ -439,6 +439,10 @@ This will start the application on port 8080.
 
 ## 7. GraalVM Native Executable
 
+*Note: Generating GraalVM native executable of Java applications that make use of Graal languages and virtual threads
+at the same time is supported only on GraalVM JDK 23+. Notably, virtual threads support is unconditionally reachable
+in Micronaut framework and therefore this applies also to our example.*
+
 ### 7.1. Native Executable metadata
 
 The [GraalVM](https://www.graalvm.org/) Native Image compilation requires metadata to properly run code that uses [dynamic proxies](https://www.graalvm.org/latest/reference-manual/native-image/metadata/#dynamic-proxy).
@@ -470,7 +474,7 @@ To generate a native executable using Maven, run:
 The native executable is created in the `target` directory and can be run with:
 
 ```bash
-./target/demo
+./target/graalpy-micronaut
 ```
 
 ## 8. Next steps
