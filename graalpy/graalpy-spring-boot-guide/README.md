@@ -467,7 +467,7 @@ To generate a native executable using Maven, run:
 The native executable is created in the `target` directory and can be run with:
 
 ```bash
-./target/demo
+./target/graalpy-springboot
 ```
 
 ## 8. Next steps
