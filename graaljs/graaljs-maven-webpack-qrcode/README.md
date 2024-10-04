@@ -4,7 +4,7 @@ JavaScript libraries can be packaged with plain Java applications.
 The integration is facilitated through [GraalJS Maven artifacts](https://central.sonatype.com/artifact/org.graalvm.polyglot/js) and the [GraalVM Polyglot API](https://www.graalvm.org/latest/reference-manual/embed-languages/), supporting a wide range of project setups.
 
 Using Node (NPM) packages in Java projects often requires a bit more setup, due to the nature of the Node packaging ecosystem.
-One way to use such modules is prepackage them into a single _.js_ or _.mjs_ file using a bundler like [webpack](https://webpack.js.org/).
+One way to use such modules is to prepackage them into a single _.js_ or _.mjs_ file using a bundler like [webpack](https://webpack.js.org/).
 This guide explains step-by-step how to integrate the `webpack` build into a Maven Java project and embed the generated JavaScript code in the JAR file of the application.
 
 # GraalJS QRCode Demo
