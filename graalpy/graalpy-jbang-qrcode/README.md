@@ -22,7 +22,7 @@ sdk install jbang
 To start the demo, run:
 
 ```bash
-jbang run QRCodeMaker.java "Hello from GraalPy!"
+jbang run qrcode.java "Hello from GraalPy!"
 ```
 
 ## Implementation Details
