@@ -2,7 +2,7 @@
 
 While GraalPy provides a [python-embedding](https://central.sonatype.com/artifact/org.graalvm.python/python-embedding) package and GraalPy [Maven plugin](https://www.graalvm.org/latest/reference-manual/python/Embedding-Build-Tools/) to simplify the required setup to ship Python packages
 as Java resources or in separate folders, sometimes developers may want to install the Python packages manually
-using the GraalPy standalone distribution and then use the manually installed packages in Java.
+using the GraalPy standalone distribution, and then use these manually installed packages in Java.
 
 This approach requires more effort, but may be useful in the following scenarios:
 
