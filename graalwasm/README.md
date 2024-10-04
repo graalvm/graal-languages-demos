@@ -6,6 +6,6 @@ This directory contains demo applications and guides for [GraalWasm](https://www
 
 ## Demos
 
-- [Minimal Java application that embeds GraalWasm](graalwasm-starter/README.md)
-- [Embed Photon image processing library with GraalWasm in Micronaut](graalwasm-micronaut-photon/README.md)
-- [Embed Photon image processing library with GraalWasm in Spring Boot](graalwasm-spring-boot-photon/README.md)
+- [Minimal Java application that embeds GraalWasm](graalwasm-starter/)
+- [Embed Photon image processing library with GraalWasm in Micronaut](graalwasm-micronaut-photon/)
+- [Embed Photon image processing library with GraalWasm in Spring Boot](graalwasm-spring-boot-photon/)

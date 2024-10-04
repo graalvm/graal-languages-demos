@@ -6,8 +6,8 @@ This directory contains demo applications and guides for [GraalJS](https://www.g
 
 ## Demos
 
-- [Minimal Java application that embeds GraalJS](graaljs-starter/README.md)
+- [Minimal Java application that embeds GraalJS](graaljs-starter/)
 
 ## Guides
 
-- [Use Node Packages in a Java SE application](graaljs-maven-webpack-guide/README.md)
+- [Use Node Packages in a Java SE application](graaljs-maven-webpack-guide/)
