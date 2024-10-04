@@ -74,7 +74,6 @@
                 <configuration>
                     <buildArgs>
                         <buildArg>-march=native</buildArg>
-                        <buildArg>--gc=G1</buildArg>
                     </buildArgs>
                 </configuration>
             </plugin>
@@ -137,6 +136,27 @@
     </build>
 
     <profiles>
+        <profile>
+            <id>enable-g1gc</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <buildArgs combine.children="append">
+                                <buildArg>--gc=G1</buildArg><!-- Prefer G1 on Linux -->
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>pgo-instrument</id>
             <build>
