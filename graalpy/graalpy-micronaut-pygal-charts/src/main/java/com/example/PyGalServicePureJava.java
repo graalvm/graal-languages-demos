@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 
 
 @Singleton
-class PyGalServicePureJava implements PyGalService {
+public class PyGalServicePureJava implements PyGalService {
     private final PyGal pyGalModule;
 
     PyGalServicePureJava(GraalPyContext graalPyContext) {

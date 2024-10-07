@@ -9,7 +9,7 @@ package com.example;
 import jakarta.inject.Singleton;
 
 @Singleton
-class PyGalServicePurePython implements PyGalService {
+public class PyGalServicePurePython implements PyGalService {
     private final String purePythonXY;
 
     PyGalServicePurePython(GraalPyContext graalPyContext) {

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 @Singleton
-class PyGalServiceMixed implements PyGalService {
+public class PyGalServiceMixed implements PyGalService {
     private final Value pythonFunctionXY;
 
     PyGalServiceMixed(GraalPyContext graalPyContext) {
