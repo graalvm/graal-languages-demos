@@ -1,0 +1,37 @@
+{
+  "reflection": [
+    {
+      "type": "com.example.PyGalServiceMixed$Entry"
+    },
+    {
+      "type": "com.example.PyGalServicePureJava$BytesIO"
+    },
+    {
+      "type": "com.example.PyGalServicePureJava$PyGal"
+    },
+    {
+      "type": "com.example.PyGalServicePureJava$XY"
+    },
+    {
+      "type": {
+        "proxy": [
+          "com.example.PyGalServicePureJava$PyGal"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "com.example.PyGalServicePureJava$XY"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "com.example.PyGalServicePureJava$BytesIO"
+        ]
+      }
+    }
+  ]
+}
