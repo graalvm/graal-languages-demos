@@ -35,4 +35,4 @@ jobs:
           ./mvnw --no-transfer-progress clean package -Dpackaging=native-image
           ./target/demo &
           sleep 10
-          curl -s -D - -o /dev/null http://localhost:8080/photo/flipv
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/photo/flipv
