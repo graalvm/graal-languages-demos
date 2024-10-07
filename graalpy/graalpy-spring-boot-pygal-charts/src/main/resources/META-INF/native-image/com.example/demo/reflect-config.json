@@ -1,0 +1,14 @@
+[
+  {
+    "type": "com.example.demo.PyGalServiceMixed$Entry"
+  },
+  {
+    "type": "com.example.demo.PyGalServicePureJava$BytesIO"
+  },
+  {
+    "type": "com.example.demo.PyGalServicePureJava$PyGal"
+  },
+  {
+    "type": "com.example.demo.PyGalServicePureJava$XY"
+  }
+]

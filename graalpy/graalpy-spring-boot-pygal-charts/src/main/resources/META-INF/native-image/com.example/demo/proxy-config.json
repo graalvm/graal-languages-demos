@@ -1,0 +1,17 @@
+[
+  {
+    "interfaces": [
+      "com.example.demo.PyGalServicePureJava$PyGal"
+    ]
+  },
+  {
+    "interfaces": [
+      "com.example.demo.PyGalServicePureJava$XY"
+    ]
+  },
+  {
+    "interfaces": [
+      "com.example.demo.PyGalServicePureJava$BytesIO"
+    ]
+  }
+]
