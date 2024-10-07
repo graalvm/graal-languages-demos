@@ -34,7 +34,7 @@ jobs:
           ./mvnw --no-transfer-progress spring-boot:run &
           sbpid="$!"
           sleep 30
-          curl -s -D - -o /dev/null http://localhost:8080/java
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/java
           kill $sbpid
       - name: Build and run native 'graalpy-spring-boot-pygal-charts' using Maven
         run: |
@@ -43,5 +43,5 @@ jobs:
           ./target/demo &
           sbpid="$!"
           sleep 20
-          curl -s -D - -o /dev/null http://localhost:8080/python
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/python
           kill $sbpid
