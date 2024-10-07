@@ -13,7 +13,7 @@ import org.graalvm.polyglot.Value;
 import java.util.stream.IntStream;
 
 @Singleton
-class PyGalServiceValueAPIDynamic implements PyGalService {
+public class PyGalServiceValueAPIDynamic implements PyGalService {
     private final Value pyGalModule;
 
     PyGalServiceValueAPIDynamic(GraalPyContext context) {
