@@ -34,7 +34,7 @@ jobs:
           ./mvnw --no-transfer-progress mn:run &
           mnpid="$!"
           sleep 30
-          curl --fail-with-body -s -D - -o /dev/null http://localhost:8080/java
+          curl --fail-with-body --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/java
           kill $mnpid
       - name: Build and run native 'graalpy-micronaut-pygal-charts' using Maven
         run: |
@@ -43,5 +43,5 @@ jobs:
           ./target/demo &
           mnpid="$!"
           sleep 20
-          curl --fail-with-body -s -D - -o /dev/null http://localhost:8080/python
+          curl --fail-with-body --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/python
           kill $mnpid
