@@ -9,3 +9,7 @@ This directory contains demo applications and guides for [GraalWasm](https://www
 - [Minimal Java application that embeds GraalWasm](graalwasm-starter/)
 - [Embed Photon image processing library with GraalWasm in Micronaut](graalwasm-micronaut-photon/)
 - [Embed Photon image processing library with GraalWasm in Spring Boot](graalwasm-spring-boot-photon/)
+
+## Guides
+
+- [Embed C in Java Using GraalWasm](graalwasm-embed-c-code-guide/)

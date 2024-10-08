@@ -1,0 +1,42 @@
+name: Test GraalWasm Embed C in Java Guide
+on:
+  push:
+    paths:
+      - 'graalwasm/graalwasm-embed-c-code-guide/**'
+      - '.github/workflows/graalwasm-embed-c-code-guide.yml'
+  pull_request:
+    paths:
+      - 'graalwasm/graalwasm-embed-c-code-guide/**'
+      - '.github/workflows/graalwasm-embed-c-code-guide.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graalwasm-embed-c-code-guide'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Checkout emscripten-core/emsdk
+        uses: actions/checkout@v4
+        with:
+          repository: emscripten-core/emsdk
+          path: emsdk
+      - name: Install and activate latest emsdk
+        run: |
+          cd emsdk
+          ./emsdk install latest
+          ./emsdk activate latest
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '23.0.0'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+      - name: Build, test, and run 'graalwasm-embed-c-code-guide'
+        run: |
+          source ./emsdk/emsdk_env.sh
+          cd graalwasm/graalwasm-embed-c-code-guide
+          ./mvnw --no-transfer-progress package
+          ./mvnw --no-transfer-progress exec:java
