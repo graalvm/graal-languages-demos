@@ -62,13 +62,13 @@ Add the required dependencies for GraalPy in the dependency section of the POM.
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>24.1.0</version>
+  <version>24.1.1</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>24.1.0</version>
+  <version>24.1.1</version>
 </dependency>
 <dependency>
     <groupId>io.micronaut.views</groupId>
@@ -97,7 +97,7 @@ Also add the `graalpy-maven-plugin` configuration into the plugins section of th
 <plugin>
     <groupId>org.graalvm.python</groupId>
     <artifactId>graalpy-maven-plugin</artifactId>
-    <version>24.1.0</version>
+    <version>24.1.1</version>
     <executions>
         <execution>
             <configuration>

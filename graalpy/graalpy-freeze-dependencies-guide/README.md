@@ -59,7 +59,7 @@ You can use the GraalPy plugin to manage Python packages for you.
         <plugin>
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
-            <version>24.1.0</version>
+            <version>24.1.1</version>
             <executions>
                 <execution>
                     <configuration>
@@ -114,7 +114,7 @@ them in `<package>` xml tag:
         <plugin>
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
-            <version>24.1.0</version>
+            <version>24.1.1</version>
             <executions>
                 <execution>
                     <configuration>
