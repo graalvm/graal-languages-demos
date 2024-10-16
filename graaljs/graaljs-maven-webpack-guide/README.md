@@ -43,13 +43,13 @@ Add the required dependencies for GraalJS in the `<dependencies>` section of the
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>polyglot</artifactId> <!-- ① -->
-    <version>24.1.0</version>
+    <version>24.1.1</version>
 </dependency>
 
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>js</artifactId> <!-- ② -->
-    <version>24.1.0</version>
+    <version>24.1.1</version>
     <type>pom</type> <!-- ③ -->
 </dependency>
 <!-- </dependencies> -->
