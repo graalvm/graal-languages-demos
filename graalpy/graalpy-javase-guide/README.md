@@ -31,19 +31,28 @@ However, you can go right to the [completed example](./).
 
 ## 4. Writing the application
 
-You can start with any Maven application that runs on JDK 17 or newer.
-We will use a default Maven application [generated](https://maven.apache.org/archetypes/maven-archetype-quickstart/) from an archetype.
+You can start with any Maven or Gradle application that runs on JDK 17 or newer.
+We will demonstrate on both build systems.
+A default Maven application [generated](https://maven.apache.org/archetypes/maven-archetype-quickstart/) from an archetype.
 
 ```shell
 mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes \
   -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.5 \
-  -DgroupId=example -DartifactId=example -Dpackage=org.example \
+  -DgroupId=example -DartifactId=javase -Dpackage=org.example \
   -Dversion=1.0-SNAPSHOT -DinteractiveMode=false
+```
+
+And a default Gradle Java application [generated](https://docs.gradle.org/current/samples/sample_building_java_applications.html#run_the_init_task) with the init task.
+
+```shell
+gradle init --type java-application --dsl kotlin --test-framework junit-jupiter \
+    --package org.example --project-name javase --java-version 17 \
+    --no-split-project --no-incubating
 ```
 
 ## 4.1 Dependency configuration
 
-Add the required dependencies for GraalPy in the `<dependencies>` section of the POM.
+Add the required dependencies for GraalPy in the `<dependencies>` section of the POM or the `build.gradle.kts` file.
 
 `pom.xml`
 ```xml
@@ -61,6 +70,14 @@ Add the required dependencies for GraalPy in the `<dependencies>` section of the
       <version>24.1.1</version>
   </dependency>
 </dependencies>
+```
+
+`build.gradle.kts`
+```kotlin
+dependencies {
+  implementation("org.graalvm.python:python:24.1.1") // ①
+  implementation("org.graalvm.python:python-embedding:24.1.1") // ③
+}
 ```
 
 ❶ The `python` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
@@ -110,6 +127,20 @@ You can use the GraalPy plugin to manage Python packages for you.
 </build>
 ```
 
+`build.gradle.kts`
+```kotlin
+plugins {
+    application
+    id("org.graalvm.python") version "24.1.1"
+}
+
+graalPy {
+    packages = setOf("qrcode==7.4.2") // ①
+    pythonHome { includes = setOf(); excludes = setOf(".*") } // ②
+    pythonResourcesDirectory = file("${project.projectDir}/python-resources") // ③
+}
+```
+
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
 In this case, we install the `qrcode` package and pin it to version `7.4.2`.
 
@@ -154,9 +185,9 @@ public class GraalPy {
 }
 ```
 
-❶ [If we set the `pythonResourcesDirectory` property](#external-or-embedded-python-code-pom) in our pom, we use this factory method to tell GraalPy where that folder is at runtime.
+❶ [If we set the `pythonResourcesDirectory` property](#external-or-embedded-python-code-pom) in our build config, we use this factory method to tell GraalPy where that folder is at runtime.
 
-❷ We [excluded](#external-or-embedded-stdlib-pom) all of the Python standard library from the resources in our pom.
+❷ We [excluded](#external-or-embedded-stdlib-pom) all of the Python standard library from the resources in our build config.
 The GraalPy VirtualFileSystem is set up to ship even the standard library in the resources.
 Since we did not include any standard library, we set the `"python.PythonHome"` option to an empty string.
 
