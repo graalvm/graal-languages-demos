@@ -194,7 +194,7 @@
             <id>enable-g1gc</id>
             <activation>
                 <os>
-                    <family>unix</family>
+                    <name>Linux</name>
                 </os>
             </activation>
             <build>
