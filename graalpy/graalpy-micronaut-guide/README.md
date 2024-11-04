@@ -27,10 +27,18 @@ However, you can go right to the [completed example](./).
 Create an application using the [Micronaut Command Line Interface](https://docs.micronaut.io/latest/guide/#cli) or with [Micronaut Launch](https://micronaut.io/launch/).
 To make copying of the code snippets in this guide as smooth as possible, the application should have the base package `org.example`.
 We also recommend to use Micronaut version 4.6.2 or newer.
+You can choose to build with either Maven or Gradle.
 
 ```bash
 mn create-app org.example.demo \
 --build=maven \
+--lang=java \
+--test=junit
+```
+
+```bash
+mn create-app org.example.demo \
+--build=gradle_kotlin \
 --lang=java \
 --test=junit
 ```
@@ -55,7 +63,7 @@ public class Application {
 
 ### 4.2 Dependency configuration
 
-Add the required dependencies for GraalPy in the dependency section of the POM.
+Add the required dependencies for GraalPy in the dependency section of the POM or Gradle build script.
 
 `pom.xml`
 ```xml
@@ -76,6 +84,13 @@ Add the required dependencies for GraalPy in the dependency section of the POM.
 </dependency>
 ```
 
+`build.gradle.kts`
+```kotlin
+    implementation("org.graalvm.python:python:24.1.1") // ①
+    implementation("org.graalvm.python:python-embedding:24.1.1") // ③
+    implementation("io.micronaut.views:micronaut-views-thymeleaf") // ④
+```
+
 ❶ The `python` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
 
 ❷ Note that the `python` package is not a JAR - it is simply a `pom` that declares more dependencies.
@@ -84,13 +99,13 @@ Add the required dependencies for GraalPy in the dependency section of the POM.
 
 ❹ The `thymeleaf` dependency is used to render the index page.
 
-### 4.3 Adding packages - graalpy-maven-plugin configuration
+### 4.3 Adding packages - GraalPy build plugin configuration
 
 Most Python packages are hosted on [PyPI](https://pypi.org) and can be installed via the `pip` tool.
 The Python ecosystem has conventions about the filesystem layout of installed packages that need to be kept in mind when embedding into Java.
-You can use the GraalPy plugin to manage Python packages for you.
+You can use the GraalPy plugins for Gradle and Maven to manage Python packages for you.
 
-Also add the `graalpy-maven-plugin` configuration into the plugins section of the POM.
+Add the `graalpy-maven-plugin` configuration into the plugins section of the POM or the `org.graalvm.python` plugin dependency and a `graalPy` block to your Gradle build:
 
 `pom.xml`
 ```xml
@@ -112,6 +127,23 @@ Also add the `graalpy-maven-plugin` configuration into the plugins section of th
         </execution>
     </executions>
 </plugin>
+```
+
+`build.gradle.kts`
+```
+plugins {
+    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.micronaut.application") version "4.4.2"
+    id("io.micronaut.aot") version "4.4.2"
+    id("org.graalvm.python") version "24.1.1"
+}
+
+graalPy {
+    packages = setOf( // ①
+        "vader-sentiment==3.2.1.1", // ②
+        "requests" // ③
+    )
+}
 ```
 
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
@@ -427,12 +459,24 @@ To run the tests:
 ./mvnw test
 ```
 
+or
+
+```bash
+./gradlew test
+```
+
 ## 6. Running the Application
 
 To run the application:
 
 ```bash
 ./mvnw mn:run
+```
+
+or
+
+```bash
+./gradlew run
 ```
 
 This will start the application on port 8080.
@@ -465,16 +509,18 @@ Compiling native executables ahead of time with GraalVM improves startup time an
 Make sure that the `JAVA_HOME` environmental variable is set to the location of a GraalVM installation.
 We recommend using a GraalVM 24.1, which works fine with Micronaut 4.6.0.
 
-To generate a native executable using Maven, run:
+To generate and run a native executable using Maven, run:
 
 ```bash
 ./mvnw package -Dpackaging=native-image
+./target/graalpy-micronaut
 ```
 
-The native executable is created in the `target` directory and can be run with:
+To generate a native executable using Gradle, run:
 
 ```bash
-./target/graalpy-micronaut
+./gradlew nativeCompile
+./build/native/nativeCompile/demo
 ```
 
 ## 8. Next steps
