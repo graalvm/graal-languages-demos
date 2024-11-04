@@ -37,3 +37,7 @@ dependencies {
 tasks.named('test') {
   useJUnitPlatform()
 }
+
+test {
+  systemProperty "spring.mvc.async.request-timeout", System.getProperty("spring.mvc.async.request-timeout")
+}

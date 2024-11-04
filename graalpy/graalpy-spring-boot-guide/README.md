@@ -464,7 +464,7 @@ To run the application:
 or
 
 ```bash
-./gradlew run
+./gradlew bootRun
 ```
 
 This will start the application on port 8080.

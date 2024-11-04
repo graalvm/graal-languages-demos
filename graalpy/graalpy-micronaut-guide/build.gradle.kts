@@ -63,3 +63,7 @@ micronaut {
         replaceLogbackXml = true
     }
 }
+
+tasks.withType<Test> {
+    systemProperty("micronaut.http.client.read-timeout", System.getProperty("micronaut.http.client.read-timeout"))
+}
