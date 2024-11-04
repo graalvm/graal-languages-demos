@@ -27,7 +27,7 @@ However, you can go right to the [completed example](./).
 You can use [Spring Initializr](https://start.spring.io/) project generator to generate a basic Spring Boot project skeleton. To generate a project:
 
 1. Navigate to https://start.spring.io/
-2. GraalPy currently provides a plugin for *Maven*, but not yet for *Gradle*. Select **Maven** as the build system.
+2. GraalPy currently provides plugins for *Maven* and *Gradle*. You can select either one as the build system.
 3. Click on **Dependencies** and select **Spring Web**
 4. Click on **Dependencies** and select **Thymeleaf**
 5. Click on **Generate**. Download and extract the generated ZIP file
@@ -54,7 +54,7 @@ public class DemoApplication {
 
 ### 4.2 Dependency configuration
 
-Add the required dependencies for GraalPy in the dependency section of the POM.
+Add the required dependencies for GraalPy in the dependency section of the POM or Gradle build script.
 
 `pom.xml`
 ```xml
@@ -71,19 +71,25 @@ Add the required dependencies for GraalPy in the dependency section of the POM.
 </dependency>
 ```
 
+`build.gradle`
+```groovy
+  implementation 'org.graalvm.python:python:24.1.1' // ①
+  implementation 'org.graalvm.python:python-embedding:24.1.1' // ③
+```
+
 ❶ The `python` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
 
 ❷ Note that the `python` package is not a JAR - it is simply a `pom` that declares more dependencies.
 
 ❸ The `python-embedding` dependency provides the APIs to manage and use GraalPy from Java.
 
-### 4.3 Adding packages - graalpy-maven-plugin configuration
+### 4.3 Adding packages - GraalPy build plugin configuration
 
 Most Python packages are hosted on [PyPI](https://pypi.org) and can be installed via the `pip` tool.
 The Python ecosystem has conventions about the filesystem layout of installed packages that need to be kept in mind when embedding into Java.
-You can use the GraalPy Maven plugin to manage Python packages for you.
+You can use the GraalPy plugins for Gradle and Maven to manage Python packages for you.
 
-Also add the `graalpy-maven-plugin` configuration into the plugins section of the POM.
+Add the `graalpy-maven-plugin` configuration into the plugins section of the POM or the `org.graalvm.python` plugin dependency and a `graalPy` block to your Gradle build:
 
 `pom.xml`
 ```xml
@@ -105,6 +111,23 @@ Also add the `graalpy-maven-plugin` configuration into the plugins section of th
         </execution>
     </executions>
 </plugin>
+```
+
+`build.gradle`
+```
+plugins {
+  id 'java'
+  id 'org.springframework.boot' version '3.3.5'
+  id 'io.spring.dependency-management' version '1.1.6'
+  id 'org.graalvm.python' version '24.1.1'
+}
+
+graalPy {
+    packages = [ // ①
+        'vader-sentiment==3.2.1.1', // ②
+        'requests' // ③
+    ]
+}
 ```
 
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
@@ -424,12 +447,24 @@ To run the tests:
 ./mvnw test
 ```
 
+or
+
+```bash
+./gradlew test
+```
+
 ## 6. Running the Application
 
 To run the application:
 
 ```bash
 ./mvnw spring-boot:run
+```
+
+or
+
+```bash
+./gradlew run
 ```
 
 This will start the application on port 8080.
@@ -455,19 +490,22 @@ We will use GraalVM, the polyglot embeddable virtual machine, to generate a nati
 
 Compiling native executables ahead of time with GraalVM improves startup time and reduces the memory footprint of JVM-based applications.
 
+First, add the [`org.graalvm.buildtools`](https://graalvm.github.io/native-build-tools/latest/index.html) plugin for your build system.
 Make sure that the `JAVA_HOME` environmental variable is set to the location of a GraalVM installation.
 We recommend using a GraalVM 24.1.
 
-To generate a native executable using Maven, run:
+To generate and run a native executable using Maven, run:
 
 ```bash
 ./mvnw -Pnative native:compile
+./target/graalpy-springboot
 ```
 
-The native executable is created in the `target` directory and can be run with:
+To generate a native executable using Gradle, run:
 
 ```bash
-./target/graalpy-springboot
+./gradlew nativeCompile
+./build/native/nativeCompile/demo
 ```
 
 ## 8. Next steps
