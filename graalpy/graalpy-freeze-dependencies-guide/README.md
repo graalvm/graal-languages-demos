@@ -36,8 +36,9 @@ However, you can go right to the [completed example](https://github.com/graalvm/
 
 ## 3. Writing the application
 
-You can start with any Maven application that runs on JDK 17 or newer.
-We will use a default Maven application [generated](https://maven.apache.org/archetypes/maven-archetype-quickstart/) from an archetype.
+You can start with any Maven or Gradle application that runs on JDK 17 or newer.
+We will demonstrate on both build systems.
+A default Maven application [generated](https://maven.apache.org/archetypes/maven-archetype-quickstart/) from an archetype.
 
 ```shell
 mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes \
@@ -46,15 +47,23 @@ mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes \
   -Dversion=1.0-SNAPSHOT -DinteractiveMode=false
 ```
 
+And a default Gradle Java application [generated](https://docs.gradle.org/current/samples/sample_building_java_applications.html#run_the_init_task) with the init task.
+
+```shell
+gradle init --type java-application --dsl kotlin --test-framework junit-jupiter \
+    --package org.example --project-name example --java-version 17 \
+    --no-split-project --no-incubating
+```
+
 ## 4. Adding packages
 
 Most Python packages are hosted on [PyPI](https://pypi.org) and can be installed via the `pip` tool.
 The Python ecosystem has conventions about the filesystem layout of installed packages that need to be kept in mind when embedding into Java.
-You can use the GraalPy plugin to manage Python packages for you.
+You can use the GraalPy plugins for Maven or Gradle to manage Python packages for you.
 
 `pom.xml`
 ```xml
-            <build>
+<build>
     <plugins>
         <plugin>
             <groupId>org.graalvm.python</groupId>
@@ -77,25 +86,66 @@ You can use the GraalPy plugin to manage Python packages for you.
 </build>
 ```
 
+`build.gradle.kts`
+```kotlin
+plugins {
+    application
+    id("org.graalvm.python") version "24.1.1"
+}
+```
+
+`build.gradle.kts`
+```kotlin
+graalPy {
+    packages = setOf("vaderSentiment==3.3.2") // ①
+}
+```
+
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
 In this case, we install the `vaderSentiment` package and pin it to version `3.3.2`. Because we are not
-specifying `<pythonResourcesDirectory>` the Maven plugin will embed the packages into the
+specifying `<pythonResourcesDirectory>` the plugins will embed the packages into the
 resulting JAR as a standard Java resource.
 
 ## 5. Determining and Pinning Transitive Dependencies
 
-Package the application using Maven, this should install all the transitive dependencies
+When you package the application, it installs all the transitive dependencies
 in a newly created [virtual environment](https://docs.python.org/3/library/venv.html):
 
 ```shell
-mvn package
+./mvnw package
 ```
 
-If the compilation is successful, one can run the following command to get
-versions of all the installed Python packages:
+```shell
+./gradlew build
+```
 
+If the compilation is successful, one can run the following command to get versions of all the installed Python packages if you use Maven:
+
+On macOS and Linux:
 ```shell
 ./target/classes/org.graalvm.python.vfs/venv/bin/pip3 freeze -l
+```
+
+On Windows:
+```shell
+.\target\classes\org.graalvm.python.vfs\venv\Scripts\pip3.exe freeze -l
+```
+
+If you are using Gradle, run the following command:
+
+On macOS and Linux:
+```shell
+./build/generated/graalpy/resources/org.graalvm.python.vfs/venv/bin/pip3 freeze -l
+```
+
+On Windows:
+```shell
+.\build\generated\graalpy\resources\org.graalvm.python.vfs\venv\Scripts\pip3.exe freeze -l
+```
+
+The output will look something like this:
+
+```
 certifi==2024.8.30
 charset-normalizer==3.1.0
 idna==3.8
@@ -104,8 +154,8 @@ urllib3==2.2.2
 vaderSentiment==3.3.2
 ```
 
-Copy and paste the package names and versions to the `pom.xml`, and wrap
-them in `<package>` xml tag:
+Copy and paste the package names and versions.
+If you use Maven, paste them in the `pom.xml` section of the packages and wrap them in `<package>` xml tag:
 
 `pom.xml`
 ```xml
@@ -137,6 +187,20 @@ them in `<package>` xml tag:
 </build>
 ```
 
+For Gradle, paste them into the packages block:
+
+`build.gradle.kts`
+```kotlin
+packages = setOf(
+    "vaderSentiment==3.3.2",
+    "certifi==2024.8.30",
+    "charset-normalizer==3.1.0",
+    "idna==3.8",
+    "requests==2.32.3",
+    "urllib3==2.2.2"
+)
+```
+
 Note: one can use other Python tools, such as `pipdeptree` to generate the following
 dependency tree, where we can also see the version ranges.
 
@@ -151,7 +215,7 @@ vaderSentiment==3.3.2
 
 *Warning:
 Is it not recommended to manually alter the virtual environment.
-Any changes will be overridden by the GraalPy Maven plugin.*
+Any changes will be overridden by the GraalPy build plugins.*
 
 ## 8. Next steps
 

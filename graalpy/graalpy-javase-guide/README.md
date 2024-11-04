@@ -90,7 +90,7 @@ dependencies {
 
 Most Python packages are hosted on [PyPI](https://pypi.org) and can be installed via the `pip` tool.
 The Python ecosystem has conventions about the filesystem layout of installed packages that need to be kept in mind when embedding into Java.
-You can use the GraalPy plugin to manage Python packages for you.
+You can use the GraalPy plugins for Maven or Gradle to manage Python packages for you.
 
 `pom.xml`
 ```xml
