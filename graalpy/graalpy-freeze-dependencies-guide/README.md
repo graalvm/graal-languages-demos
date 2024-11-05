@@ -61,6 +61,18 @@ Most Python packages are hosted on [PyPI](https://pypi.org) and can be installed
 The Python ecosystem has conventions about the filesystem layout of installed packages that need to be kept in mind when embedding into Java.
 You can use the GraalPy plugins for Maven or Gradle to manage Python packages for you.
 
+For Maven, add dependency on GraalPy runtime, and configure the GraalPy Maven plugin:
+
+`pom.xml`
+```xml
+    <dependency>
+        <groupId>org.graalvm.polyglot</groupId>
+        <artifactId>python</artifactId>
+        <version>24.1.1</version>
+        <type>pom</type>
+    </dependency>
+```
+
 `pom.xml`
 ```xml
 <build>
@@ -86,6 +98,8 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
 </build>
 ```
 
+For Gradle, add the GraalPy plugin, configure it, and add the dependency on the GraalPy runtime:
+
 `build.gradle.kts`
 ```kotlin
 plugins {
@@ -98,6 +112,10 @@ plugins {
 ```kotlin
 graalPy {
     packages = setOf("vaderSentiment==3.3.2") // ①
+}
+
+dependencies {
+    implementation("org.graalvm.python:python:24.1.1")
 }
 ```
 
@@ -116,7 +134,7 @@ in a newly created [virtual environment](https://docs.python.org/3/library/venv.
 ```
 
 ```shell
-./gradlew build
+./gradlew assemble
 ```
 
 If the compilation is successful, one can run the following command to get versions of all the installed Python packages if you use Maven:
@@ -135,12 +153,12 @@ If you are using Gradle, run the following command:
 
 On macOS and Linux:
 ```shell
-./build/generated/graalpy/resources/org.graalvm.python.vfs/venv/bin/pip3 freeze -l
+./app/build/generated/graalpy/resources/org.graalvm.python.vfs/venv/bin/pip3 freeze -l
 ```
 
 On Windows:
 ```shell
-.\build\generated\graalpy\resources\org.graalvm.python.vfs\venv\Scripts\pip3.exe freeze -l
+.\app\build\generated\graalpy\resources\org.graalvm.python.vfs\venv\Scripts\pip3.exe freeze -l
 ```
 
 The output will look something like this:
