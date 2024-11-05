@@ -299,7 +299,8 @@ Update the build script to pass the necessary Java property to the application:
 `build.gradle.kts`
 ```
 application {
-    applicationDefaultJvmArgs = listOf("-Dgraalpy.resources=./python-resources")
+    mainClass = "org.example.App"
+    applicationDefaultJvmArgs = listOf("-Dgraalpy.resources=" + System.getProperty("graalpy.resources"))
 }
 ```
 

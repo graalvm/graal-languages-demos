@@ -28,6 +28,7 @@ You can use [Spring Initializr](https://start.spring.io/) project generator to g
 
 1. Navigate to https://start.spring.io/
 2. GraalPy currently provides plugins for *Maven* and *Gradle*. You can select either one as the build system.
+Note: in the Gradle case, this guide uses Groovy.
 3. Click on **Dependencies** and select **Spring Web**
 4. Click on **Dependencies** and select **Thymeleaf**
 5. Click on **Generate**. Download and extract the generated ZIP file
@@ -116,12 +117,12 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `build.gradle`
 ```
 plugins {
-  id 'java'
-  id 'org.springframework.boot' version '3.3.5'
-  id 'io.spring.dependency-management' version '1.1.6'
   id 'org.graalvm.python' version '24.1.1'
-}
+  // ...
+```
 
+`build.gradle`
+```
 graalPy {
     packages = [ // ①
         'vader-sentiment==3.2.1.1', // ②
@@ -491,6 +492,25 @@ We will use GraalVM, the polyglot embeddable virtual machine, to generate a nati
 Compiling native executables ahead of time with GraalVM improves startup time and reduces the memory footprint of JVM-based applications.
 
 First, add the [`org.graalvm.buildtools`](https://graalvm.github.io/native-build-tools/latest/index.html) plugin for your build system.
+
+For Maven:
+
+`pom.xml`
+```xml
+<plugin>
+    <groupId>org.graalvm.buildtools</groupId>
+    <artifactId>native-maven-plugin</artifactId>
+</plugin>
+```
+
+
+For Gradle, add this to the `plugins` block:
+
+`build.gradle`
+```
+  id 'org.graalvm.buildtools.native' version '0.10.3'
+```
+
 Make sure that the `JAVA_HOME` environmental variable is set to the location of a GraalVM installation.
 We recommend using a GraalVM 24.1.
 

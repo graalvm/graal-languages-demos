@@ -132,12 +132,12 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `build.gradle.kts`
 ```
 plugins {
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.4.2"
-    id("io.micronaut.aot") version "4.4.2"
     id("org.graalvm.python") version "24.1.1"
-}
+    // ...
+```
 
+`build.gradle.kts`
+```
 graalPy {
     packages = setOf( // ①
         "vader-sentiment==3.2.1.1", // ②
@@ -275,7 +275,7 @@ The application will have a simple chat-like view, which takes text as input and
 
 Create a html file, which will be later on rendered with the help of the `thymeleaf` library:
 
-`resources/views/index.html`
+`src/main/resources/views/index.html`
 ```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
