@@ -275,7 +275,7 @@ The application will have a simple chat-like view, which takes text as input and
 
 Create a html file, which will be later on rendered with the help of the `thymeleaf` library:
 
-`resources/views/index.html`
+`src/main/resources/views/index.html`
 ```html
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
