@@ -52,7 +52,7 @@ gradle init --type java-application --dsl kotlin --test-framework junit-jupiter 
 
 ## 4.1 Dependency configuration
 
-Add the required dependencies for GraalPy in the `<dependencies>` section of the POM or the `build.gradle.kts` file.
+Add the required dependencies for GraalPy in the `<dependencies>` section of the POM or to the `dependencies` block in the `build.gradle.kts` file.
 
 `pom.xml`
 ```xml
@@ -279,9 +279,35 @@ We cast the `io` and `qrcode` packages to our declared interfaces so we can use 
 
 If you followed along with the example, you can now compile and run your application from the commandline:
 
+With Maven:
+
 ```shell
 ./mvnw compile
 ./mvnw exec:java -Dexec.mainClass=org.example.App -Dgraalpy.resources=./python-resources
+```
+
+With Gradle:
+
+> There is a known bug in the GraalPy Gradle plugin version 24.1.1, which will be fixed in later
+> releases, where the build fails if the resources directory is empty. To work around this bug,
+> add a dummy file to the resources:
+>
+> `touch app/src/main/resources/dummy.txt`
+
+Update the build script to pass the necessary Java property to the application:
+
+`build.gradle.kts`
+```
+application {
+    applicationDefaultJvmArgs = listOf("-Dgraalpy.resources=./python-resources")
+}
+```
+
+Run from command line:
+
+```shell
+./gradlew compileJava
+./gradlew run
 ```
 
 ## 6. Next steps
