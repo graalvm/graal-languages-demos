@@ -3,9 +3,16 @@ plugins {
     id("org.graalvm.python") version "24.1.1"
 }
 
+// To make the paths of this reference solution (without 'app' subdirectory for sources)
+// and "gradle init ..." based solution (with sources in 'app') the same for README.md
+layout.buildDirectory.set(layout.projectDirectory.dir("app/build"))
+
 if ("true".equals(System.getProperty("no.transitive.dependencies"))) {
     graalPy {
         packages = setOf("vaderSentiment==3.3.2") // ①
+    }
+    dependencies {
+        implementation("org.graalvm.python:python:24.1.1")
     }
 } else {
     // The default profile shows the end result: all our transitive
@@ -20,6 +27,9 @@ if ("true".equals(System.getProperty("no.transitive.dependencies"))) {
             "urllib3==2.2.2"
         )
     }
+    dependencies {
+        implementation("org.graalvm.python:python:24.1.1")
+    }
 }
 
 repositories {
@@ -29,10 +39,8 @@ repositories {
     }
 }
 
-dependencies {
-  implementation("org.graalvm.python:python:24.1.1") // ①
-  implementation("org.graalvm.python:python-embedding:24.1.1") // ③
-}
+// This dependency is necessary only for the example Java code, not for building and running pip freeze:
+dependencies.add("implementation", "org.graalvm.python:python-embedding:24.1.1")
 
 group = "org.example"
 version = "1.0-SNAPSHOT"
