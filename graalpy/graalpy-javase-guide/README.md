@@ -306,7 +306,7 @@ application {
 Run from command line:
 
 ```shell
-./gradlew compileJava
+./gradlew assemble
 ./gradlew run
 ```
 
