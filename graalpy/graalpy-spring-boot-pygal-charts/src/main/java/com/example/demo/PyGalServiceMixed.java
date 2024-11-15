@@ -7,7 +7,6 @@
 package com.example.demo;
 
 import com.example.demo.GraalPyContextConfiguration.GraalPyContext;
-import org.graalvm.polyglot.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +14,10 @@ import java.util.stream.IntStream;
 
 @Service
 public class PyGalServiceMixed implements PyGalService {
-    private final Value pythonFunctionXY;
+    private final RenderXYFunction renderXYFunction;
 
     PyGalServiceMixed(GraalPyContext graalPyContext) {
-        pythonFunctionXY = graalPyContext.eval(
+        renderXYFunction = graalPyContext.eval(
                 // language=python
                 """
                         import pygal
@@ -30,10 +29,15 @@ public class PyGalServiceMixed implements PyGalService {
                                 xy_chart.add(entry.label(), entry.dataPoints())
                             return xy_chart.render().decode()
                         
-                        render_xy""");
+                        render_xy""").as(RenderXYFunction.class);
     }
 
     public record Entry(String label, double[][] dataPoints) {
+    }
+
+    @FunctionalInterface
+    public interface RenderXYFunction {
+        String apply(String title, List<Entry> labelDatapointEntries);
     }
 
     @Override
@@ -47,6 +51,6 @@ public class PyGalServiceMixed implements PyGalService {
                 new Entry("y = 1", new double[][]{{-5, 1}, {5, 1}}),
                 new Entry("y = -1", new double[][]{{-5, -1}, {5, -1}})
         );
-        return pythonFunctionXY.execute(title, labelDatapointEntries).asString();
+        return renderXYFunction.apply(title, labelDatapointEntries);
     }
 }
