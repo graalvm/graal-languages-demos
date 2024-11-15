@@ -4,6 +4,9 @@
       "type": "com.example.PyGalServiceMixed$Entry"
     },
     {
+      "type": "com.example.PyGalServiceMixed$RenderXYFunction"
+    },
+    {
       "type": "com.example.PyGalServicePureJava$BytesIO"
     },
     {
@@ -11,6 +14,13 @@
     },
     {
       "type": "com.example.PyGalServicePureJava$XY"
+    },
+    {
+      "type": {
+        "proxy": [
+          "com.example.PyGalServiceMixed$RenderXYFunction"
+        ]
+      }
     },
     {
       "type": {

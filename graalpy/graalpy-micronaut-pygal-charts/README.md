@@ -20,7 +20,7 @@ To start the demo, simply run:
 ./mvnw package mn:run
 ```
 
-When the demo runs, open the follwing URLs in a browser:
+When the demo runs, open the following URLs in a browser:
 
 | URL                           | Service                       |
 |:------------------------------|:------------------------------|
