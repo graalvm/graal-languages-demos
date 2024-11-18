@@ -294,12 +294,6 @@ With Maven:
 
 With Gradle:
 
-> There is a known bug in the GraalPy Gradle plugin version 24.1.1, which will be fixed in later
-> releases, where the build fails if the resources directory is empty. To work around this bug,
-> add a dummy file to the resources:
->
-> `touch app/src/main/resources/dummy.txt`
-
 Update the build script to pass the necessary Java property to the application:
 
 `build.gradle.kts`
