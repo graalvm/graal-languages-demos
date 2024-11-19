@@ -1,0 +1,45 @@
+plugins {
+  id 'org.graalvm.python' version '24.1.1'
+  // ...
+  id 'java'
+  id 'org.springframework.boot' version '3.3.5'
+  id 'io.spring.dependency-management' version '1.1.6'
+  id 'org.graalvm.buildtools.native' version '0.10.3'
+}
+
+graalPy {
+    packages = [ // ①
+        'vader-sentiment==3.2.1.1', // ②
+        'requests' // ③
+    ]
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  implementation 'org.graalvm.python:python:24.1.1' // ①
+  implementation 'org.graalvm.python:python-embedding:24.1.1' // ③
+  implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+  useJUnitPlatform()
+}
+
+test {
+  systemProperty "spring.mvc.async.request-timeout", System.getProperty("spring.mvc.async.request-timeout")
+}

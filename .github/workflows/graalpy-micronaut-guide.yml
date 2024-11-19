@@ -17,7 +17,7 @@ jobs:
   run:
     name: 'graalpy-micronaut-guide'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: graalvm/setup-graalvm@v1
@@ -30,8 +30,19 @@ jobs:
       - name: Build, test, and run 'graalpy-micronaut-guide' using Maven
         run: |
           cd graalpy/graalpy-micronaut-guide
+          git clean -fdx
           ./mvnw --no-transfer-progress clean test -Dmicronaut.http.client.read-timeout=1m
           ./mvnw --no-transfer-progress mn:run &
+          mnpid="$!"
+          sleep 30
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          kill $mnpid
+      - name: Build, test, and run 'graalpy-micronaut-guide' using Gradle
+        run: |
+          cd graalpy/graalpy-micronaut-guide
+          git clean -fdx
+          ./gradlew test -Dmicronaut.http.client.read-timeout=1m
+          ./gradlew run &
           mnpid="$!"
           sleep 30
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
@@ -39,8 +50,19 @@ jobs:
       - name: Build and run native 'graalpy-micronaut-guide' using Maven
         run: |
           cd graalpy/graalpy-micronaut-guide
+          git clean -fdx
           ./mvnw --no-transfer-progress clean package -DskipTests -Dpackaging=native-image
           ./target/graalpy-micronaut &
+          mnpid="$!"
+          sleep 20
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          kill $mnpid
+      - name: Build and run native 'graalpy-micronaut-guide' using Gradle
+        run: |
+          cd graalpy/graalpy-micronaut-guide
+          git clean -fdx
+          ./gradlew nativeCompile
+          ./build/native/nativeCompile/demo &
           mnpid="$!"
           sleep 20
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/

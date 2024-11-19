@@ -17,7 +17,7 @@ jobs:
   run:
     name: 'graalpy-spring-boot-guide'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: graalvm/setup-graalvm@v1
@@ -30,8 +30,19 @@ jobs:
       - name: Build, test, and run 'graalpy-spring-boot-guide' using Maven
         run: |
           cd graalpy/graalpy-spring-boot-guide
+          git clean -fdx
           ./mvnw --no-transfer-progress clean test -Dspring.mvc.async.request-timeout=60000
           ./mvnw --no-transfer-progress spring-boot:run &
+          sbpid="$!"
+          sleep 30
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          kill $sbpid
+      - name: Build, test, and run 'graalpy-spring-boot-guide' using Gradle
+        run: |
+          cd graalpy/graalpy-spring-boot-guide
+          git clean -fdx
+          ./gradlew test -Dspring.mvc.async.request-timeout=60000
+          ./gradlew bootRun &
           sbpid="$!"
           sleep 30
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
@@ -39,6 +50,7 @@ jobs:
       - name: Build and run native 'graalpy-spring-boot-guide' using Maven
         run: |
           cd graalpy/graalpy-spring-boot-guide
+          git clean -fdx
           ./mvnw --no-transfer-progress clean -DskipTests -Pnative native:compile
           ./target/graalpy-springboot &
           sbpid="$!"

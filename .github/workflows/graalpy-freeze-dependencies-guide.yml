@@ -28,6 +28,15 @@ jobs:
         shell: bash
         run: |
           cd graalpy/graalpy-freeze-dependencies-guide
+          git clean -fdx
           ./mvnw --no-transfer-progress compile
           ./mvnw --no-transfer-progress exec:java -Dexec.mainClass=org.example.App | tee /tmp/output
+          grep darent /tmp/output
+      - name: Build, test, and run 'graalpy-freeze-dependencies-guide' using Gradle
+        shell: bash
+        run: |
+          cd graalpy/graalpy-freeze-dependencies-guide
+          git clean -fdx
+          ./gradlew build
+          ./gradlew run | tee /tmp/output
           grep darent /tmp/output
