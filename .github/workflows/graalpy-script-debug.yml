@@ -1,0 +1,34 @@
+name: Test GraalPy Scripts Guide
+on:
+  push:
+    paths:
+      - 'graalpy/graalpy-scripts-debug/**'
+      - '.github/workflows/graalpy-scripts-debug.yml'
+  pull_request:
+    paths:
+      - 'graalpy/graalpy-scripts-debug/**'
+      - '.github/workflows/graalpy-scripts-debug.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graalpy-scripts-debug'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '23.0.1'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+      - name: Build, test, and run 'graalpy-scripts-debug' using Maven
+        run: |
+          cd graalpy/graalpy-scripts-debug
+          ./mvnw --no-transfer-progress test
+      - name: Build, test, and run 'graalpy-scripts-debug' using Gradle
+        run: |
+          cd graalpy/graalpy-scripts-debug
+          ./gradlew test
