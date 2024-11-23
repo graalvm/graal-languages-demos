@@ -1,0 +1,8 @@
+{
+    "configurations": [{
+        "name": "GraalPy: Attach embedded",
+        "type": "debugpy",
+        "request": "attach",
+        "connect": { "host": "localhost", "port": 4711 },
+    }]
+}
