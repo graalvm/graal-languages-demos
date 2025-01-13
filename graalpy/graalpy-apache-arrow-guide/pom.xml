@@ -63,6 +63,10 @@
                                 <package>pandas</package>
                                 <package>pyarrow</package>
                             </packages>
+                            <pythonHome>
+                                <includes></includes>
+                                <excludes>.*</excludes>
+                            </pythonHome>
                         </configuration>
                         <goals>
                             <goal>process-graalpy-resources</goal>
