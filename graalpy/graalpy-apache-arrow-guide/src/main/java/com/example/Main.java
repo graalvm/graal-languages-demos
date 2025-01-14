@@ -1,5 +1,12 @@
 package com.example;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.time.Duration;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
 import org.apache.arrow.vector.Float8Vector;
@@ -7,8 +14,7 @@ import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Value;
 import org.graalvm.python.embedding.utils.GraalPyResources;
-
-import java.io.IOException;
+import org.graalvm.python.embedding.utils.VirtualFileSystem;
 
 public class Main {
 
@@ -17,12 +23,17 @@ public class Main {
     private static final String JAVASCRIPT_URL = "https://www.graalvm.org/compatibility/module_results/js-module-testing.csv";
     private static final Integer PASSING_RATE_COLUMN_INDEX = 3;
 
-    public static Context initContext() {
-        return GraalPyResources.contextBuilder()
+    public static Context initContext() throws IOException {
+        var resourcesDir = Path.of(System.getProperty("user.home"), ".cache", "graalpy-apache-arrow-guide.resources");
+        if (!resourcesDir.toFile().isDirectory()) {
+            var fs = VirtualFileSystem.create();
+            GraalPyResources.extractVirtualFileSystemResources(fs, resourcesDir);
+        }
+        return GraalPyResources.contextBuilder(resourcesDir)
             .option("python.PythonHome", "")
             .option("python.WarnExperimentalFeatures", "false")
             .allowHostAccess(HostAccess.ALL)
-            .allowHostClassLookup(c -> true)
+            .allowHostClassLookup(_ -> true)
             .allowNativeAccess(true)
             .build();
     }
@@ -36,25 +47,27 @@ public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
         try (Context context = initContext();
              BufferAllocator allocator = new RootAllocator();
-             Float8Vector pyVector = new Float8Vector("pyPassingRate", allocator);
-             Float8Vector jsVector = new Float8Vector("jsPassingRate", allocator)
         ) {
             initDataAnalysisPyModule(context);
-            Thread pyThread = new Thread(() -> {
-                DownloadUtils.downloadAndStore(PYTHON_URL, PASSING_RATE_COLUMN_INDEX, pyVector);
-                System.out.println("Python mean: " + dataAnalysisPyModule.calculateMean(pyVector));
-                System.out.println("Python median: " + dataAnalysisPyModule.calculateMedian(pyVector));
-            });
-            Thread jsThread = new Thread(() -> {
-                DownloadUtils.downloadAndStore(JAVASCRIPT_URL, PASSING_RATE_COLUMN_INDEX, jsVector);
-                System.out.println("JS mean: " + dataAnalysisPyModule.calculateMean(jsVector));
-                System.out.println("JS median: " + dataAnalysisPyModule.calculateMedian(jsVector));
-            });
-            pyThread.start();
-            jsThread.start();
-            pyThread.join();
-            jsThread.join();
-
+            try (ExecutorService e =  Executors.newWorkStealingPool()) {
+                // Simulate some amount of parallelism
+                for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; ++i) {
+                    for (var pair : Map.of("GraalPy", PYTHON_URL, "GraalJS", JAVASCRIPT_URL).entrySet()) {
+                        e.submit(() -> {
+                            try (Float8Vector v = new Float8Vector("passingRate", allocator)) {
+                                DownloadUtils.downloadAndStore(pair.getValue(), PASSING_RATE_COLUMN_INDEX, v);
+                                System.err.println("DOWNLOAD FINISHED, SUBMITTING TO PYTHON WITH 0-COPY IN 5 SECONDS! WATCH THE MEMORY AND BE AMAZED!");
+                                try {
+                                    Thread.sleep(Duration.ofSeconds(5));
+                                } catch (InterruptedException e1) {
+                                }
+                                System.out.println(pair.getKey() + " mean: " + dataAnalysisPyModule.calculateMean(v));
+                                System.out.println(pair.getKey() + " median: " + dataAnalysisPyModule.calculateMedian(v));
+                            }
+                        });
+                    }
+                }
+            }
         }
     }
 }
