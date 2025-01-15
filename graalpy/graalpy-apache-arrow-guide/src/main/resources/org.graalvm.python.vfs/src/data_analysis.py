@@ -1,5 +1,4 @@
 import pandas as pd
-import pyarrow as pa
 
 from polyglot.arrow import Float8Vector
 
