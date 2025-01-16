@@ -21,6 +21,8 @@
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>graalpy.micronaut.multithreaded.aot.generated</micronaut.aot.packageName>
     <exec.mainClass>graalpy.micronaut.multithreaded.Application</exec.mainClass>
+    <!--Python version needs to be changed when we publish public artefacts-->
+    <python.version>25.0.0-SNAPSHOT</python.version>
   </properties>
 
   <repositories>
@@ -41,6 +43,18 @@
   </repositories>
 
   <dependencies>
+    <dependency>
+      <groupId>org.graalvm.python</groupId>
+      <artifactId>python-community</artifactId>
+      <version>${python.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>org.graalvm.python</groupId>
+      <artifactId>python-embedding</artifactId>
+      <version>${python.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-server-netty</artifactId>
@@ -109,6 +123,7 @@
       <plugin>
           <groupId>org.graalvm.python</groupId>
           <artifactId>graalpy-maven-plugin</artifactId>
+          <version>${python.version}</version>
           <configuration>
               <packages>
                   <package>pandas</package>
