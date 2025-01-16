@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Demo App</title>
+        <script language="javascript">
+            document.addEventListener("DOMContentLoaded", () => {
+                let dropArea = document.getElementById("drop-area");
+                ["dragenter", "dragover", "dragleave", "drop"].forEach(en => {
+                    [dropArea, document.body].forEach(el => el.addEventListener(en, e => { e.preventDefault(); e.stopPropagation() }, false))
+                });
+                ["dragenter", "dragover"].forEach(en => dropArea.addEventListener(en, () => dropArea.classList.add("highlight"), false));
+                ["dragleave", "drop"].forEach(en => dropArea.addEventListener(en, () => dropArea.classList.remove("highlight"), false));
+                dropArea.addEventListener(
+                    "drop",
+                    (e) => {
+                        var files = [...e.dataTransfer.files]
+                        files.forEach((file, i) => {
+                            var url = "/data_analysis"
+                            var xhr = new XMLHttpRequest()
+                            var formData = new FormData()
+                            xhr.open("POST", url, true)
+                            xhr.addEventListener("readystatechange", function(e) {
+                                if (xhr.readyState == 4 && xhr.status == 200) {
+                                    let response = document.createElement("pre");
+                                    response.innerHTML = xhr.responseText;
+                                    let responses = document.getElementById("responses");
+                                    responses.appendChild(response);
+                                    responses.scrollTop = responses.scrollHeight;
+                                }
+                            })
+                            var method = "describe";
+                            if (document.getElementById("calcMean").checked) {
+                                method = "mean";
+                            } else if (document.getElementById("calcMedian").checked) {
+                                method = "median";
+                            }
+                            formData.append("method", method);
+                            formData.append("column", document.getElementById("column").value);
+                            formData.append("file", file);
+                            xhr.send(formData)
+                        });
+                    },
+                    false);
+            });
+        </script>
+        <style>
+            #drop-area {
+                border: 2px dashed #ccc;
+                border-radius: 20px;
+                width: 480px;
+                margin: 50px auto;
+                padding: 20px;
+            }
+            #drop-area.highlight {
+                border-color: purple;
+            }
+        </style>
+    </head>
+    <body style="font-family:sans-serif">
+        <div id="drop-area">
+            <form class="my-form">
+                <p>Upload multiple CSV files by dragging and dropping</p>
+                <fieldset>
+                    <input type="radio" id="calcMean" name="operation">
+                    <label for="calcMean">Mean</label>
+                    <input type="radio" id="calcMedian" name="operation">
+                    <label for="calcMedian">Median</label>
+                    <input type="radio" id="describe" name="operation" checked>
+                    <label for="describe">Describe</label>
+                    <input type="number" id="column" style="width:2em;margin-left:4em" value="3">
+                    <label for="column">Column</label>
+                </fieldset>
+                <input type="file" id="fileElem" multiple accept=".csv" onchange="handleFiles(this.files)" style="display:none">
+            </form>
+            <div id="responses" style="max-height:20em;overflow-y:scroll"></div>
+        </div>
+    </body>
+</html>
