@@ -18,11 +18,12 @@ import io.micronaut.views.View;
 
 @Controller
 public class DataAnalysisController {
+    private final DataAnalysisModuleSingleContext das;
+    private final DataAnalysisModuleMultiContext dam;
 
-    private final DataAnalysisModule da;
-
-    DataAnalysisController(DataAnalysisModule da) {
-        this.da = da;
+    public DataAnalysisController(DataAnalysisModuleSingleContext das, DataAnalysisModuleMultiContext dam) {
+        this.das = das;
+        this.dam = dam;
     }
 
     @Get
@@ -31,10 +32,22 @@ public class DataAnalysisController {
     }
 
     @ExecuteOn(TaskExecutors.IO)
-    @Post(value = "/data_analysis", consumes = MediaType.MULTIPART_FORM_DATA, produces = MediaType.TEXT_PLAIN)
-    String analyzeCsv(StreamingFileUpload file,
+    @Post(value = "/data_analysis_single", consumes = MediaType.MULTIPART_FORM_DATA, produces = MediaType.TEXT_PLAIN)
+    String analyzeCsvSingle(StreamingFileUpload file,
                     @Part("method") String analysisMethod,
                     @Part("column") String columnString) {
+        return analyzeCsv(file, analysisMethod, columnString, das);
+    }
+
+    @ExecuteOn(TaskExecutors.IO)
+    @Post(value = "/data_analysis_multi", consumes = MediaType.MULTIPART_FORM_DATA, produces = MediaType.TEXT_PLAIN)
+    String analyzeCsvMulti(StreamingFileUpload file,
+                    @Part("method") String analysisMethod,
+                    @Part("column") String columnString) {
+        return analyzeCsv(file, analysisMethod, columnString, dam);
+    }
+
+    private String analyzeCsv(StreamingFileUpload file, String analysisMethod, String columnString, DataAnalysisModule da) {
         String csv;
         try {
             csv = new String(file.asInputStream().readAllBytes(), "UTF-8");

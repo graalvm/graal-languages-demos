@@ -15,19 +15,22 @@
                     (e) => {
                         var files = [...e.dataTransfer.files]
                         files.forEach((file, i) => {
-                            var url = "/data_analysis"
-                            var xhr = new XMLHttpRequest()
-                            var formData = new FormData()
-                            xhr.open("POST", url, true)
-                            xhr.addEventListener("readystatechange", function(e) {
-                                if (xhr.readyState == 4 && xhr.status == 200) {
+                            var url = document.getElementById("parallel").checked ? "/data_analysis_multi" : "/data_analysis_single";
+                            var xhr = new XMLHttpRequest();
+                            var formData = new FormData();
+                            var begin;
+                            xhr.addEventListener("readystatechange", e => {
+                                if (xhr.readyState == 1) {
+                                    begin = Date.now();
+                                } else if (xhr.readyState == 4) {
                                     let response = document.createElement("pre");
-                                    response.innerHTML = xhr.responseText;
+                                    response.innerHTML = "" + xhr.responseText + "\n    Request took: " + (Date.now() - begin);
                                     let responses = document.getElementById("responses");
                                     responses.appendChild(response);
                                     responses.scrollTop = responses.scrollHeight;
                                 }
-                            })
+                            });
+                            xhr.open("POST", url, true);
                             var method = "describe";
                             if (document.getElementById("calcMean").checked) {
                                 method = "mean";
@@ -61,14 +64,20 @@
             <form class="my-form">
                 <p>Upload multiple CSV files by dragging and dropping</p>
                 <fieldset>
-                    <input type="radio" id="calcMean" name="operation">
-                    <label for="calcMean">Mean</label>
-                    <input type="radio" id="calcMedian" name="operation">
-                    <label for="calcMedian">Median</label>
-                    <input type="radio" id="describe" name="operation" checked>
-                    <label for="describe">Describe</label>
-                    <input type="number" id="column" style="width:2em;margin-left:4em" value="3">
-                    <label for="column">Column</label>
+                    <div>
+                        <input type="radio" id="calcMean" name="operation">
+                        <label for="calcMean">Mean</label>
+                        <input type="radio" id="calcMedian" name="operation">
+                        <label for="calcMedian">Median</label>
+                        <input type="radio" id="describe" name="operation" checked>
+                        <label for="describe">Describe</label>
+                        <input type="number" id="column" style="width:2em;margin-left:4em" value="3">
+                        <label for="column">Column</label>
+                    </div>
+                    <div>
+                        <input type="checkbox" id="parallel">
+                        <label for="parallel">Parallelize</label>
+                    </div>
                 </fieldset>
                 <input type="file" id="fileElem" multiple accept=".csv" onchange="handleFiles(this.files)" style="display:none">
             </form>
