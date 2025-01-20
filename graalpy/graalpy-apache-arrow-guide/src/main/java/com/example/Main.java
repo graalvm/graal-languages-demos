@@ -25,10 +25,8 @@ public class Main {
 
     public static Context initContext() throws IOException {
         var resourcesDir = Path.of(System.getProperty("user.home"), ".cache", "graalpy-apache-arrow-guide.resources");
-        if (!resourcesDir.toFile().isDirectory()) {
-            var fs = VirtualFileSystem.create();
-            GraalPyResources.extractVirtualFileSystemResources(fs, resourcesDir);
-        }
+        var fs = VirtualFileSystem.create();
+        GraalPyResources.extractVirtualFileSystemResources(fs, resourcesDir);
         return GraalPyResources.contextBuilder(resourcesDir)
             .option("python.PythonHome", "")
             .option("python.WarnExperimentalFeatures", "false")
@@ -44,30 +42,25 @@ public class Main {
     }
 
 
-    public static void main(String[] args) throws IOException {
+
+    public static void main(String[] args) throws IOException, InterruptedException {
         try (Context context = initContext();
              BufferAllocator allocator = new RootAllocator();
+             Float8Vector pyVector = new Float8Vector("python", allocator);
+             Float8Vector jsVector = new Float8Vector("javascript", allocator)
         ) {
             initDataAnalysisPyModule(context);
-            try (ExecutorService e =  Executors.newWorkStealingPool()) {
-                // Simulate some amount of parallelism
-                for (int i = 0; i < Runtime.getRuntime().availableProcessors() * 2; ++i) {
-                    for (var pair : Map.of("GraalPy", PYTHON_URL, "GraalJS", JAVASCRIPT_URL).entrySet()) {
-                        e.submit(() -> {
-                            try (Float8Vector v = new Float8Vector("passingRate", allocator)) {
-                                DownloadUtils.downloadAndStore(pair.getValue(), PASSING_RATE_COLUMN_INDEX, v);
-                                System.err.println("DOWNLOAD FINISHED, SUBMITTING TO PYTHON WITH 0-COPY IN 5 SECONDS! WATCH THE MEMORY AND BE AMAZED!");
-                                try {
-                                    Thread.sleep(Duration.ofSeconds(5));
-                                } catch (InterruptedException e1) {
-                                }
-                                System.out.println(pair.getKey() + " mean: " + dataAnalysisPyModule.calculateMean(v));
-                                System.out.println(pair.getKey() + " median: " + dataAnalysisPyModule.calculateMedian(v));
-                            }
-                        });
-                    }
-                }
-            }
+            Thread pyThread = new Thread(() -> DownloadUtils.downloadAndStore(PYTHON_URL, PASSING_RATE_COLUMN_INDEX, pyVector));
+            Thread jsThread = new Thread(() -> DownloadUtils.downloadAndStore(JAVASCRIPT_URL, PASSING_RATE_COLUMN_INDEX, jsVector));
+            pyThread.start();
+            jsThread.start();
+            pyThread.join();
+            jsThread.join();
+
+            System.out.println("Python mean: " + dataAnalysisPyModule.calculateMean(pyVector));
+            System.out.println("Python median: " + dataAnalysisPyModule.calculateMedian(pyVector));
+            System.out.println("JS mean: " + dataAnalysisPyModule.calculateMean(jsVector));
+            System.out.println("JS median: " + dataAnalysisPyModule.calculateMedian(jsVector));
         }
     }
 }

@@ -14,7 +14,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <arrow.version>17.0.0</arrow.version>
         <!--Python version needs to be changed when we publish public artefacts-->
-        <python.version>25.0.0-SNAPSHOT</python.version>
+<!--        <python.version>25.0.0-SNAPSHOT</python.version>-->
+        <python.version>26.0.0</python.version>
     </properties>
 
 
@@ -54,9 +55,9 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <packages>
-                                <package>pandas</package>
-                                <package>pyarrow</package>
+                            <packages> <!-- ① -->
+                                <package>pandas</package> <!-- ② -->
+                                <package>pyarrow</package> <!-- ③ -->
                             </packages>
                             <pythonHome>
                                 <includes></includes>
@@ -69,7 +70,21 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <mainClass>com.example.Main</mainClass>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
 </project>

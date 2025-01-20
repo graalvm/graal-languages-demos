@@ -2,7 +2,7 @@
 
 ## 1. Getting Started
 
-In this guide, we demonstrate how to use Java Apache Arrow implementation library (JArrow) together with GraalPy while achieving zero copy memory when data are moved from Java to Python. Keep in mind that the current API is experimental and can change in the future. 
+This guide demonstrates how to use the Java Apache Arrow implementation library (JArrow) with GraalPy, achieving zero-copy memory when transferring data between Java and Python.
 
 ## 2. What you will need 
 * Basic knowledge of JArrow
@@ -14,7 +14,7 @@ In this guide, we demonstrate how to use Java Apache Arrow implementation librar
   GraalVM JDK 21, Oracle JDK 21, OpenJDK 21 and newer with [JIT compilation](https://www.graalvm.org/latest/reference-manual/embed-languages/#runtime-optimization-support).
   Note: GraalVM for JDK 17 is **not supported**.
 
-## 3. Dependency configuration
+## 3. Writing the application
 
 Add the required dependencies for GraalPy and JArrow in the dependency section of the POM.
 
@@ -62,7 +62,7 @@ Add the required dependencies for GraalPy and JArrow in the dependency section o
 There is also another option `arrow-memory-netty`. You can read more about Apache Arrow memory management in [Apache Arrow documentation](https://arrow.apache.org/docs/java/memory.html)
 
 
-## 4. Adding packages - GraalPy build plugin configuration
+## 3.3 Adding packages - GraalPy build plugin configuration
 
 `pom.xml`
 ```xml
@@ -102,4 +102,145 @@ There is also another option `arrow-memory-netty`. You can read more about Apach
 
 
 
-TBD
+## 3.4 Creating a Python context
+`Main.java`
+```java
+public static Context initContext() throws IOException {
+  var resourcesDir = Path.of(System.getProperty("user.home"), ".cache", "graalpy-apache-arrow-guide.resources"); // ①
+  var fs = VirtualFileSystem.create();
+  GraalPyResources.extractVirtualFileSystemResources(fs, resourcesDir); // ②
+  return GraalPyResources.contextBuilder(resourcesDir)
+          .option("python.PythonHome", "")
+          .option("python.WarnExperimentalFeatures", "false")
+          .allowHostAccess(HostAccess.ALL)
+          .allowHostClassLookup(_ -> true)
+          .allowNativeAccess(true)
+          .build(); // ③
+}
+```
+
+❶ Specify directory where resources will be copied.
+
+❷ Copy the resources from Virtual File System to the directory specified. This step is needed because PyArrow ...? 
+
+❸ Create the context with the given configuration. 
+
+
+## 3.5 Initialize Python module
+
+
+We'll create a Python module in this section and bind it to a Java interface, allowing the Java interface to call Python methods defined in the module.
+
+All Python source code should be placed in `src/main/resources/org.graalvm.python.vfs/src`
+
+Let's create a `data_analysis.py` file to calculate the mean and median for the Float8Vector using Pandas:
+```python
+import pandas as pd
+from polyglot.arrow import Float8Vector # ①
+
+
+def calculateMean(valueVector: Float8Vector) -> float:
+    series = pd.Series(valueVector, dtype="float64[pyarrow]") # ②
+    return series.mean()
+
+
+def calculateMedian(valueVector: Float8Vector) -> float:
+    series = pd.Series(valueVector, dtype="float64[pyarrow]")
+    return series.median()
+```
+
+❶ This import is crucial. Without it zero copy memory won't be achieved.
+
+❷ In pandas you need to specify that the series should be backed by pyarrow, therefore adding `[pyarrow]` to the dtype. 
+
+
+
+### 3.5.1 Binding Java interface with Python code
+
+Define a Java interface with the methods we want to bind. Remember, the method names must match those in the Python code.
+
+`DataAnalysisPyModule.java`
+```java
+
+public interface DataAnalysisPyModule {
+    double calculateMean(Float8Vector valueVector);
+    double calculateMedian(Float8Vector valueVector);
+}
+```
+
+Bind the Java interface to the Python module.
+
+`Main.java`
+
+```java
+    public static void initDataAnalysisPyModule(Context context) {
+        Value value = context.eval("python", "import data_analysis; data_analysis");
+        dataAnalysisPyModule = value.as(DataAnalysisPyModule.class);
+    }
+```
+
+## 3.6 Running the Application
+
+Everything is set, and we can now try it out. In this example, we'll download test reports for GraalPy and GraalJS, and then calculate the mean and median values. We handle the data download on the Java side to take advantage of true parallelism, which isn't possible in Python due to the Global Interpreter Lock (GIL).
+
+To download the data, we've prepared a helper method. This method also populates a JArrow float vector, which will be passed directly to the Python code.
+
+`DownloadUtils.java`
+```java
+    public static void downloadAndStore(String url, int columnIndex, Float8Vector vectorToStore) {
+        try {
+            var httpConnection = (HttpURLConnection) URI.create(url).toURL().openConnection();
+            if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(httpConnection.getInputStream()))) {
+                    String line;
+                    int index = 0;
+                    while ((line = reader.readLine()) != null) {
+                        var values = line.split(",");
+                        double value = Double.parseDouble(values[columnIndex]);
+                        vectorToStore.setSafe(index, value);
+                        index++;
+                    }
+                    vectorToStore.setValueCount(index);
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+```
+
+Finally, use the setup in your main method:
+
+`Main.java`
+```java
+    public static void main(String[] args) throws IOException, InterruptedException {
+        try (Context context = initContext();
+             BufferAllocator allocator = new RootAllocator();
+             Float8Vector pyVector = new Float8Vector("python", allocator);
+             Float8Vector jsVector = new Float8Vector("javascript", allocator)
+        ) {
+            initDataAnalysisPyModule(context);
+            Thread pyThread = new Thread(() -> DownloadUtils.downloadAndStore(PYTHON_URL, PASSING_RATE_COLUMN_INDEX, pyVector));
+            Thread jsThread = new Thread(() -> DownloadUtils.downloadAndStore(JAVASCRIPT_URL, PASSING_RATE_COLUMN_INDEX, jsVector));
+            pyThread.start();
+            jsThread.start();
+            pyThread.join();
+            jsThread.join();
+
+            System.out.println("Python mean: " + dataAnalysisPyModule.calculateMean(pyVector));
+            System.out.println("Python median: " + dataAnalysisPyModule.calculateMedian(pyVector));
+            System.out.println("JS mean: " + dataAnalysisPyModule.calculateMean(jsVector));
+            System.out.println("JS median: " + dataAnalysisPyModule.calculateMedian(jsVector));
+        }
+    }
+```
+
+To compile the application: 
+```bash
+./mvnw package
+```
+
+To run the application: 
+```bash
+./mvnw exec:java -Dexec.mainClass="com.example.Main"
+```

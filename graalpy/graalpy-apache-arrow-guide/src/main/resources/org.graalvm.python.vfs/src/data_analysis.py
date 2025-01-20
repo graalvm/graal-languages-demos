@@ -1,6 +1,5 @@
 import pandas as pd
-
-from polyglot.arrow import Float8Vector
+from polyglot.arrow import Float8Vector # ①
 
 
 def calculateMean(valueVector: Float8Vector) -> float:
