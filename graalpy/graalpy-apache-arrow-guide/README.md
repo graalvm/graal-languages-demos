@@ -34,6 +34,14 @@ Add the required dependencies for GraalPy and JArrow in the dependency section o
 </dependency>
 ```
 
+or 
+
+`build.gradle`
+```
+implementation "org.graalvm.python:python-community:$pythonVersion" // ①
+implementation "org.graalvm.python:python-embedding:$pythonVersion" // ③
+```
+
 ❶ The `python-community` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
 
 ❷ Note that the `python-community` package is not a JAR - it is simply a `pom` that declares more dependencies.
@@ -54,6 +62,14 @@ Add the required dependencies for GraalPy and JArrow in the dependency section o
     <artifactId>arrow-memory-unsafe</artifactId> <!-- ② -->
     <version>${arrow.version}</version>
 </dependency>
+```
+
+or
+
+`build.gradle`
+```java
+implementation "org.apache.arrow:arrow-vector:$arrowVersion" // ①
+implementation "org.apache.arrow:arrow-memory-unsafe:$arrowVersion" // ②
 ```
 
 ❶ The `arrow-vector` dependency is used for managing in-memory columnar data structures.
@@ -92,6 +108,27 @@ There is also another option `arrow-memory-netty`. You can read more about Apach
             </plugin>
         </plugins>
     </build>
+```
+
+or 
+
+`build.gradle`
+```
+plugins {
+    id 'org.graalvm.python' version '25.0.0'
+    // ...
+}
+```
+
+`build.gradle`
+```
+graalPy {
+    community = true
+    packages = [ // ①
+                 'pandas', // ②
+                 'pyarrow' // ③
+    ]
+}
 ```
 
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
@@ -136,20 +173,22 @@ All Python source code should be placed in `src/main/resources/org.graalvm.pytho
 Let's create a `data_analysis.py` file to calculate the mean and median for the Float8Vector using Pandas:
 ```python
 import pandas as pd
-from polyglot.arrow import Float8Vector # ①
+from polyglot.arrow import Float8Vector, enable_java_integration
 
+enable_java_integration() # ①
 
 def calculateMean(valueVector: Float8Vector) -> float:
-    series = pd.Series(valueVector, dtype="float64[pyarrow]") # ②
-    return series.mean()
+  series = pd.Series(valueVector, dtype="float64[pyarrow]") # ②
+  return series.mean()
 
 
 def calculateMedian(valueVector: Float8Vector) -> float:
-    series = pd.Series(valueVector, dtype="float64[pyarrow]")
-    return series.median()
+  series = pd.Series(valueVector, dtype="float64[pyarrow]")
+  return series.median()
+
 ```
 
-❶ This import is crucial. Without it zero copy memory won't be achieved.
+❶ You need to call this method to enable the zero copy integration.
 
 ❷ In pandas you need to specify that the series should be backed by pyarrow, therefore adding `[pyarrow]` to the dtype. 
 
@@ -240,7 +279,19 @@ To compile the application:
 ./mvnw package
 ```
 
+or
+
+```bash
+./gradlew build
+```
+
 To run the application: 
 ```bash
 ./mvnw exec:java -Dexec.mainClass="com.example.Main"
+```
+
+or
+
+```bash
+./gradlew run
 ```

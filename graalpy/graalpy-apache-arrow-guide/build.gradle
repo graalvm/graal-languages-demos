@@ -1,7 +1,7 @@
 plugins {
+    id 'org.graalvm.python' version '25.0.0'
     id 'application'
     id 'java'
-    id 'org.graalvm.python' version '25.0.0'
 }
 
 group = 'com.example'
@@ -34,17 +34,17 @@ compileJava {
 }
 
 tasks.withType(JavaExec) {
-    jvmArgs = ['--enable-preview']
+    jvmArgs = ['--enable-preview', '--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED']
 }
 
 dependencies {
     // Apache Arrow
-    implementation "org.apache.arrow:arrow-vector:$arrowVersion"
-    implementation "org.apache.arrow:arrow-memory-unsafe:$arrowVersion"
+    implementation "org.apache.arrow:arrow-vector:$arrowVersion" // ①
+    implementation "org.apache.arrow:arrow-memory-unsafe:$arrowVersion" // ②
 
     // GraalPy
-    implementation "org.graalvm.python:python-community:$pythonVersion"
-    implementation "org.graalvm.python:python-embedding:$pythonVersion"
+    implementation "org.graalvm.python:python-community:$pythonVersion" // ①
+    implementation "org.graalvm.python:python-embedding:$pythonVersion" // ③
 }
 
 application {
