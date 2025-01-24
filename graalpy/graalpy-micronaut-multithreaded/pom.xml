@@ -10,32 +10,22 @@
   <parent>
     <groupId>io.micronaut.platform</groupId>
     <artifactId>micronaut-parent</artifactId>
-    <version>4.7.5-SNAPSHOT</version>
+    <version>4.7.4</version>
   </parent>
   <properties>
     <packaging>jar</packaging>
     <jdk.version>21</jdk.version>
     <release.version>21</release.version>
-    <micronaut.version>4.7.5-SNAPSHOT</micronaut.version>
+    <micronaut.version>4.7.4</micronaut.version>
     <micronaut.runtime>netty</micronaut.runtime>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>graalpy.micronaut.multithreaded.aot.generated</micronaut.aot.packageName>
     <exec.mainClass>graalpy.micronaut.multithreaded.Application</exec.mainClass>
-    <!--Python version needs to be changed when we publish public artefacts-->
+    <!--TODO: Python version to be changed when we publish public artefacts-->
     <python.version>25.0.0-SNAPSHOT</python.version>
   </properties>
 
   <repositories>
-    <repository>
-      <id>sonatype-snapshots</id>
-      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
     <repository>
       <id>central</id>
       <url>https://repo.maven.apache.org/maven2</url>
@@ -43,6 +33,7 @@
   </repositories>
 
   <dependencies>
+    <!--TODO: Selecting a Python version different from the Micronaut BOM -->
     <dependency>
       <groupId>org.graalvm.python</groupId>
       <artifactId>python-community</artifactId>
@@ -126,7 +117,7 @@
           <version>${python.version}</version>
           <configuration>
               <packages>
-                  <package>pandas</package>
+                  <package>pandas==2.2.0</package>
               </packages>
           </configuration>
           <executions>
@@ -171,18 +162,4 @@
       </plugin>
     </plugins>
   </build>
-
-    <pluginRepositories>
-       <pluginRepository>
-           <id>central</id>
-           <url>https://repo.maven.apache.org/maven2</url>
-       </pluginRepository>
-       <pluginRepository>
-           <id>ossrh</id>
-           <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-           <snapshots>
-               <enabled>true</enabled>
-           </snapshots>
-       </pluginRepository>
-    </pluginRepositories>
 </project>
