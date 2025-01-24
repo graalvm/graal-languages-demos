@@ -64,14 +64,15 @@
                 <groupId>org.graalvm.python</groupId>
                 <artifactId>graalpy-maven-plugin</artifactId>
                 <version>24.1.1</version>
+                <configuration>
+                    <packages> <!-- ① -->
+                        <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
+                        <package>requests</package> <!-- ③ -->
+                    </packages>
+                </configuration>
                 <executions>
                     <execution>
-                        <configuration>
-                            <packages> <!-- ① -->
-                                <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-                                <package>requests</package> <!-- ③ -->
-                            </packages>
-                        </configuration>
+                        <?m2e execute onConfiguration,onIncremental?>
                         <goals>
                             <goal>process-graalpy-resources</goal>
                         </goals>

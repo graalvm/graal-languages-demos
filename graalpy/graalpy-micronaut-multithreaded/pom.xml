@@ -100,6 +100,7 @@
   <build>
     <plugins>
       <plugin>
+        <?m2e execute onConfiguration,onIncremental?>
         <groupId>io.micronaut.maven</groupId>
         <artifactId>micronaut-maven-plugin</artifactId>
         <configuration>
@@ -122,6 +123,7 @@
           </configuration>
           <executions>
             <execution>
+              <?m2e execute onConfiguration,onIncremental?>
               <goals>
                 <goal>process-graalpy-resources</goal>
               </goals>

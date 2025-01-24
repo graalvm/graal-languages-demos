@@ -10,6 +10,7 @@ import org.python.core.*;
 import org.python.util.PythonInterpreter;
 
 final class JythonInputCallback implements InputCallback {
+    @SuppressWarnings("resource")
     static PyCode JYTHON_CODE = new PythonInterpreter().compile("__import__('sys').version"); // ①
     private PythonInterpreter python;
 

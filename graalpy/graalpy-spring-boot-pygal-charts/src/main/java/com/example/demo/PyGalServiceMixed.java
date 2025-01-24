@@ -32,7 +32,7 @@ public class PyGalServiceMixed implements PyGalService {
                         render_xy""").as(RenderXYFunction.class);
     }
 
-    public record Entry(String label, double[][] dataPoints) {
+    public record Entry(@SuppressWarnings("unused") String label, @SuppressWarnings("unused") double[][] dataPoints) {
     }
 
     @FunctionalInterface

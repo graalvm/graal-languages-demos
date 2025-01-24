@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest // ①
 class SentimentAnalysisControllerTest {
+    @SuppressWarnings("unchecked")
     @Test
     void testAnalyzeResponse(@Client("/") HttpClient client) { // ②
         Map<String, Double> response = client.toBlocking().retrieve("/analyze?text=happy", Map.class); // ③
