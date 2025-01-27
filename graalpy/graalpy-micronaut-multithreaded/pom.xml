@@ -36,7 +36,7 @@
     <!--TODO: Selecting a Python version different from the Micronaut BOM -->
     <dependency>
       <groupId>org.graalvm.python</groupId>
-      <artifactId>python-community</artifactId>
+      <artifactId>python</artifactId>
       <version>${python.version}</version>
       <type>pom</type>
     </dependency>
@@ -118,7 +118,7 @@
           <version>${python.version}</version>
           <configuration>
               <packages>
-                  <package>pandas==2.2.0</package>
+                  <package>pandas==2.2.2</package>
               </packages>
           </configuration>
           <executions>

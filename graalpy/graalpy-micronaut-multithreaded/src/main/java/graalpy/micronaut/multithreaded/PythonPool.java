@@ -4,24 +4,24 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
-import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.Value;
-import org.graalvm.python.embedding.utils.GraalPyResources;
-import org.graalvm.python.embedding.utils.VirtualFileSystem;
+import org.graalvm.python.embedding.GraalPyResources;
+import org.graalvm.python.embedding.VirtualFileSystem;
 
 @io.micronaut.context.annotation.Context
 public class PythonPool extends AbstractExecutorService {
     private final Engine engine;
     private final ThreadLocal<Context> thisContext;
-    private final BlockingQueue<Context> contexts;
+    private final BlockingDeque<Context> contexts;
     private final ExecutorService threadPool;
     private final int size;
 
@@ -70,15 +70,24 @@ public class PythonPool extends AbstractExecutorService {
     private PythonPool(int nContexts) {
         size = nContexts;
         engine = Engine.create();
-        contexts = new LinkedBlockingQueue<>();
+        contexts = new LinkedBlockingDeque<>();
         thisContext = new ThreadLocal<>();
-        threadPool = Executors.newFixedThreadPool(nContexts, new ThreadFactory() {
+        for (int i = 0; i < nContexts; i++) {
+            contexts.addLast(createContext(engine));
+        }
+        threadPool = Executors.newCachedThreadPool(new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
+                // associate contexts with threads round-robin
                 return new Thread(() -> {
-                    var c = createContext(engine);
-                    contexts.add(c);
+                    Context c;
+                    try {
+                        c = contexts.takeFirst();
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                     thisContext.set(c);
+                    contexts.addLast(c);
                     r.run();
                 });
             }
