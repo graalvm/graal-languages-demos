@@ -1,5 +1,5 @@
 plugins {
-  id 'org.graalvm.python' version '24.1.1'
+  id 'org.graalvm.python' version '24.1.2'
   // ...
   id 'java'
   id 'org.springframework.boot' version '3.3.5'
@@ -28,8 +28,8 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.graalvm.python:python:24.1.1' // ①
-  implementation 'org.graalvm.python:python-embedding:24.1.1' // ③
+  implementation 'org.graalvm.python:python:24.1.2' // ①
+  implementation 'org.graalvm.python:python-embedding:24.1.2' // ③
   implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
   implementation 'org.springframework.boot:spring-boot-starter-web'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'

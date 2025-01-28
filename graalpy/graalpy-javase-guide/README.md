@@ -60,14 +60,14 @@ Add the required dependencies for GraalPy in the `<dependencies>` section of the
   <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>python</artifactId> <!-- ① -->
-    <version>24.1.1</version>
+    <version>24.1.2</version>
     <type>pom</type> <!-- ② -->
   </dependency>
 
   <dependency>
     <groupId>org.graalvm.python</groupId>
     <artifactId>python-embedding</artifactId> <!-- ③ -->
-      <version>24.1.1</version>
+      <version>24.1.2</version>
   </dependency>
 </dependencies>
 ```
@@ -75,8 +75,8 @@ Add the required dependencies for GraalPy in the `<dependencies>` section of the
 `build.gradle.kts`
 ```kotlin
 dependencies {
-  implementation("org.graalvm.python:python:24.1.1") // ①
-  implementation("org.graalvm.python:python-embedding:24.1.1") // ③
+  implementation("org.graalvm.python:python:24.1.2") // ①
+  implementation("org.graalvm.python:python-embedding:24.1.2") // ③
 }
 ```
 
@@ -99,7 +99,7 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
     <plugin>
       <groupId>org.graalvm.python</groupId>
       <artifactId>graalpy-maven-plugin</artifactId>
-      <version>24.1.1</version>
+      <version>24.1.2</version>
       <executions>
         <execution>
           <configuration>
@@ -131,7 +131,7 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
 ```kotlin
 plugins {
     application
-    id("org.graalvm.python") version "24.1.1"
+    id("org.graalvm.python") version "24.1.2"
 }
 
 graalPy {
@@ -154,7 +154,7 @@ We disable this by specifying that we want to exclude all standard library files
 Omit this section if you want to include the Python packages into the Java resources (and, for example, ship them in the Jar).
 [Later in the Java code](#external-or-embedded-python-code-java) we can configure the GraalPy runtime to load the package from the filesystem or from resources.
 
-**Note** that due to a bug in the 24.1.1 version of the `org.graalvm.python` plugin for **Gradle** you need to include a resource.
+**Note** that due to a bug in the 24.1.2 version of the `org.graalvm.python` plugin for **Gradle** you need to include a resource.
 A simple workaround is to add a `src/main/resources/META-INF/MANIFEST.MF`:
 ```
 Manifest-Version: 1.0

@@ -87,27 +87,27 @@ Add the required dependencies for GraalPy in the `<dependencies>` section of the
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>python</artifactId> <!-- ① -->
-    <version>24.1.1</version>
+    <version>24.1.2</version>
     <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>polyglot</artifactId> <!-- ③ -->
-    <version>24.1.1</version>
+    <version>24.1.2</version>
 </dependency>
 <dependency>
     <groupId>org.graalvm.tools</groupId>
     <artifactId>dap-tool</artifactId> <!-- ④ -->
-    <version>24.1.1</version>
+    <version>24.1.2</version>
 </dependency>
 ```
 
 `build.gradle.kts`
 ```kotlin
 dependencies {
-    implementation("org.graalvm.polyglot:python:24.1.1") // ①
-    implementation("org.graalvm.polyglot:polyglot:24.1.1") // ③
-    implementation("org.graalvm.tools:dap-tool:24.1.1") // ④
+    implementation("org.graalvm.polyglot:python:24.1.2") // ①
+    implementation("org.graalvm.polyglot:polyglot:24.1.2") // ③
+    implementation("org.graalvm.tools:dap-tool:24.1.2") // ④
 }
 ```
 
