@@ -10,16 +10,16 @@
   <parent>
     <groupId>io.micronaut.platform</groupId>
     <artifactId>micronaut-parent</artifactId>
-    <version>4.6.3</version>
+    <version>4.7.4</version>
   </parent>
   <properties>
     <packaging>jar</packaging>
-    <jdk.version>17</jdk.version>
-    <release.version>17</release.version>
-    <micronaut.version>4.6.3</micronaut.version>
-    <micronaut.runtime>netty</micronaut.runtime>
+    <jdk.version>21</jdk.version>
+    <release.version>21</release.version>
+    <micronaut.version>4.7.4</micronaut.version>
     <micronaut.aot.enabled>false</micronaut.aot.enabled>
     <micronaut.aot.packageName>org.example.aot.generated</micronaut.aot.packageName>
+    <micronaut.runtime>netty</micronaut.runtime>
     <exec.mainClass>org.example.Application</exec.mainClass>
   </properties>
 
@@ -31,31 +31,29 @@
   </repositories>
 
   <dependencies>
-    <!-- GraalPy -->
-    <dependency>
-      <groupId>org.graalvm.python</groupId>
-      <artifactId>python</artifactId> <!-- ① -->
-      <version>24.1.2</version>
-      <type>pom</type> <!-- ② -->
-    </dependency>
-    <dependency>
-      <groupId>org.graalvm.python</groupId>
-      <artifactId>python-embedding</artifactId> <!-- ③ -->
-      <version>24.1.2</version>
-    </dependency>
-    <dependency>
-        <groupId>io.micronaut.views</groupId>
-        <artifactId>micronaut-views-thymeleaf</artifactId> <!-- ④ -->
-    </dependency>
-
     <dependency>
       <groupId>io.micronaut</groupId>
       <artifactId>micronaut-http-server-netty</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
+      <groupId>io.micronaut.graal-languages</groupId> <!-- ① -->
+      <artifactId>micronaut-graalpy</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>io.micronaut.serde</groupId>
       <artifactId>micronaut-serde-jackson</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.views</groupId>
+      <artifactId>micronaut-views-fieldset</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.micronaut.views</groupId>
+      <artifactId>micronaut-views-thymeleaf</artifactId>
       <scope>compile</scope>
     </dependency>
     <dependency>
@@ -86,26 +84,6 @@
   </dependencies>
   <build>
     <plugins>
-      <!-- GraalPy -->
-      <plugin>
-        <groupId>org.graalvm.python</groupId>
-        <artifactId>graalpy-maven-plugin</artifactId>
-        <version>24.1.2</version>
-        <executions>
-          <execution>
-            <configuration>
-              <packages> <!-- ① -->
-                <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-                <package>requests</package> <!-- ③ -->
-              </packages>
-            </configuration>
-            <goals>
-              <goal>process-graalpy-resources</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>io.micronaut.maven</groupId>
         <artifactId>micronaut-maven-plugin</artifactId>
@@ -117,6 +95,26 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
       </plugin>
+      <!-- tag::graalpy-maven-plugin[] -->
+      <plugin>
+          <groupId>org.graalvm.python</groupId>
+          <artifactId>graalpy-maven-plugin</artifactId>
+          <version>24.1.2</version>
+          <executions>
+            <execution>
+              <configuration>
+                <packages> <!-- ① -->
+                  <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
+                  <package>requests==2.32.3</package> <!-- ③ -->
+                </packages>
+              </configuration>
+              <goals>
+                <goal>process-graalpy-resources</goal>
+              </goals>
+            </execution>
+          </executions>
+      </plugin>
+      <!-- end::graalpy-maven-plugin[] -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
