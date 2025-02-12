@@ -106,14 +106,7 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
             <packages> <!-- ① -->
               <package>qrcode==7.4.2</package>
             </packages>
-            <pythonHome> <!-- ② -->
-              <includes>
-              </includes>
-              <excludes>
-                <exclude>.*</exclude>
-              </excludes>
-            </pythonHome>
-            <pythonResourcesDirectory> <!-- ③ -->
+            <pythonResourcesDirectory> <!-- ② -->
               ${project.basedir}/python-resources
             </pythonResourcesDirectory>
           </configuration>
@@ -136,21 +129,15 @@ plugins {
 
 graalPy {
     packages = setOf("qrcode==7.4.2") // ①
-    pythonHome { includes = setOf(); excludes = setOf(".*") } // ②
-    pythonResourcesDirectory = file("${project.projectDir}/python-resources") // ③
+    pythonResourcesDirectory = file("${project.projectDir}/python-resources") // ②
 }
 ```
 
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
 In this case, we install the `qrcode` package and pin it to version `7.4.2`.
 
-<a name="external-or-embedded-stdlib-pom"></a>
-❷ The GraalPy plugin can copy the Python standard library resources.
-This is mainly useful when creating a [GraalVM Native Image](https://www.graalvm.org/latest/reference-manual/native-image/), a use-case that we are not going to cover right now.
-We disable this by specifying that we want to exclude all standard library files matching the regular expression `.*`, i.e., all of them, from the included Python home.
-
 <a name="external-or-embedded-python-code-pom"></a>
-❸ We can specify where the plugin should place Python files for packages and the standard library that the application will use.
+❷ We can specify where the plugin should place Python files for packages and the standard library that the application will use.
 Omit this section if you want to include the Python packages into the Java resources (and, for example, ship them in the Jar).
 [Later in the Java code](#external-or-embedded-python-code-java) we can configure the GraalPy runtime to load the package from the filesystem or from resources.
 
@@ -178,26 +165,21 @@ public class GraalPy {
 
     public static Context createPythonContext(String pythonResourcesDirectory) { // ①
         return GraalPyResources.contextBuilder(Path.of(pythonResourcesDirectory))
-            .option("python.PythonHome", "") // ②
             .build();
     }
 
     public static Context createPythonContextFromResources() {
-        if (vfs == null) { // ③
+        if (vfs == null) { // ②
             vfs = VirtualFileSystem.newBuilder().allowHostIO(VirtualFileSystem.HostIO.READ).build();
         }
-        return GraalPyResources.contextBuilder(vfs).option("python.PythonHome", "").build();
+        return GraalPyResources.contextBuilder(vfs).build();
     }
 }
 ```
 
 ❶ [If we set the `pythonResourcesDirectory` property](#external-or-embedded-python-code-pom) in our build config, we use this factory method to tell GraalPy where that folder is at runtime.
 
-❷ We [excluded](#external-or-embedded-stdlib-pom) all of the Python standard library from the resources in our build config.
-The GraalPy VirtualFileSystem is set up to ship even the standard library in the resources.
-Since we did not include any standard library, we set the `"python.PythonHome"` option to an empty string.
-
-❸ [If we do not set the `pythonResourcesDirectory` property](#external-or-embedded-python-code-pom), the GraalPy Maven plugin will place the packages inside the Java resources.
+❷ [If we do not set the `pythonResourcesDirectory` property](#external-or-embedded-python-code-pom), the GraalPy Maven plugin will place the packages inside the Java resources.
 Because Python libraries assume they are running from a filesystem, not a resource location, GraalPy provides the `VirtualFileSystem`, and API to make Java resource locations available to Python code as if it were in the real filesystem.
 VirtualFileSystem instances can be configured to allow different levels of through-access to the underlying host filesystem.
 In this demo we use the same VirtualFileSystem instance in multiple Python contexts.

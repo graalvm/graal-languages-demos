@@ -21,7 +21,7 @@ public class qrcode {
             System.out.println("This tool takes only a single argument, the QR code data.");
             return;
         }
-        try (var context = GraalPyResources.contextBuilder().option("python.PythonHome", "").build()) {
+        try (var context = GraalPyResources.contextBuilder().build()) {
             QRCodeModule qrcodeModule = context.eval("python", "import qrcode; qrcode").as(QRCodeModule.class);
             IO io = context.eval("python", "import io; io").as(IO.class);
 
