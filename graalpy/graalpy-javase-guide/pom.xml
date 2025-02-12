@@ -41,14 +41,7 @@
               <packages> <!-- ① -->
                 <package>qrcode==7.4.2</package>
               </packages>
-              <pythonHome> <!-- ② -->
-                <includes>
-                </includes>
-                <excludes>
-                  <exclude>.*</exclude>
-                </excludes>
-              </pythonHome>
-              <pythonResourcesDirectory> <!-- ③ -->
+              <pythonResourcesDirectory> <!-- ② -->
                 ${project.basedir}/python-resources
               </pythonResourcesDirectory>
             </configuration>

@@ -9,7 +9,7 @@ plugins {
 graalPy {
     packages = setOf( // ①
         "vader-sentiment==3.2.1.1", // ②
-        "requests" // ③
+        "requests==2.32.3" // ③
     )
 }
 
@@ -21,10 +21,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.graalvm.python:python:24.1.2") // ①
-    implementation("org.graalvm.python:python-embedding:24.1.2") // ③
-    implementation("io.micronaut.views:micronaut-views-thymeleaf") // ④
+    implementation("org.graalvm.python:python:24.1.2") // ④
 
+    implementation("io.micronaut.graal-languages:micronaut-graalpy") // ①
+
+    implementation("io.micronaut.views:micronaut-views-thymeleaf")
     annotationProcessor("io.micronaut:micronaut-http-validation")
     annotationProcessor("io.micronaut.serde:micronaut-serde-processor")
     implementation("io.micronaut.serde:micronaut-serde-jackson")

@@ -9,6 +9,7 @@
 //DEPS org.graalvm.python:python-resources:24.1.2
 //DEPS org.graalvm.python:python-embedding:24.1.2
 //DEPS org.graalvm.python:python-embedding-tools:24.1.2
+//DEPS org.graalvm.truffle:truffle-runtime:24.1.2
 //PIP qrcode==7.4.2
 
 import org.graalvm.python.embedding.utils.GraalPyResources;
@@ -20,7 +21,7 @@ public class qrcode {
             System.out.println("This tool takes only a single argument, the QR code data.");
             return;
         }
-        try (var context = GraalPyResources.contextBuilder().option("python.PythonHome", "").build()) {
+        try (var context = GraalPyResources.contextBuilder().build()) {
             QRCodeModule qrcodeModule = context.eval("python", "import qrcode; qrcode").as(QRCodeModule.class);
             IO io = context.eval("python", "import io; io").as(IO.class);
 
