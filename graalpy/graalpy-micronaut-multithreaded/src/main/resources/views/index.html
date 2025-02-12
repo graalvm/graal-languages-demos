@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Demo App</title>
+        <script language="javascript">
+            document.addEventListener("DOMContentLoaded", () => {
+                let dropArea = document.getElementById("drop-area");
+                ["dragenter", "dragover", "dragleave", "drop"].forEach(en => {
+                    [dropArea, document.body].forEach(el => el.addEventListener(en, e => { e.preventDefault(); e.stopPropagation() }, false))
+                });
+                ["dragenter", "dragover"].forEach(en => dropArea.addEventListener(en, () => dropArea.classList.add("highlight"), false));
+                ["dragleave", "drop"].forEach(en => dropArea.addEventListener(en, () => dropArea.classList.remove("highlight"), false));
+                dropArea.addEventListener(
+                    "drop",
+                    (e) => {
+                        var files = [...e.dataTransfer.files]
+                        files.forEach((file, i) => {
+                            var xhr = new XMLHttpRequest();
+                            var formData = new FormData();
+                            var begin;
+                            xhr.addEventListener("readystatechange", e => {
+                                if (xhr.readyState == 1) {
+                                    begin = Date.now();
+                                } else if (xhr.readyState == 4) {
+                                    let response = document.createElement("pre");
+                                    response.innerHTML = `<hr><u>Filename: ${file.name}, Response time: ${Date.now() - begin}ms</u><br>${xhr.responseText}<hr>`;
+                                    let responses = document.getElementById("responses");
+                                    responses.appendChild(response);
+                                    responses.scrollTop = responses.scrollHeight;
+                                }
+                            });
+                            xhr.open("POST", "/data_analysis", true);
+                            formData.append("poolSize", document.getElementById("poolSize").value);
+                            formData.append("file", file);
+                            xhr.send(formData);
+                        });
+                    },
+                    false);
+            });
+        </script>
+        <style>
+            #drop-area.highlight { border-color: purple; }
+        </style>
+    </head>
+    <body style="font-family:sans-serif">
+        <div id="drop-area" style="border-style:dashed;border-radius:20px;width:640px;margin:auto;padding:20px;">
+            <form class="my-form">
+                <p>Drag and drop multiple CSV files to get their per-column mean.</p>
+                <fieldset>
+                    <div>
+                        <input type="number" id="poolSize" style="width:2em;margin-left:4em" value="3">
+                        <label for="poolSize">Python Context Pool Size</label>
+                    </div>
+                </fieldset>
+                <input type="file" id="fileElem" multiple accept=".csv" onchange="handleFiles(this.files)" style="display:none">
+            </form>
+            <div id="responses" style="max-height:20em;overflow-y:scroll"></div>
+        </div>
+    </body>
+</html>
