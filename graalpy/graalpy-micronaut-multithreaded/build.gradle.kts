@@ -8,22 +8,21 @@ plugins {
 
 graalPy {
     packages = setOf( // ①
-        "vader-sentiment==3.2.1.1", // ②
-        "requests==2.32.3" // ③
+        "numpy==2.0.2", // ②
     )
 }
 
 version = "0.1"
-group = "com.example"
+group = "graalpy.micronaut.multithreaded"
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
-    implementation("org.graalvm.python:python:24.1.2") // ④
-
-    implementation("io.micronaut.graal-languages:micronaut-graalpy") // ①
+    implementation("org.graalvm.python:python:25.0.0-SNAPSHOT") // ④
+    implementation("org.graalvm.python:python-embedding:25.0.0-SNAPSHOT") // ④    
 
     implementation("io.micronaut.views:micronaut-views-thymeleaf")
     annotationProcessor("io.micronaut:micronaut-http-validation")
@@ -35,7 +34,7 @@ dependencies {
 }
 
 application {
-    mainClass = "org.example.Application"
+    mainClass = "graalpy.micronaut.multithreaded.Application"
 }
 
 java {
@@ -50,7 +49,7 @@ micronaut {
     testRuntime("junit5")
     processing {
         incremental(true)
-        annotations("com.example.*")
+        annotations("graalpy.micronaut.multithreaded.*")
     }
     aot {
         // Please review carefully the optimizations enabled below

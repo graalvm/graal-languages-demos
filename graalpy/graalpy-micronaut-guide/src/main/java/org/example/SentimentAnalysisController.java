@@ -15,10 +15,10 @@ import java.util.Map;
 @Controller // ①
 public class SentimentAnalysisController {
 
-    private final SentimentAnalysis sentimentAnalysis;
+    private final VaderSentiment.SentimentIntensityAnalyzer sentimentAnalysis;
 
-    SentimentAnalysisController(SentimentAnalysis sentimentAnalysis) { // ②
-        this.sentimentAnalysis = sentimentAnalysis;
+    SentimentAnalysisController(VaderSentiment vaderSentiment) { // ②
+        this.sentimentAnalysis = vaderSentiment.SentimentIntensityAnalyzer();
     }
 
     @Get // ③
@@ -30,6 +30,6 @@ public class SentimentAnalysisController {
     @Get(value = "/analyze") // ⑤
     @ExecuteOn(TaskExecutors.BLOCKING) // ⑥
     public Map<String, Double> answer(String text) {
-        return sentimentAnalysis.getPolarityScores(text); // ⑦
+        return sentimentAnalysis.polarity_scores(text); // ⑦
     }
 }

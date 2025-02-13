@@ -11,6 +11,7 @@
 *.iws
 build/
 out/
+bin/
 target/
 node_modules/
 Thumbs.db

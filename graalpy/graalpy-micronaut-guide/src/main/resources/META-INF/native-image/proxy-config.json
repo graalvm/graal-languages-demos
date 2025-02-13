@@ -1,3 +1,4 @@
 [
-  ["org.example.SentimentIntensityAnalyzer"]
+  ["org.example.VaderSentiment"],
+  ["org.example.VaderSentiment$SentimentIntensityAnalyzer"]
 ]

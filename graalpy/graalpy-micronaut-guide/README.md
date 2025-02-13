@@ -26,13 +26,14 @@ However, you can go right to the [completed example](./).
 
 Create an application using the [Micronaut Command Line Interface](https://docs.micronaut.io/latest/guide/#cli) or with [Micronaut Launch](https://micronaut.io/launch/).
 To make copying of the code snippets in this guide as smooth as possible, the application should have the base package `org.example`.
-We also recommend to use Micronaut version 4.6.2 or newer.
+We also recommend to use Micronaut version 4.7.4 or newer.
 You can choose to build with either Maven or Gradle.
 
 ```bash
 mn create-app org.example.demo \
 --build=maven \
 --lang=java \
+--features=views-thymeleaf,graalvm \
 --test=junit
 ```
 
@@ -40,8 +41,11 @@ mn create-app org.example.demo \
 mn create-app org.example.demo \
 --build=gradle_kotlin \
 --lang=java \
+--features=views-thymeleaf,graalvm \
 --test=junit
 ```
+
+The `views-thymeleaf` feature will be used to render the index page, the `graalvm` feature enables the Micronaut integration with GraalVM Native Image.
 
 ### 4.1. Application
 
@@ -68,36 +72,18 @@ Add the required dependencies for GraalPy in the dependency section of the POM o
 `pom.xml`
 ```xml
 <dependency>
-  <groupId>org.graalvm.python</groupId>
-  <artifactId>python</artifactId> <!-- ① -->
-  <version>24.1.2</version>
-  <type>pom</type> <!-- ② -->
-</dependency>
-<dependency>
-  <groupId>org.graalvm.python</groupId>
-  <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>24.1.2</version>
-</dependency>
-<dependency>
-    <groupId>io.micronaut.views</groupId>
-    <artifactId>micronaut-views-thymeleaf</artifactId> <!-- ④ -->
+  <groupId>io.micronaut.graal-languages</groupId> <!-- ① -->
+  <artifactId>micronaut-graalpy</artifactId>
+  <scope>compile</scope>
 </dependency>
 ```
 
 `build.gradle.kts`
 ```kotlin
-    implementation("org.graalvm.python:python:24.1.2") // ①
-    implementation("org.graalvm.python:python-embedding:24.1.2") // ③
-    implementation("io.micronaut.views:micronaut-views-thymeleaf") // ④
+implementation("io.micronaut.graal-languages:micronaut-graalpy") // ①
 ```
 
-❶ The `python` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
-
-❷ Note that the `python` package is not a JAR - it is simply a `pom` that declares more dependencies.
-
-❸ The `python-embedding` dependency provides the APIs to manage and use GraalPy from Java.
-
-❹ The `thymeleaf` dependency is used to render the index page.
+❶ The `micronaut-graalpy` dependency enables the Micronaut integration with GraalPy, in particular, automatic management of GraalPy contexts and packages.
 
 ### 4.3 Adding packages - GraalPy build plugin configuration
 
@@ -118,7 +104,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
             <configuration>
                 <packages> <!-- ① -->
                     <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-                    <package>requests</package> <!-- ③ -->
+                    <package>requests==2.32.3</package> <!-- ③ -->
                 </packages>
             </configuration>
             <goals>
@@ -141,9 +127,15 @@ plugins {
 graalPy {
     packages = setOf( // ①
         "vader-sentiment==3.2.1.1", // ②
-        "requests" // ③
+        "requests==2.32.3" // ③
     )
 }
+```
+
+`build.gradle.kts`
+```
+dependencies {
+    implementation("org.graalvm.python:python:24.1.2") // ④
 ```
 
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
@@ -153,58 +145,9 @@ Install and pin the `vader-sentiment` package to version `3.2.1.1`.
 
 ❸ The `vader_sentiment` package does not declare `requests` as a dependency so it has to done so manually at this place.
 
-### 4.4 Creating a Python context
+❹ The `python` dependency is a meta-dependency that pulls in the GraalPy runtime and associated resources and is only required for installing Python packages with Gradle.
 
-GraalPy provides APIs to make setting up a context to load Python packages from Java as easy as possible.
-
-Create a Java class which will serve as a wrapper bean for the GraalPy context:
-
-`src/main/java/org/example/GraalPyContext.java`
-```java
-package org.example;
-
-import io.micronaut.context.annotation.Context;
-import jakarta.annotation.PreDestroy;
-import org.graalvm.python.embedding.utils.GraalPyResources;
-
-@Context // ①
-public final class GraalPyContext {
-
-  static final String PYTHON = "python";
-
-  private final org.graalvm.polyglot.Context context;
-
-  public GraalPyContext() {
-    context = GraalPyResources.createContext(); // ②
-    context.initialize(PYTHON); // ③
-  }
-
-  org.graalvm.polyglot.Context get() {
-    return context; // ④
-  }
-
-  @PreDestroy
-  void close() {
-    try {
-      context.close(true); // ⑤
-    } catch (Exception e) {
-      // ignore
-    }
-  }
-}
-```
-
-❶ Eagerly initialize as a singleton bean.
-
-❷ The created GraalPy context will serve as a single access point to GraalPy for the whole application.
-
-❸ Initializing a GraalPy context isn't cheap, so we do so already at creation time to avoid delayed response time.
-
-❹ Return the GraalPy context.
-
-❺ Close the GraalPy context.
-
-### 4.5 Using a Python library from Java
+### 4.4 Using a Python library from Java
 
 After reading the [vaderSentiment](https://github.com/cjhutto/vaderSentiment) docs, you can now write the Java interface that matches the Python type and function you want to call.
 
@@ -215,61 +158,31 @@ The names of the interfaces can be chosen freely, but it makes sense to base the
 
 Your application will call the Python function `polarity_scores(text)` from the `vader_sentiment.SentimentIntensityAnalyzer` Python class.
 
-In oder to do so, create a Java interface with a method matching that function:
+In oder to do so, create a Java interface to represent the `vaderSentiment` package.
 
-`src/main/java/org/example/SentimentIntensityAnalyzer.java`
+`src/main/java/org/example/VaderSentiment.java`
 ```java
 package org.example;
 
 import java.util.Map;
 
-public interface SentimentIntensityAnalyzer {
-    Map<String, Double> polarity_scores(String text); // ①
+import io.micronaut.graal.graalpy.annotations.GraalPyModule;
+
+@GraalPyModule("vader_sentiment.vader_sentiment")
+public interface VaderSentiment {
+    SentimentIntensityAnalyzer SentimentIntensityAnalyzer();
+
+    public interface SentimentIntensityAnalyzer {
+        Map<String, Double> polarity_scores(String text); // ①
+    }
 }
 ```
 
-❶ The Java method to call into `SentimentIntensityAnalyzer.polarity_scores(text)`.
-The Python return value is a `dict` and can be directly converted to a Java Map on the fly.
+❶ This Java method will call into `SentimentIntensityAnalyzer.polarity_scores(text)`.
+The Python return value is a `dict` and GraalPy will directly convert it to a Java Map on the fly.
 The same applies to the argument, which is a Python String and therefore also a String on Java side.
 
-Using this Java interface and the GraalPy context, you can now construct a bean which calls the `SentimentIntensityAnalyzer.polarity_scores(text)` Python function:
-
-`src/main/java/org/example/SentimentAnalysis.java`
-```java
-package org.example;
-
-import io.micronaut.context.annotation.Bean;
-import org.graalvm.polyglot.Value;
-import java.util.Map;
-import static org.example.GraalPyContext.PYTHON;
-
-@Bean
-public class SentimentAnalysis {
-
-    private final SentimentIntensityAnalyzer sentimentIntensityAnalyzer;
-
-    public SentimentAnalysis(GraalPyContext context) {
-        Value value = context.get().eval(PYTHON, """
-                from vader_sentiment.vader_sentiment import SentimentIntensityAnalyzer
-                SentimentIntensityAnalyzer() # ①
-                """);
-        sentimentIntensityAnalyzer = value.as(SentimentIntensityAnalyzer.class); // ②
-    }
-
-    public Map<String, Double> getPolarityScores(String text) {
-        return sentimentIntensityAnalyzer.polarity_scores(text); // ③
-    }
-}
-```
-
-❶ The executed Python snippet imports the `vader_sentiment.SentimentIntensityAnalyzer` Python class into the GraalPy context and returns a new instance of it.
-Note that the GraalPy context preserves its state and an eventual subsequent `eval` call accessing `SentimentIntensityAnalyzer` would not require an import anymore.
-
-❷ Map the obtained `org.graalvm.polyglot.Value` to the `SentimentIntensityAnalyzer` type.
-
-❸ Return the `sentimentIntensityAnalyzer` object.
-
-### 4.6 Index page
+### 4.5 Index page
 
 The application will have a simple chat-like view, which takes text as input and return its sentiment value in form of an emoticon.
 
@@ -366,7 +279,7 @@ Create a html file, which will be later on rendered with the help of the `thymel
 </html>
 ```
 
-### 4.7 Controller
+### 4.6 Controller
 
 To create a microservice that provides a simple sentiment analysis, you also need a controller:
 
@@ -383,10 +296,10 @@ import java.util.Map;
 @Controller // ①
 public class SentimentAnalysisController {
 
-    private final SentimentAnalysis sentimentAnalysis;
+    private final VaderSentiment.SentimentIntensityAnalyzer sentimentAnalysis;
 
-    SentimentAnalysisController(SentimentAnalysis sentimentAnalysis) { // ②
-        this.sentimentAnalysis = sentimentAnalysis;
+    SentimentAnalysisController(VaderSentiment vaderSentiment) { // ②
+        this.sentimentAnalysis = vaderSentiment.SentimentIntensityAnalyzer();
     }
 
     @Get // ③
@@ -398,7 +311,7 @@ public class SentimentAnalysisController {
     @Get(value = "/analyze") // ⑤
     @ExecuteOn(TaskExecutors.BLOCKING) // ⑥
     public Map<String, Double> answer(String text) {
-        return sentimentAnalysis.getPolarityScores(text); // ⑦
+        return sentimentAnalysis.polarity_scores(text); // ⑦
     }
 }
 ```
@@ -417,7 +330,7 @@ public class SentimentAnalysisController {
 
 ❼ Use the `SentimentAnalysis` bean to call the `SentimentIntensityAnalyzer.polarity_scores(text)` Python function.
 
-### 4.8 Test
+### 4.7 Test
 
 Create a test to verify that when you make a GET request to `/analyze` you get the expected sentiment score response:
 
@@ -496,7 +409,8 @@ For the case that also a native executable has to be generated, create a proxy c
 `src/main/resources/META-INF/native-image/proxy-config.json`
 ```json
 [
-  ["org.example.SentimentIntensityAnalyzer"]
+  ["org.example.VaderSentiment"],
+  ["org.example.VaderSentiment$SentimentIntensityAnalyzer"]
 ]
 ```
 
