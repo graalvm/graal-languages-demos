@@ -21,23 +21,23 @@ Add the required dependencies for GraalPy and JArrow in the dependency section o
 ### 3.1 GraalPy dependencies
 `pom.xml`
 ```xml
-<dependency>
-    <groupId>org.graalvm.python</groupId>
-    <artifactId>python-community</artifactId> <!-- ① -->
-    <version>${python.version}</version>
-    <type>pom</type> <!-- ② -->
-</dependency>
-<dependency>
-    <groupId>org.graalvm.python</groupId>
-    <artifactId>python-embedding</artifactId> <!-- ③ -->
-    <version>${python.version}</version>
-</dependency>
+        <dependency>
+            <groupId>org.graalvm.python</groupId>
+            <artifactId>python-community</artifactId> <!-- ① -->
+            <version>${python.version}</version>
+            <type>pom</type> <!-- ② -->
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.python</groupId>
+            <artifactId>python-embedding</artifactId> <!-- ③ -->
+            <version>${python.version}</version>
+        </dependency>
 ```
 
 or 
 
 `build.gradle`
-```
+```groovy
 implementation "org.graalvm.python:python-community:$pythonVersion" // ①
 implementation "org.graalvm.python:python-embedding:$pythonVersion" // ③
 ```
@@ -95,10 +95,6 @@ There is also another option `arrow-memory-netty`. You can read more about Apach
                                 <package>pandas</package> <!-- ② -->
                                 <package>pyarrow</package> <!-- ③ -->
                             </packages>
-                            <pythonHome>
-                                <includes></includes>
-                                <excludes>.*</excludes>
-                            </pythonHome>
                         </configuration>
                         <goals>
                             <goal>process-graalpy-resources</goal>
@@ -212,6 +208,8 @@ Bind the Java interface to the Python module.
 `Main.java`
 
 ```java
+    private static DataAnalysisPyModule dataAnalysisPyModule;
+
     public static void initDataAnalysisPyModule(Context context) {
         Value value = context.eval("python", "import data_analysis; data_analysis");
         dataAnalysisPyModule = value.as(DataAnalysisPyModule.class);
@@ -252,6 +250,11 @@ Finally, use the setup in your main method:
 
 `Main.java`
 ```java
+    private static final String PYTHON_URL = "https://www.graalvm.org/compatibility/module_results/python-module-testing-v241.csv";
+    private static final String JAVASCRIPT_URL = "https://www.graalvm.org/compatibility/module_results/js-module-testing.csv";
+    private static final Integer PASSING_RATE_COLUMN_INDEX = 3;    
+
+
     public static void main(String[] args) throws IOException, InterruptedException {
         try (Context context = initContext();
              BufferAllocator allocator = new RootAllocator();
@@ -285,7 +288,27 @@ or
 ./gradlew build
 ```
 
-To run the application: 
+To run the application using Maven, first define `exec` plugin:
+
+`pom.xml`
+```xml
+<plugin>
+  <groupId>org.codehaus.mojo</groupId>
+  <artifactId>exec-maven-plugin</artifactId>
+  <version>1.2.1</version>
+  <executions>
+    <execution>
+      <goals>
+        <goal>java</goal>
+      </goals>
+    </execution>
+  </executions>
+  <configuration>
+    <mainClass>com.example.Main</mainClass>
+  </configuration>
+</plugin>
+```
+Run the application using:
 ```bash
 ./mvnw exec:java -Dexec.mainClass="com.example.Main"
 ```
