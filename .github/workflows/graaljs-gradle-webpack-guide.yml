@@ -27,5 +27,5 @@ jobs:
           cache: 'gradle'
       - name: Build and run 'graaljs-gradle-webpack-guide'
         run: |
-          ./gradlew build
-          ./gradlew run --args="https://www.graalvm.org/javascript"
+          gradle build
+          gradle run --args="https://www.graalvm.org/javascript"
