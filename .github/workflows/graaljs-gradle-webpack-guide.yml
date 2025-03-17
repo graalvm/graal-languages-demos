@@ -25,8 +25,12 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
+      - name: Install npm dependencies
+        run: |
+          cd graaljs/graaljs-gradle-webpack-guide/src/main/js
+          npm install
       - name: Build and run 'graaljs-gradle-webpack-guide'
         run: |
           cd graaljs/graaljs-gradle-webpack-guide
-          gradle build
-          gradle run --args="https://www.graalvm.org/javascript"
+          ./gradlew build
+          ./gradlew run --args="https://www.graalvm.org/javascript"
