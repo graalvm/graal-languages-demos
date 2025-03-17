@@ -1,0 +1,35 @@
+name: Test GraalJS Gradle Webpack Guide
+on:
+  push:
+    paths:
+      - 'graaljs/graaljs-gradle-webpack-guide/**'
+      - '.github/workflows/graaljs-gradle-webpack-guide.yml'
+  pull_request:
+    paths:
+      - 'graaljs/graaljs-gradle-webpack-guide/**'
+      - '.github/workflows/graaljs-gradle-webpack-guide.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graaljs-gradle-webpack-guide'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21.0.6'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+      - name: Install npm dependencies
+        run: |
+          cd src/main/js
+          npm install
+      - name: Build and run 'graaljs-gradle-webpack-guide'
+        run: |
+          ./gradlew build
+          ./gradlew run --args="https://www.graalvm.org/javascript"
