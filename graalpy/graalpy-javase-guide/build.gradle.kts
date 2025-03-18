@@ -1,6 +1,6 @@
 plugins {
     application
-    id("org.graalvm.python") version "24.1.2"
+    id("org.graalvm.python") version "24.2.0"
 }
 
 graalPy {
@@ -17,8 +17,8 @@ repositories {
 }
 
 dependencies {
-  implementation("org.graalvm.python:python:24.1.2") // ①
-  implementation("org.graalvm.python:python-embedding:24.1.2") // ③
+  implementation("org.graalvm.python:python:24.2.0") // ①
+  implementation("org.graalvm.python:python-embedding:24.2.0") // ③
 }
 
 group = "org.example"
