@@ -62,14 +62,14 @@ Add the required dependencies for GraalPy in the dependency section of the POM.
 <dependency>
     <groupId>org.graalvm.python</groupId>
     <artifactId>python</artifactId> <!-- ① -->
-    <version>24.1.2</version>
+    <version>24.2.0</version>
     <type>pom</type> <!-- ② -->
 </dependency>
 
 <dependency>
     <groupId>org.graalvm.python</groupId>
     <artifactId>python-embedding</artifactId> <!-- ③ -->
-    <version>24.1.2</version>
+    <version>24.2.0</version>
 </dependency>
 ```
 
@@ -92,7 +92,7 @@ You can use the GraalPy plugin to manage Python packages for you.
         <plugin>
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
-            <version>24.1.2</version>
+            <version>24.2.0</version>
             <executions>
                 <execution>
                     <configuration>

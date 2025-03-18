@@ -70,13 +70,13 @@ Add the required dependencies for GraalPy in the dependency section of the POM o
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>24.1.2</version>
+  <version>24.2.0</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>24.1.2</version>
+  <version>24.2.0</version>
 </dependency>
 <dependency>
     <groupId>io.micronaut.views</groupId>
@@ -86,8 +86,8 @@ Add the required dependencies for GraalPy in the dependency section of the POM o
 
 `build.gradle.kts`
 ```kotlin
-    implementation("org.graalvm.python:python:24.1.2") // ①
-    implementation("org.graalvm.python:python-embedding:24.1.2") // ③
+    implementation("org.graalvm.python:python:24.2.0") // ①
+    implementation("org.graalvm.python:python-embedding:24.2.0") // ③
     implementation("io.micronaut.views:micronaut-views-thymeleaf") // ④
 ```
 
@@ -112,7 +112,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 <plugin>
     <groupId>org.graalvm.python</groupId>
     <artifactId>graalpy-maven-plugin</artifactId>
-    <version>24.1.2</version>
+    <version>24.2.0</version>
     <executions>
         <execution>
             <configuration>
@@ -132,7 +132,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `build.gradle.kts`
 ```
 plugins {
-    id("org.graalvm.python") version "24.1.2"
+    id("org.graalvm.python") version "24.2.0"
     // ...
 ```
 

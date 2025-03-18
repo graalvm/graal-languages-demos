@@ -1,5 +1,5 @@
 plugins {
-    id("org.graalvm.python") version "24.1.2"
+    id("org.graalvm.python") version "24.2.0"
     // ...
     id("com.github.johnrengelman.shadow") version "8.1.1"
     id("io.micronaut.application") version "4.4.2"
@@ -21,8 +21,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.graalvm.python:python:24.1.2") // ①
-    implementation("org.graalvm.python:python-embedding:24.1.2") // ③
+    implementation("org.graalvm.python:python:24.2.0") // ①
+    implementation("org.graalvm.python:python-embedding:24.2.0") // ③
     implementation("io.micronaut.views:micronaut-views-thymeleaf") // ④
 
     annotationProcessor("io.micronaut:micronaut-http-validation")
