@@ -22,11 +22,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '24.0.0'
+          java-version: '21.0.6'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
-          native-image-job-reports: 'true'
       - name: Build, test, and run 'graalpy-micronaut-guide' using Maven
         run: |
           cd graalpy/graalpy-micronaut-guide
@@ -47,6 +46,14 @@ jobs:
           sleep 30
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
           kill $mnpid
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24.0.0'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+          set-java-home: false # keep using previous JAVA_HOME, but use different GRAALVM_JAVA_HOME for generating native image
+          native-image-job-reports: 'true'
       - name: Build and run native 'graalpy-micronaut-guide' using Maven
         run: |
           cd graalpy/graalpy-micronaut-guide
