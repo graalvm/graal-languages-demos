@@ -21,25 +21,25 @@ Add the required dependencies for GraalPy and JArrow in the dependency section o
 ### 3.1 GraalPy dependencies
 `pom.xml`
 ```xml
-        <dependency>
-            <groupId>org.graalvm.python</groupId>
-            <artifactId>python-community</artifactId> <!-- ① -->
-            <version>${python.version}</version>
-            <type>pom</type> <!-- ② -->
-        </dependency>
-        <dependency>
-            <groupId>org.graalvm.python</groupId>
-            <artifactId>python-embedding</artifactId> <!-- ③ -->
-            <version>${python.version}</version>
-        </dependency>
+<dependency>
+  <groupId>org.graalvm.python</groupId>
+  <artifactId>python-community</artifactId> <!-- ① -->
+  <version>${python.version}</version>
+  <type>pom</type> <!-- ② -->
+</dependency>
+<dependency>
+  <groupId>org.graalvm.python</groupId>
+  <artifactId>python-embedding</artifactId> <!-- ③ -->
+  <version>${python.version}</version>
+</dependency>
 ```
 
 or 
 
 `build.gradle`
-```groovy
-implementation "org.graalvm.python:python-community:$pythonVersion" // ①
-implementation "org.graalvm.python:python-embedding:$pythonVersion" // ③
+```
+implementation "org.graalvm.python:python-community:24.2.0" // ①
+implementation "org.graalvm.python:python-embedding:24.2.0" // ③
 ```
 
 ❶ The `python-community` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
@@ -67,9 +67,9 @@ implementation "org.graalvm.python:python-embedding:$pythonVersion" // ③
 or
 
 `build.gradle`
-```java
-implementation "org.apache.arrow:arrow-vector:$arrowVersion" // ①
-implementation "org.apache.arrow:arrow-memory-unsafe:$arrowVersion" // ②
+```
+implementation "org.apache.arrow:arrow-vector:17.0.0" // ①
+implementation "org.apache.arrow:arrow-memory-unsafe:17.0.0" // ②
 ```
 
 ❶ The `arrow-vector` dependency is used for managing in-memory columnar data structures.
@@ -82,28 +82,24 @@ There is also another option `arrow-memory-netty`. You can read more about Apach
 
 `pom.xml`
 ```xml
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.graalvm.python</groupId>
-                <artifactId>graalpy-maven-plugin</artifactId>
-                <version>${python.version}</version>
-                <executions>
-                    <execution>
-                        <configuration>
-                            <packages> <!-- ① -->
-                                <package>pandas</package> <!-- ② -->
-                                <package>pyarrow</package> <!-- ③ -->
-                            </packages>
-                        </configuration>
-                        <goals>
-                            <goal>process-graalpy-resources</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+<plugin>
+  <groupId>org.graalvm.python</groupId>
+  <artifactId>graalpy-maven-plugin</artifactId>
+  <version>${python.version}</version>
+  <executions>
+    <execution>
+      <configuration>
+        <packages> <!-- ① -->
+          <package>pandas</package> <!-- ② -->
+          <package>pyarrow</package> <!-- ③ -->
+        </packages>
+      </configuration>
+      <goals>
+        <goal>process-graalpy-resources</goal>
+      </goals>
+    </execution>
+  </executions>
+</plugin>
 ```
 
 or 
@@ -111,9 +107,8 @@ or
 `build.gradle`
 ```
 plugins {
-    id 'org.graalvm.python' version '25.0.0'
+    id 'org.graalvm.python' version '24.2.0'
     // ...
-}
 ```
 
 `build.gradle`

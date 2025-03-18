@@ -19,21 +19,18 @@ import org.graalvm.python.embedding.utils.VirtualFileSystem;
 public class Main {
 
     private static DataAnalysisPyModule dataAnalysisPyModule;
-    private static final String PYTHON_URL = "https://www.graalvm.org/compatibility/module_results/python-module-testing-v241.csv";
-    private static final String JAVASCRIPT_URL = "https://www.graalvm.org/compatibility/module_results/js-module-testing.csv";
-    private static final Integer PASSING_RATE_COLUMN_INDEX = 3;
 
     public static Context initContext() throws IOException {
-        var resourcesDir = Path.of(System.getProperty("user.home"), ".cache", "graalpy-apache-arrow-guide.resources");
+        var resourcesDir = Path.of(System.getProperty("user.home"), ".cache", "graalpy-apache-arrow-guide.resources"); // ①
         var fs = VirtualFileSystem.create();
-        GraalPyResources.extractVirtualFileSystemResources(fs, resourcesDir);
+        GraalPyResources.extractVirtualFileSystemResources(fs, resourcesDir); // ②
         return GraalPyResources.contextBuilder(resourcesDir)
-            .option("python.PythonHome", "")
-            .option("python.WarnExperimentalFeatures", "false")
-            .allowHostAccess(HostAccess.ALL)
-            .allowHostClassLookup(_ -> true)
-            .allowNativeAccess(true)
-            .build();
+                .option("python.PythonHome", "")
+                .option("python.WarnExperimentalFeatures", "false")
+                .allowHostAccess(HostAccess.ALL)
+                .allowHostClassLookup(_ -> true)
+                .allowNativeAccess(true)
+                .build(); // ③
     }
 
     public static void initDataAnalysisPyModule(Context context) {
@@ -41,6 +38,9 @@ public class Main {
         dataAnalysisPyModule = value.as(DataAnalysisPyModule.class);
     }
 
+    private static final String PYTHON_URL = "https://www.graalvm.org/compatibility/module_results/python-module-testing-v241.csv";
+    private static final String JAVASCRIPT_URL = "https://www.graalvm.org/compatibility/module_results/js-module-testing.csv";
+    private static final Integer PASSING_RATE_COLUMN_INDEX = 3;
 
 
     public static void main(String[] args) throws IOException, InterruptedException {

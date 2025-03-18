@@ -14,7 +14,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <arrow.version>17.0.0</arrow.version>
         <!--Python version needs to be changed when we publish public artefacts-->
-<!--        <python.version>25.0.0-SNAPSHOT</python.version>-->
+        <!--        <python.version>25.0.0-SNAPSHOT</python.version>-->
         <python.version>26.0.0</python.version>
     </properties>
 
@@ -22,25 +22,25 @@
     <dependencies>
         <dependency>
             <groupId>org.apache.arrow</groupId>
-            <artifactId>arrow-vector</artifactId>
+            <artifactId>arrow-vector</artifactId> <!-- ① -->
             <version>${arrow.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.arrow</groupId>
-            <artifactId>arrow-memory-unsafe</artifactId>
+            <artifactId>arrow-memory-unsafe</artifactId> <!-- ② -->
             <version>${arrow.version}</version>
         </dependency>
 
         <!--GraalPy-->
         <dependency>
             <groupId>org.graalvm.python</groupId>
-            <artifactId>python-community</artifactId>
+            <artifactId>python-community</artifactId> <!-- ① -->
             <version>${python.version}</version>
-            <type>pom</type>
+            <type>pom</type> <!-- ② -->
         </dependency>
         <dependency>
             <groupId>org.graalvm.python</groupId>
-            <artifactId>python-embedding</artifactId>
+            <artifactId>python-embedding</artifactId> <!-- ③ -->
             <version>${python.version}</version>
         </dependency>
     </dependencies>
