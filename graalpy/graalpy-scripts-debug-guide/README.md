@@ -40,7 +40,7 @@ If you want to follow along using Maven, you can start with this minimal `pom.xm
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>23.0.2</version>
+      <version>24.0.0</version>
     </dependency>
   </dependencies>
 
@@ -67,7 +67,7 @@ plugins {
 }
 
 javafx {
-    version = "23.0.2"
+    version = "24.0.0"
     modules = listOf("javafx.controls")
 }
 
