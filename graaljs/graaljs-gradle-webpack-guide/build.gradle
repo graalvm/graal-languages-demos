@@ -42,11 +42,14 @@ test {
 node {
     version = '21.7.3'
     npmVersion = '10.9.2'
-    download = false
-    workDir = file('src/main/js')
+    download = true
+    workDir = file("${project.buildDir}/node")
+    npmWorkDir = file("${project.buildDir}/npm")
+    nodeProjectDir = file('src/main/js')
 }
 
 tasks.register('webpackBuild', NpmTask) {
+    dependsOn tasks.npmInstall
     workingDir = file('src/main/js')
     args = ['run', 'build']
     environment = ['BUILD_DIR': "${buildDir}/classes/java/main/bundle"]

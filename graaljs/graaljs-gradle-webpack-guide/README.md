@@ -19,15 +19,7 @@ git clone https://github.com/graalvm/graal-languages-demos.git
 cd graaljs/graaljs-gradle-webpack-guide
 ```
 
-### Step 2: Install Dependencies
-Navigate to the JavaScript source directory and install the necessary Node.js dependencies:
-
-```sh
-cd src/main/js
-npm install
-```
-
-### Step 3: Compile and Run the Java Application
+### Step 2: Compile and Run the Java Application
 To build and run the Java application, use the following Gradle commands:
 
 1. **Build the application**:
@@ -175,11 +167,14 @@ test {
 node {
     version = '21.7.3'
     npmVersion = '10.9.2'
-    download = false
-    workDir = file('src/main/js')
+    download = true
+    workDir = file("${project.buildDir}/node")
+    npmWorkDir = file("${project.buildDir}/npm")
+    nodeProjectDir = file('src/main/js')
 }
 
 tasks.register('webpackBuild', NpmTask) {
+    dependsOn tasks.npmInstall
     workingDir = file('src/main/js')
     args = ['run', 'build']
     environment = ['BUILD_DIR': "${buildDir}/classes/java/main/bundle"]
