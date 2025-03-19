@@ -9,7 +9,7 @@ Install GraalVM for JDK 23 and set the value of `JAVA_HOME` accordingly.
 We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash
-sdk install java 23-graal
+sdk install java 24-graal
 ```
 
 ## Run the Application
