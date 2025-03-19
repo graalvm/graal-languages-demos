@@ -11,9 +11,6 @@ if ("true".equals(System.getProperty("no.transitive.dependencies"))) {
     graalPy {
         packages = setOf("vaderSentiment==3.3.2") // ①
     }
-    dependencies {
-        implementation("org.graalvm.python:python:24.2.0")
-    }
 } else {
     // The default profile shows the end result: all our transitive
     // dependencies are explicitly pinned to a specific version.
@@ -26,9 +23,6 @@ if ("true".equals(System.getProperty("no.transitive.dependencies"))) {
             "requests==2.32.3",
             "urllib3==2.2.2"
         )
-    }
-    dependencies {
-        implementation("org.graalvm.python:python:24.2.0")
     }
 }
 
