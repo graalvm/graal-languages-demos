@@ -45,4 +45,4 @@ The `DemoTest` ensures that all four service implementations render the same XY 
 > Note: This demo uses a single [`GraalPyContext`](src/main/java/com/example/GraalPyContext.java), which can execute [Python code in only one thread at a time](https://docs.python.org/3/glossary.html#term-global-interpreter-lock).
 > Threads running Python code are internally scheduled in round-robin fashion.
 > Pure Python packages including Pygal can be used in multiple GraalPy contexts, for example one context per thread, to improve the throughput of the application.
-> Other demos such as [`graalwasm-micronaut-photon`](../graalwasm/graalwasm-micronaut-photon) illustrate how to pool multiple contexts.
+> Other demos such as [`graalwasm-micronaut-photon`](../../graalwasm/graalwasm-micronaut-photon) illustrate how to pool multiple contexts.
