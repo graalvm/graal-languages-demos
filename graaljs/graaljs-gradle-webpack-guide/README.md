@@ -152,8 +152,8 @@ java {
 }
 
 dependencies {
-    implementation 'org.graalvm.polyglot:polyglot:24.1.2'
-    implementation 'org.graalvm.polyglot:js:24.1.2'
+    implementation 'org.graalvm.polyglot:polyglot:24.2.0'
+    implementation 'org.graalvm.polyglot:js:24.2.0'
     
     testImplementation platform('org.junit:junit-bom:5.11.0')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
@@ -165,7 +165,7 @@ test {
 }
 
 node {
-    version = '21.7.3'
+    version = '22.14.0'
     npmVersion = '10.9.2'
     download = true
     workDir = file("${project.buildDir}/node")
