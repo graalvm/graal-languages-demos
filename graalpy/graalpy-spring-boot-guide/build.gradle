@@ -28,8 +28,6 @@ repositories {
 }
 
 dependencies {
-  implementation 'org.graalvm.python:python:24.2.0' // ①
-  implementation 'org.graalvm.python:python-embedding:24.2.0' // ③
   implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
   implementation 'org.springframework.boot:spring-boot-starter-web'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'

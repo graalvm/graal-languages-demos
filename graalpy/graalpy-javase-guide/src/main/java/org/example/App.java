@@ -12,11 +12,12 @@ import javax.swing.*;
 
 public class App {
     public static void main(String[] args) throws IOException {
-        if (System.getProperty("graalpy.resources") == null) {
+        String path = System.getProperty("graalpy.resources");
+        if (path == null || path.isBlank() || path.equals("null")) {
             System.err.println("Please provide 'graalpy.resources' system property.");
             System.exit(1);
         }
-        try (var context = GraalPy.createPythonContext(System.getProperty("graalpy.resources"))) { // ①
+        try (var context = GraalPy.createPythonContext(path)) { // ①
             QRCode qrCode = context.eval("python", "import qrcode; qrcode").as(QRCode.class); // ②
             IO io = context.eval("python", "import io; io").as(IO.class);
 

@@ -81,13 +81,13 @@ For Maven, add dependency on GraalPy runtime, and configure the GraalPy Maven pl
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
             <version>24.2.0</version>
+            <configuration>
+                <packages> <!-- ① -->
+                    <package>vaderSentiment==3.3.2</package>
+                </packages>
+            </configuration>
             <executions>
                 <execution>
-                    <configuration>
-                        <packages> <!-- ① -->
-                            <package>vaderSentiment==3.3.2</package>
-                        </packages>
-                    </configuration>
                     <goals>
                         <goal>process-graalpy-resources</goal>
                     </goals>
@@ -112,10 +112,6 @@ plugins {
 ```kotlin
 graalPy {
     packages = setOf("vaderSentiment==3.3.2") // ①
-}
-
-dependencies {
-    implementation("org.graalvm.python:python:24.2.0")
 }
 ```
 
@@ -183,18 +179,18 @@ If you use Maven, paste them in the `pom.xml` section of the packages and wrap t
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
             <version>24.2.0</version>
+            <configuration>
+                <packages> <!-- ① -->
+                    <package>vaderSentiment==3.3.2</package>
+                    <package>certifi==2024.8.30</package>
+                    <package>charset-normalizer==3.1.0</package>
+                    <package>idna==3.8</package>
+                    <package>requests==2.32.3</package>
+                    <package>urllib3==2.2.2</package>
+                </packages>
+            </configuration>
             <executions>
                 <execution>
-                    <configuration>
-                        <packages> <!-- ① -->
-                            <package>vaderSentiment==3.3.2</package>
-                            <package>certifi==2024.8.30</package>
-                            <package>charset-normalizer==3.1.0</package>
-                            <package>idna==3.8</package>
-                            <package>requests==2.32.3</package>
-                            <package>urllib3==2.2.2</package>
-                        </packages>
-                    </configuration>
                     <goals>
                         <goal>process-graalpy-resources</goal>
                     </goals>

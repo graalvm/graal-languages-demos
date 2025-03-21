@@ -55,7 +55,9 @@ public class DemoApplication {
 
 ### 4.2 Dependency configuration
 
-Add the required dependencies for GraalPy in the dependency section of the POM or Gradle build script.
+Add the required dependencies for GraalPy in the dependency section of the POM build script.
+For Gradle, the GraalPy Gradle plugin that we will add in the next section will inject these
+dependencies automatically.
 
 `pom.xml`
 ```xml
@@ -70,12 +72,6 @@ Add the required dependencies for GraalPy in the dependency section of the POM o
   <artifactId>python-embedding</artifactId> <!-- ③ -->
   <version>24.2.0</version>
 </dependency>
-```
-
-`build.gradle`
-```groovy
-  implementation 'org.graalvm.python:python:24.2.0' // ①
-  implementation 'org.graalvm.python:python-embedding:24.2.0' // ③
 ```
 
 ❶ The `python` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
@@ -98,14 +94,14 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
     <groupId>org.graalvm.python</groupId>
     <artifactId>graalpy-maven-plugin</artifactId>
     <version>24.2.0</version>
+    <configuration>
+        <packages> <!-- ① -->
+            <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
+            <package>requests</package> <!-- ③ -->
+        </packages>
+    </configuration>
     <executions>
         <execution>
-            <configuration>
-                <packages> <!-- ① -->
-                    <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-                    <package>requests</package> <!-- ③ -->
-                </packages>
-            </configuration>
             <goals>
                 <goal>process-graalpy-resources</goal>
             </goals>

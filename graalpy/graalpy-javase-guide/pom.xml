@@ -35,23 +35,16 @@
         <groupId>org.graalvm.python</groupId>
         <artifactId>graalpy-maven-plugin</artifactId>
         <version>24.2.0</version>
+        <configuration>
+          <packages> <!-- ① -->
+            <package>qrcode==7.4.2</package>
+          </packages>
+          <externalDirectory> <!-- ② -->
+            ${project.basedir}/python-resources
+          </externalDirectory>
+        </configuration>
         <executions>
           <execution>
-            <configuration>
-              <packages> <!-- ① -->
-                <package>qrcode==7.4.2</package>
-              </packages>
-              <pythonHome> <!-- ② -->
-                <includes>
-                </includes>
-                <excludes>
-                  <exclude>.*</exclude>
-                </excludes>
-              </pythonHome>
-              <pythonResourcesDirectory> <!-- ③ -->
-                ${project.basedir}/python-resources
-              </pythonResourcesDirectory>
-            </configuration>
             <goals>
               <goal>process-graalpy-resources</goal>
             </goals>

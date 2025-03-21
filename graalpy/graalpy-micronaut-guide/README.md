@@ -63,7 +63,9 @@ public class Application {
 
 ### 4.2 Dependency configuration
 
-Add the required dependencies for GraalPy in the dependency section of the POM or Gradle build script.
+Add the required dependencies for GraalPy in the dependency section of the POM build script.
+For Gradle, the GraalPy Gradle plugin that we will add in the next section will inject the GraalPy
+related dependencies automatically.
 
 `pom.xml`
 ```xml
@@ -86,8 +88,6 @@ Add the required dependencies for GraalPy in the dependency section of the POM o
 
 `build.gradle.kts`
 ```kotlin
-    implementation("org.graalvm.python:python:24.2.0") // ①
-    implementation("org.graalvm.python:python-embedding:24.2.0") // ③
     implementation("io.micronaut.views:micronaut-views-thymeleaf") // ④
 ```
 
@@ -110,22 +110,22 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `pom.xml`
 ```xml
 <plugin>
-    <groupId>org.graalvm.python</groupId>
-    <artifactId>graalpy-maven-plugin</artifactId>
-    <version>24.2.0</version>
-    <executions>
-        <execution>
-            <configuration>
-                <packages> <!-- ① -->
-                    <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-                    <package>requests</package> <!-- ③ -->
-                </packages>
-            </configuration>
-            <goals>
-                <goal>process-graalpy-resources</goal>
-            </goals>
-        </execution>
-    </executions>
+  <groupId>org.graalvm.python</groupId>
+  <artifactId>graalpy-maven-plugin</artifactId>
+  <version>24.2.0</version>
+  <configuration>
+    <packages> <!-- ① -->
+      <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
+      <package>requests</package> <!-- ③ -->
+    </packages>
+  </configuration>
+  <executions>
+    <execution>
+      <goals>
+        <goal>process-graalpy-resources</goal>
+      </goals>
+    </execution>
+  </executions>
 </plugin>
 ```
 

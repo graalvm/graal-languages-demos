@@ -10,6 +10,7 @@
 //DEPS org.graalvm.python:python-embedding:24.2.0
 //DEPS org.graalvm.python:python-embedding-tools:24.2.0
 //DEPS org.graalvm.python:jbang:24.2.0
+//DEPS org.graalvm.truffle:truffle-runtime:24.2.0
 //PIP qrcode==7.4.2
 
 import org.graalvm.python.embedding.utils.GraalPyResources;

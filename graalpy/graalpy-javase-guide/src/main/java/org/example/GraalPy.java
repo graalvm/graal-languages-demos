@@ -15,15 +15,13 @@ public class GraalPy {
     static VirtualFileSystem vfs;
 
     public static Context createPythonContext(String pythonResourcesDirectory) { // ①
-        return GraalPyResources.contextBuilder(Path.of(pythonResourcesDirectory))
-            .option("python.PythonHome", "") // ②
-            .build();
+        return GraalPyResources.contextBuilder(Path.of(pythonResourcesDirectory)).build();
     }
 
     public static Context createPythonContextFromResources() {
-        if (vfs == null) { // ③
+        if (vfs == null) { // ②
             vfs = VirtualFileSystem.newBuilder().allowHostIO(VirtualFileSystem.HostIO.READ).build();
         }
-        return GraalPyResources.contextBuilder(vfs).option("python.PythonHome", "").build();
+        return GraalPyResources.contextBuilder(vfs).build();
     }
 }
