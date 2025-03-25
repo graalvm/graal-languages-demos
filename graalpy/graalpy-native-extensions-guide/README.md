@@ -87,19 +87,19 @@ You can use the GraalPy plugin to manage Python packages for you.
 
 `pom.xml`
 ```xml
-    <build>
+<build>
     <plugins>
         <plugin>
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
             <version>24.2.0</version>
+            <configuration>
+                <packages> <!-- ① -->
+                    <package>polyleven==0.8</package>
+                </packages>
+            </configuration>
             <executions>
                 <execution>
-                    <configuration>
-                        <packages> <!-- ① -->
-                            <package>polyleven==0.8</package>
-                        </packages>
-                    </configuration>
                     <goals>
                         <goal>process-graalpy-resources</goal>
                     </goals>

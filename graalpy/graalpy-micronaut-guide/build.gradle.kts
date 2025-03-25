@@ -21,8 +21,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.graalvm.python:python:24.2.0") // ①
-    implementation("org.graalvm.python:python-embedding:24.2.0") // ③
     implementation("io.micronaut.views:micronaut-views-thymeleaf") // ④
 
     annotationProcessor("io.micronaut:micronaut-http-validation")
