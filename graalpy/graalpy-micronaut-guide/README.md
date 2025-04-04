@@ -484,7 +484,7 @@ This will start the application on port 8080.
 ## 7. GraalVM Native Executable
 
 *Note: Generating GraalVM native executables of Java applications that make use of Graal languages and virtual threads
-at the same time is supported only on GraalVM for JDK 23 and later. Notably, virtual threads support is unconditionally reachable
+at the same time is supported only on GraalVM for JDK 24 and later. Notably, virtual threads support is unconditionally reachable
 in Micronaut framework and therefore this applies also to our example.*
 
 ### 7.1. Native Executable metadata
