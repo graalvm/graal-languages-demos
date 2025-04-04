@@ -22,7 +22,6 @@ To start the demo, simply run:
 
 When the demo runs, open the following URLs in a browser:
 
-- http://localhost:8080/photo/default
 - http://localhost:8080/photo/grayscale
 - http://localhost:8080/photo/colorize
 - http://localhost:8080/photo/fliph
