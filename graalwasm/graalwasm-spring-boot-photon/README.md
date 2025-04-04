@@ -23,7 +23,6 @@ To start the demo, simply run:
 When the demo runs, open http://localhost:8080/ in a browser.
 To apply a specific effect, navigate to `http://localhost:8080/photo/<effect name>` (e.g., http://localhost:8080/photo/colorize).
 
-
 To compile the application with GraalVM Native Image, run:
 
 ```bash
