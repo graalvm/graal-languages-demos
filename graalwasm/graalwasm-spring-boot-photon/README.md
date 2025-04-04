@@ -5,7 +5,7 @@ The demo also uses GraalJS to access the Photon module through the WebAssembly J
 
 ## Preparation
 
-Install GraalVM for JDK 23 and set the value of `JAVA_HOME` accordingly.
+Install GraalVM for JDK 24 and set the value of `JAVA_HOME` accordingly.
 We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash

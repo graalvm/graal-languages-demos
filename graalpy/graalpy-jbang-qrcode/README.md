@@ -4,7 +4,7 @@ This demo illustrates how GraalPy can be used to embed the [`qrcode` Python pack
 
 ## Preparation
 
-Install GraalVM for JDK 23 and set the value of `JAVA_HOME` accordingly.
+Install GraalVM for JDK 24 and set the value of `JAVA_HOME` accordingly.
 We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash
