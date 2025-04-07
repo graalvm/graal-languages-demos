@@ -8,7 +8,7 @@
   <version>1.0-SNAPSHOT</version>
 
   <name>qrdemo</name>
-  <url>http://www.example.com</url>
+  <url>https://www.example.com</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
