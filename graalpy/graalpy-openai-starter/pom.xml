@@ -8,8 +8,7 @@
   <version>1.0-SNAPSHOT</version>
 
   <name>demo</name>
-  <!-- FIXME change it to the project's website -->
-  <url>http://www.example.com</url>
+  <url>https://www.example.com</url>
 
   <properties>
     <graalpy.version>24.2.0</graalpy.version>
