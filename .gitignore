@@ -11,8 +11,11 @@
 *.iws
 build/
 out/
+bin/
 target/
 node_modules/
 Thumbs.db
 .sdkmanrc
 settings.json
+graalpy/graalpy-javase-guide/python-resources
+**/.mvn/wrapper/maven-wrapper.jar

@@ -1,6 +1,6 @@
 plugins {
     application
-    id("org.graalvm.python") version "24.1.2"
+    id("org.graalvm.python") version "24.2.0"
 }
 
 // To make the paths of this reference solution (without 'app' subdirectory for sources)
@@ -10,9 +10,6 @@ layout.buildDirectory.set(layout.projectDirectory.dir("app/build"))
 if ("true".equals(System.getProperty("no.transitive.dependencies"))) {
     graalPy {
         packages = setOf("vaderSentiment==3.3.2") // ①
-    }
-    dependencies {
-        implementation("org.graalvm.python:python:24.1.2")
     }
 } else {
     // The default profile shows the end result: all our transitive
@@ -27,9 +24,6 @@ if ("true".equals(System.getProperty("no.transitive.dependencies"))) {
             "urllib3==2.2.2"
         )
     }
-    dependencies {
-        implementation("org.graalvm.python:python:24.1.2")
-    }
 }
 
 repositories {
@@ -40,7 +34,7 @@ repositories {
 }
 
 // This dependency is necessary only for the example Java code, not for building and running pip freeze:
-dependencies.add("implementation", "org.graalvm.python:python-embedding:24.1.2")
+dependencies.add("implementation", "org.graalvm.python:python-embedding:24.2.0")
 
 group = "org.example"
 version = "1.0-SNAPSHOT"

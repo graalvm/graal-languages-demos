@@ -63,20 +63,22 @@ public class Application {
 
 ### 4.2 Dependency configuration
 
-Add the required dependencies for GraalPy in the dependency section of the POM or Gradle build script.
+Add the required dependencies for GraalPy in the dependency section of the POM build script.
+For Gradle, the GraalPy Gradle plugin that we will add in the next section will inject the GraalPy
+related dependencies automatically.
 
 `pom.xml`
 ```xml
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>24.1.2</version>
+  <version>24.2.0</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>24.1.2</version>
+  <version>24.2.0</version>
 </dependency>
 <dependency>
     <groupId>io.micronaut.views</groupId>
@@ -86,8 +88,6 @@ Add the required dependencies for GraalPy in the dependency section of the POM o
 
 `build.gradle.kts`
 ```kotlin
-    implementation("org.graalvm.python:python:24.1.2") // ①
-    implementation("org.graalvm.python:python-embedding:24.1.2") // ③
     implementation("io.micronaut.views:micronaut-views-thymeleaf") // ④
 ```
 
@@ -110,29 +110,29 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `pom.xml`
 ```xml
 <plugin>
-    <groupId>org.graalvm.python</groupId>
-    <artifactId>graalpy-maven-plugin</artifactId>
-    <version>24.1.2</version>
-    <executions>
-        <execution>
-            <configuration>
-                <packages> <!-- ① -->
-                    <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-                    <package>requests</package> <!-- ③ -->
-                </packages>
-            </configuration>
-            <goals>
-                <goal>process-graalpy-resources</goal>
-            </goals>
-        </execution>
-    </executions>
+  <groupId>org.graalvm.python</groupId>
+  <artifactId>graalpy-maven-plugin</artifactId>
+  <version>24.2.0</version>
+  <configuration>
+    <packages> <!-- ① -->
+      <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
+      <package>requests</package> <!-- ③ -->
+    </packages>
+  </configuration>
+  <executions>
+    <execution>
+      <goals>
+        <goal>process-graalpy-resources</goal>
+      </goals>
+    </execution>
+  </executions>
 </plugin>
 ```
 
 `build.gradle.kts`
 ```
 plugins {
-    id("org.graalvm.python") version "24.1.2"
+    id("org.graalvm.python") version "24.2.0"
     // ...
 ```
 
@@ -484,7 +484,7 @@ This will start the application on port 8080.
 ## 7. GraalVM Native Executable
 
 *Note: Generating GraalVM native executables of Java applications that make use of Graal languages and virtual threads
-at the same time is supported only on GraalVM for JDK 23 and later. Notably, virtual threads support is unconditionally reachable
+at the same time is supported only on GraalVM for JDK 24 and later. Notably, virtual threads support is unconditionally reachable
 in Micronaut framework and therefore this applies also to our example.*
 
 ### 7.1. Native Executable metadata

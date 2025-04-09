@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <graalpy.version>24.1.2</graalpy.version>
+        <graalpy.version>24.2.0</graalpy.version>
         <java.version>21</java.version>
     </properties>
     <dependencies>
@@ -68,13 +68,13 @@
                 <groupId>org.graalvm.python</groupId>
                 <artifactId>graalpy-maven-plugin</artifactId>
                 <version>${graalpy.version}</version>
+                <configuration>
+                    <packages>
+                        <package>pygal==3.0.5</package>
+                    </packages>
+                </configuration>
                 <executions>
                     <execution>
-                        <configuration>
-                            <packages>
-                                <package>pygal==3.0.5</package>
-                            </packages>
-                        </configuration>
                         <goals>
                             <goal>process-graalpy-resources</goal>
                         </goals>

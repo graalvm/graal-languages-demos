@@ -33,7 +33,7 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
        <dependency>
            <groupId>org.graalvm.polyglot</groupId>
            <artifactId>polyglot</artifactId>
-           <version>24.1.2</version>
+           <version>24.2.0</version>
        </dependency>
        <!-- </dependencies> -->
        ```
@@ -43,7 +43,7 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
        <dependency>
            <groupId>org.graalvm.polyglot</groupId>
            <artifactId>wasm</artifactId>
-           <version>24.1.2</version>
+           <version>24.2.0</version>
            <type>pom</type>
        </dependency>
        <!-- </dependencies> -->

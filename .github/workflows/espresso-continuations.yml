@@ -1,0 +1,38 @@
+name: Test Espresso Continuations
+on:
+  push:
+    paths:
+      - 'espresso/espresso-continuations/**'
+      - '.github/workflows/espresso-continuations.yml'
+  pull_request:
+    paths:
+      - 'espresso/espresso-continuations/**'
+      - '.github/workflows/espresso-continuations.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'espresso-continuations'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Espresso
+        run: curl -sL -o $RUNNER_TEMP/espresso-linux-amd64.tar.gz https://gds.oracle.com/download/espresso/archive/espresso-java21-24.2.0-linux-amd64.tar.gz
+      - uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'jdkfile'
+          jdkFile: ${{ runner.temp }}/espresso-linux-amd64.tar.gz
+      - name: Build and run 'espresso-continuations' using Maven
+        run: |
+          cd espresso/espresso-continuations
+          ./mvnw --no-transfer-progress package
+          $JAVA_HOME/bin/java --experimental-options --java.Continuum=true -jar target/demo-1.0-SNAPSHOT-jar-with-dependencies.jar
+          ls -lisa state.serial.bin
+          $JAVA_HOME/bin/java --experimental-options --java.Continuum=true -jar target/demo-1.0-SNAPSHOT-jar-with-dependencies.jar
+          rm state.serial.bin
+          $JAVA_HOME/bin/java --experimental-options --java.Continuum=true -jar target/demo-1.0-SNAPSHOT-jar-with-dependencies.jar -s kryo
+          ls -lisa state.serial.bin
+          $JAVA_HOME/bin/java --experimental-options --java.Continuum=true -jar target/demo-1.0-SNAPSHOT-jar-with-dependencies.jar -s kryo

@@ -52,7 +52,9 @@ gradle init --type java-application --dsl kotlin --test-framework junit-jupiter 
 
 ## 4.1 Dependency configuration
 
-Add the required dependencies for GraalPy in the `<dependencies>` section of the POM or to the `dependencies` block in the `build.gradle.kts` file.
+Add the required dependencies for GraalPy in the `<dependencies>` section of the POM file for Maven.
+For Gradle, the GraalPy Gradle plugin that we will add in the next section will inject these
+dependencies automatically.
 
 `pom.xml`
 ```xml
@@ -60,24 +62,16 @@ Add the required dependencies for GraalPy in the `<dependencies>` section of the
   <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>python</artifactId> <!-- ① -->
-    <version>24.1.2</version>
+    <version>24.2.0</version>
     <type>pom</type> <!-- ② -->
   </dependency>
 
   <dependency>
     <groupId>org.graalvm.python</groupId>
     <artifactId>python-embedding</artifactId> <!-- ③ -->
-      <version>24.1.2</version>
+      <version>24.2.0</version>
   </dependency>
 </dependencies>
-```
-
-`build.gradle.kts`
-```kotlin
-dependencies {
-  implementation("org.graalvm.python:python:24.1.2") // ①
-  implementation("org.graalvm.python:python-embedding:24.1.2") // ③
-}
 ```
 
 ❶ The `python` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
@@ -94,67 +88,54 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
 
 `pom.xml`
 ```xml
-<build>
-  <plugins>
-    <plugin>
-      <groupId>org.graalvm.python</groupId>
-      <artifactId>graalpy-maven-plugin</artifactId>
-      <version>24.1.2</version>
-      <executions>
-        <execution>
-          <configuration>
-            <packages> <!-- ① -->
-              <package>qrcode==7.4.2</package>
-            </packages>
-            <pythonHome> <!-- ② -->
-              <includes>
-              </includes>
-              <excludes>
-                <exclude>.*</exclude>
-              </excludes>
-            </pythonHome>
-            <pythonResourcesDirectory> <!-- ③ -->
-              ${project.basedir}/python-resources
-            </pythonResourcesDirectory>
-          </configuration>
-          <goals>
-            <goal>process-graalpy-resources</goal>
-          </goals>
-        </execution>
-      </executions>
-    </plugin>
-  </plugins>
-</build>
+ <build>
+   <plugins>
+     <plugin>
+       <groupId>org.graalvm.python</groupId>
+       <artifactId>graalpy-maven-plugin</artifactId>
+       <version>24.2.0</version>
+       <configuration>
+         <packages> <!-- ① -->
+           <package>qrcode==7.4.2</package>
+         </packages>
+         <externalDirectory> <!-- ② -->
+           ${project.basedir}/python-resources
+         </externalDirectory>
+       </configuration>
+       <executions>
+         <execution>
+           <goals>
+             <goal>process-graalpy-resources</goal>
+           </goals>
+         </execution>
+       </executions>
+     </plugin>
+   </plugins>
+ </build>
 ```
 
 `build.gradle.kts`
 ```kotlin
 plugins {
     application
-    id("org.graalvm.python") version "24.1.2"
+    id("org.graalvm.python") version "24.2.0"
 }
 
 graalPy {
     packages = setOf("qrcode==7.4.2") // ①
-    pythonHome { includes = setOf(); excludes = setOf(".*") } // ②
-    pythonResourcesDirectory = file("${project.projectDir}/python-resources") // ③
+    externalDirectory = file("${project.projectDir}/python-resources") // ②
 }
 ```
 
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
 In this case, we install the `qrcode` package and pin it to version `7.4.2`.
 
-<a name="external-or-embedded-stdlib-pom"></a>
-❷ The GraalPy plugin can copy the Python standard library resources.
-This is mainly useful when creating a [GraalVM Native Image](https://www.graalvm.org/latest/reference-manual/native-image/), a use-case that we are not going to cover right now.
-We disable this by specifying that we want to exclude all standard library files matching the regular expression `.*`, i.e., all of them, from the included Python home.
-
 <a name="external-or-embedded-python-code-pom"></a>
-❸ We can specify where the plugin should place Python files for packages and the standard library that the application will use.
+❷ We can specify where the plugin should place Python files for packages that the application will use.
 Omit this section if you want to include the Python packages into the Java resources (and, for example, ship them in the Jar).
 [Later in the Java code](#external-or-embedded-python-code-java) we can configure the GraalPy runtime to load the package from the filesystem or from resources.
 
-**Note** that due to a bug in the 24.1.2 version of the `org.graalvm.python` plugin for **Gradle** you need to include a resource.
+**Note** that due to a bug in the 24.2.0 version of the `org.graalvm.python` plugin for **Gradle** you need to include a resource.
 A simple workaround is to add a `src/main/resources/META-INF/MANIFEST.MF`:
 ```
 Manifest-Version: 1.0
@@ -177,27 +158,21 @@ public class GraalPy {
     static VirtualFileSystem vfs;
 
     public static Context createPythonContext(String pythonResourcesDirectory) { // ①
-        return GraalPyResources.contextBuilder(Path.of(pythonResourcesDirectory))
-            .option("python.PythonHome", "") // ②
-            .build();
+        return GraalPyResources.contextBuilder(Path.of(pythonResourcesDirectory)).build();
     }
 
     public static Context createPythonContextFromResources() {
-        if (vfs == null) { // ③
+        if (vfs == null) { // ②
             vfs = VirtualFileSystem.newBuilder().allowHostIO(VirtualFileSystem.HostIO.READ).build();
         }
-        return GraalPyResources.contextBuilder(vfs).option("python.PythonHome", "").build();
+        return GraalPyResources.contextBuilder(vfs).build();
     }
 }
 ```
 
 ❶ [If we set the `pythonResourcesDirectory` property](#external-or-embedded-python-code-pom) in our build config, we use this factory method to tell GraalPy where that folder is at runtime.
 
-❷ We [excluded](#external-or-embedded-stdlib-pom) all of the Python standard library from the resources in our build config.
-The GraalPy VirtualFileSystem is set up to ship even the standard library in the resources.
-Since we did not include any standard library, we set the `"python.PythonHome"` option to an empty string.
-
-❸ [If we do not set the `pythonResourcesDirectory` property](#external-or-embedded-python-code-pom), the GraalPy Maven plugin will place the packages inside the Java resources.
+❷ [If we do not set the `externalDirectory` property](#external-or-embedded-python-code-pom), the GraalPy Maven or Gradle plugin will place the packages inside the Java resources.
 Because Python libraries assume they are running from a filesystem, not a resource location, GraalPy provides the `VirtualFileSystem`, and API to make Java resource locations available to Python code as if it were in the real filesystem.
 VirtualFileSystem instances can be configured to allow different levels of through-access to the underlying host filesystem.
 In this demo we use the same VirtualFileSystem instance in multiple Python contexts.
@@ -250,11 +225,12 @@ import javax.swing.*;
 
 public class App {
     public static void main(String[] args) throws IOException {
-        if (System.getProperty("graalpy.resources") == null) {
+        String path = System.getProperty("graalpy.resources");
+        if (path == null || path.isBlank() || path.equals("null")) {
             System.err.println("Please provide 'graalpy.resources' system property.");
             System.exit(1);
         }
-        try (var context = GraalPy.createPythonContext(System.getProperty("graalpy.resources"))) { // ①
+        try (var context = GraalPy.createPythonContext(path)) { // ①
             QRCode qrCode = context.eval("python", "import qrcode; qrcode").as(QRCode.class); // ②
             IO io = context.eval("python", "import io; io").as(IO.class);
 
@@ -308,7 +284,7 @@ Run from command line:
 
 ```shell
 ./gradlew assemble
-./gradlew run
+./gradlew -Dgraalpy.resources=./python-resources run
 ```
 
 ## 6. Next steps

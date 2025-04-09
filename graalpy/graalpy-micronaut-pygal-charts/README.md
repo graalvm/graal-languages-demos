@@ -5,11 +5,11 @@ In particular, this demo shows four different approaches to interact with Pygal 
 
 ## Preparation
 
-Install GraalVM for JDK 23 and set the value of `JAVA_HOME` accordingly.
+Install GraalVM for JDK 24 and set the value of `JAVA_HOME` accordingly.
 We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash
-sdk install java 23-graal
+sdk install java 24-graal
 ```
 
 ## Run the Application
@@ -45,4 +45,4 @@ The `DemoTest` ensures that all four service implementations render the same XY 
 > Note: This demo uses a single [`GraalPyContext`](src/main/java/com/example/GraalPyContext.java), which can execute [Python code in only one thread at a time](https://docs.python.org/3/glossary.html#term-global-interpreter-lock).
 > Threads running Python code are internally scheduled in round-robin fashion.
 > Pure Python packages including Pygal can be used in multiple GraalPy contexts, for example one context per thread, to improve the throughput of the application.
-> Other demos such as [`graalwasm-micronaut-photon`](../graalwasm/graalwasm/graalwasm-micronaut-photon) illustrate how to pool multiple contexts.
+> Other demos such as [`graalwasm-micronaut-photon`](../../graalwasm/graalwasm-micronaut-photon) illustrate how to pool multiple contexts.

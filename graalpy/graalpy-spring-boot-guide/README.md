@@ -55,27 +55,23 @@ public class DemoApplication {
 
 ### 4.2 Dependency configuration
 
-Add the required dependencies for GraalPy in the dependency section of the POM or Gradle build script.
+Add the required dependencies for GraalPy in the dependency section of the POM build script.
+For Gradle, the GraalPy Gradle plugin that we will add in the next section will inject these
+dependencies automatically.
 
 `pom.xml`
 ```xml
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>24.1.2</version>
+  <version>24.2.0</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>24.1.2</version>
+  <version>24.2.0</version>
 </dependency>
-```
-
-`build.gradle`
-```groovy
-  implementation 'org.graalvm.python:python:24.1.2' // ①
-  implementation 'org.graalvm.python:python-embedding:24.1.2' // ③
 ```
 
 ❶ The `python` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
@@ -97,15 +93,15 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 <plugin>
     <groupId>org.graalvm.python</groupId>
     <artifactId>graalpy-maven-plugin</artifactId>
-    <version>24.1.2</version>
+    <version>24.2.0</version>
+    <configuration>
+        <packages> <!-- ① -->
+            <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
+            <package>requests</package> <!-- ③ -->
+        </packages>
+    </configuration>
     <executions>
         <execution>
-            <configuration>
-                <packages> <!-- ① -->
-                    <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-                    <package>requests</package> <!-- ③ -->
-                </packages>
-            </configuration>
             <goals>
                 <goal>process-graalpy-resources</goal>
             </goals>
@@ -117,7 +113,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `build.gradle`
 ```
 plugins {
-  id 'org.graalvm.python' version '24.1.2'
+  id 'org.graalvm.python' version '24.2.0'
   // ...
 ```
 

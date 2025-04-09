@@ -1,0 +1,5 @@
+# Ignore maven build output directory
+target
+
+# Ignore application state
+state.serial.bin

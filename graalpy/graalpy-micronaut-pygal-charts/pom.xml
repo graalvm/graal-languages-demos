@@ -13,7 +13,7 @@
     <version>4.6.1</version>
   </parent>
   <properties>
-    <graalpy.version>24.1.2</graalpy.version>
+    <graalpy.version>24.2.0</graalpy.version>
     <packaging>jar</packaging>
     <jdk.version>21</jdk.version>
     <release.version>21</release.version>
@@ -93,13 +93,13 @@
         <groupId>org.graalvm.python</groupId>
         <artifactId>graalpy-maven-plugin</artifactId>
         <version>${graalpy.version}</version>
+        <configuration>
+          <packages>
+            <package>pygal==3.0.5</package>
+          </packages>
+        </configuration>
         <executions>
           <execution>
-            <configuration>
-              <packages>
-                <package>pygal==3.0.5</package>
-              </packages>
-            </configuration>
             <goals>
               <goal>process-graalpy-resources</goal>
             </goals>

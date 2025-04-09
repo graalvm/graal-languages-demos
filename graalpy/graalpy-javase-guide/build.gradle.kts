@@ -1,12 +1,11 @@
 plugins {
     application
-    id("org.graalvm.python") version "24.1.2"
+    id("org.graalvm.python") version "24.2.0"
 }
 
 graalPy {
     packages = setOf("qrcode==7.4.2") // ①
-    pythonHome { includes = setOf(); excludes = setOf(".*") } // ②
-    pythonResourcesDirectory = file("${project.projectDir}/python-resources") // ③
+    externalDirectory = file("${project.projectDir}/python-resources") // ②
 }
 
 repositories {
@@ -14,11 +13,6 @@ repositories {
     maven {
         url = uri("https://repo.maven.apache.org/maven2/")
     }
-}
-
-dependencies {
-  implementation("org.graalvm.python:python:24.1.2") // ①
-  implementation("org.graalvm.python:python-embedding:24.1.2") // ③
 }
 
 group = "org.example"

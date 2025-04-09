@@ -14,20 +14,19 @@ permissions:
 env:
   NATIVE_IMAGE_OPTIONS: '-J-Xmx16g'
 jobs:
-  run:
-    name: 'graalpy-micronaut-guide'
+  maven:
+    name: 'graalpy-micronaut-guide on Maven'
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '23.0.2'
+          java-version: '21.0.6'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
-          native-image-job-reports: 'true'
-      - name: Build, test, and run 'graalpy-micronaut-guide' using Maven
+      - name: Build, test, and run 'graalpy-micronaut-guide'
         run: |
           cd graalpy/graalpy-micronaut-guide
           git clean -fdx
@@ -37,17 +36,15 @@ jobs:
           sleep 30
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
           kill $mnpid
-      - name: Build, test, and run 'graalpy-micronaut-guide' using Gradle
-        run: |
-          cd graalpy/graalpy-micronaut-guide
-          git clean -fdx
-          ./gradlew test -Dmicronaut.http.client.read-timeout=1m
-          ./gradlew run &
-          mnpid="$!"
-          sleep 30
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
-          kill $mnpid
-      - name: Build and run native 'graalpy-micronaut-guide' using Maven
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24.0.0'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+          set-java-home: false # keep using previous JAVA_HOME, but use different GRAALVM_HOME for generating native image
+          native-image-job-reports: 'true'
+      - name: Build and run native 'graalpy-micronaut-guide'
         run: |
           cd graalpy/graalpy-micronaut-guide
           git clean -fdx
@@ -57,7 +54,37 @@ jobs:
           sleep 20
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
           kill $mnpid
-      - name: Build and run native 'graalpy-micronaut-guide' using Gradle
+  gradle:
+    name: 'graalpy-micronaut-guide on Gradle'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21.0.6'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+      - name: Build, test, and run 'graalpy-micronaut-guide'
+        run: |
+          cd graalpy/graalpy-micronaut-guide
+          git clean -fdx
+          ./gradlew test -Dmicronaut.http.client.read-timeout=1m
+          ./gradlew run &
+          mnpid="$!"
+          sleep 30
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          kill $mnpid
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24.0.0'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+          set-java-home: false # keep using previous JAVA_HOME, but use different GRAALVM_JAVA_HOME for generating native image
+          native-image-job-reports: 'true'
+      - name: Build and run native 'graalpy-micronaut-guide'
         run: |
           cd graalpy/graalpy-micronaut-guide
           git clean -fdx
