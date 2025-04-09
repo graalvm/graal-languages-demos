@@ -1,0 +1,43 @@
+name: Test GraalJS Spring Boot D3
+on:
+  push:
+    paths:
+      - 'graaljs/graaljs-spring-boot-d3/**'
+      - '.github/workflows/graaljs-spring-boot-d3.yml'
+    pull_request:
+      paths:
+        - 'graaljs/graaljs-spring-boot-d3/**'
+        - '.github/workflows/graaljs-spring-boot-d3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    name: 'graaljs-spring-boot-d3'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # Setup GraalVM and Java
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '21'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+
+      # Build, test, and run Spring Boot application
+      - name: Build, test, and run Spring Boot application
+        run: |
+          cd graaljs/graaljs-spring-boot-d3
+          ./mvnw clean package -DskipTests
+          ./mvnw spring-boot:run &
+
+      # Wait for application to start and run test
+      - name: Verify application is running
+        run: |
+          sleep 30
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8081/graph
