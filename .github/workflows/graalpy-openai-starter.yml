@@ -29,9 +29,8 @@ jobs:
           cd graalpy/graalpy-openai-starter
           ./mvnw --no-transfer-progress test
           ./mvnw --no-transfer-progress exec:java || true
-      # Gradle plugin not available yet
-      # - name: Build, test, and run 'graalpy-openai-starter' using Gradle
-      #   run: |
-      #     cd graalpy/graalpy-openai-starter
-      #     ./gradlew test
-      #     ./gradlew run || true
+      - name: Build, test, and run 'graalpy-openai-starter' using Gradle
+        run: |
+          cd graalpy/graalpy-openai-starter
+          ./gradlew test
+          ./gradlew run || true
