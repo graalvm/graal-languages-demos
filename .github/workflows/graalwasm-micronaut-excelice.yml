@@ -24,20 +24,25 @@ jobs:
 
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21.0.0'
+          java-version: '21'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
           native-image-job-reports: 'true'
 
+      - name: Install Node.js & Wasm for GraalVM
+        run: |
+          gu install js wasm nodejs
+
       - name: Package 'graalwasm-micronaut-excelice'
         run: |
           cd graalwasm/graalwasm-micronaut-excelice
+          chmod +x mvnw
           ./mvnw --no-transfer-progress clean package
 
       - name: Run and Test Excelice App
         run: |
           cd graalwasm/graalwasm-micronaut-excelice
-          ./target/demo &
+          java -jar target/micronautdemo-0.1.jar &
           sleep 10
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080
