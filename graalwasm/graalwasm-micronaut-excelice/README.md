@@ -1,38 +1,32 @@
-# 📊 Micronaut Excel Exporter using GraalVM, Excelize.wasm & H2 Database
+# Excelize with GraalWasm Micronaut Demo
 
-This Micronaut project demonstrates how to use **GraalVM**'s Polyglot capabilities (JavaScript + WebAssembly) to interact with the `excelize.wasm` module. It reads and writes Excel `.xlsx` files directly from your backend — no need for native Excel libraries in Java!
+This demo illustrates how GraalWasm can be used to embed Excelize , a WebAssembly Go library for creating and reading Microsoft Excel (xlsx) spreadsheets.
+The demo also uses GraalJS to access the Excelize module through the WebAssembly JavaScript API.
 
-## 🔧 What This Project Does
+## Preparation
 
-- Accepts `.xlsx` files via a frontend and reads them into an H2 in-memory database.
-- Automatically populates sample data when downloading an Excel file.
-- Generates an Excel file from database contents using the `excelize.wasm` module executed via **GraalJS + GraalWasm**.
-- Returns the Excel file for download in the browser.
-
-## 🧠 What is Excelize?
-
-**[Excelize](https://github.com/xuri/excelize)** is a popular Go library for creating and reading Microsoft Excel (xlsx) spreadsheets. In this project, we're using the **WebAssembly (WASM)** version of Excelize so that we can run it inside a Java application using GraalVM.
-
-## 🚀 What is GraalVM, GraalJS, and GraalWasm?
-
-- **GraalVM** is a high-performance runtime that supports multiple languages including JavaScript, Python, Ruby, and WebAssembly.
-- **GraalJS** allows executing JavaScript from Java.
-- **GraalWasm** allows executing **WASM binaries (like excelize.wasm)** from Java or JavaScript via GraalVM.
-- Here, GraalVM runs a JavaScript wrapper that loads and uses `excelize.wasm` to interact with Excel files.
-
-
-## 🖥️ How to Run It Locally
-
-### ✅ Prerequisites
-
-- [Java 17+](https://adoptium.net/)
-- [GraalVM CE 22+](https://www.graalvm.org/)
-- Enable **JavaScript and WASM** support in GraalVM
-- Micronaut CLI or build tools (Gradle or Maven)
-
-### 📥 Clone and Run
+Install GraalVM for JDK 21 and set the value of `JAVA_HOME` accordingly.
+We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash
-git clone https://github.com/anwarmoussaoui/excel-graalvm-demo.git
-cd excel-graalvm-demo
-./mvnw run
+sdk install java 21-graal
+```
+
+## Run the Application
+
+To start the demo, simply run:
+
+```bash
+./mvnw package mn:run
+```
+
+When the demo runs, open the following URLs in a browser:
+
+- http://localhost:8080/
+
+
+
+
+## Implementation Details
+
+The [`Controller`](src/main/java/com/example/Controller.java) uses a [`Service`](src/main/java/com/example/ExcelizeService.java) That integrates the Excelize library with Micronaut and GraalVM to generate and read Excel files using WebAssembly (WASM) and JavaScript. It loads necessary JS and WASM files, executes JavaScript to manipulate Excel data, and reads the content back into a Java application. The results are saved as Excel files or processed into Java objects.
