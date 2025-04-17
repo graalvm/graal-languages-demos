@@ -19,17 +19,18 @@ import java.util.List;
 @io.micronaut.http.annotation.Controller
 public class Controller {
 
-    @Inject
-    private Repository repository;
-    private ExcelizeService service;
 
-    public Controller(ExcelizeService service){
-        this.service=service;
+    private final Repository repository;
+    private final ExcelizeService service;
+
+    public Controller(ExcelizeService service ,Repository repository){
+        this.service = service;
+        this.repository = repository;
     }
 
 
-    @Get // ③
-    @View("index") // ④
+    @Get
+    @View("index")
     public void index() {
 
     }
@@ -59,7 +60,7 @@ public class Controller {
         service.runExcelizeComplete(result);
 
         // Read the generated file
-        Path excelFile = Paths.get("output.xlsx");
+        Path excelFile = Paths.get("src/main/resources/output.xlsx");
         byte[] fileContent = Files.readAllBytes(excelFile);
         // Return the file as a download
         return HttpResponse.ok(fileContent)
