@@ -1,4 +1,4 @@
-name: Test GraalWasm Micronaut Excelice Demo
+name: Test GraalWasm Micronaut Excelize Demo
 
 on:
   push:
@@ -24,23 +24,17 @@ jobs:
 
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21'
+          java-version: '24.0.0'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
-          native-image-job-reports: 'true'
-
-      - name: Install Node.js & Wasm for GraalVM
-        run: |
-          gu install js wasm nodejs
 
       - name: Package 'graalwasm-micronaut-excelice'
         run: |
           cd graalwasm/graalwasm-micronaut-excelice
-          chmod +x mvnw
           ./mvnw --no-transfer-progress clean package
 
-      - name: Run and Test Excelice App
+      - name: Run and Test Excelize App
         run: |
           cd graalwasm/graalwasm-micronaut-excelice
           java -jar target/micronautdemo-0.1.jar &
