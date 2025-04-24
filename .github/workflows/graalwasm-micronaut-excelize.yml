@@ -37,6 +37,6 @@ jobs:
       - name: Run and Test Excelize App
         run: |
           cd graalwasm/graalwasm-micronaut-excelice
-          java -jar target/micronautdemo-0.1.jar &
+          ./mvnw test &
           sleep 10
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080
