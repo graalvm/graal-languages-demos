@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024, Oracle and/or its affiliates.
+ *
+ * Licensed under the Universal Permissive License v 1.0 as shown at https://opensource.org/license/UPL.
+ */
+
 package com.example;
 
 import io.micronaut.core.io.ResourceResolver;
@@ -10,10 +16,14 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 @io.micronaut.context.annotation.Context
 public class ExcelizePool {
-    private final Context context;
+    private final BlockingQueue<Context> contexts;
+
+
     public ExcelizePool(ResourceResolver resourceResolver) throws IOException {
         final String INTERNAL_MODULE_URI_HEADER = "oracle:/mle/";
 
@@ -41,11 +51,12 @@ public class ExcelizePool {
 
         Map<String, String> engineOptions = new HashMap<>();
         engineOptions.put("engine.CompilerThreads", "1");
-        engineOptions.put("engine.TraceCompilationDetails", "true");
         engineOptions.put("engine.WarnInterpreterOnly", "false");
         engineOptions.put("engine.MultiTier", "true");
         engineOptions.put("engine.Mode", "throughput");
-
+        int maxThreads = Runtime.getRuntime().availableProcessors();
+        contexts = new LinkedBlockingQueue<>(maxThreads);
+        for (int i = 0; i < maxThreads; i++) {
       Engine engine = Engine.newBuilder("js", "wasm")
                 .allowExperimentalOptions(true)
                 .options(engineOptions)
@@ -84,12 +95,20 @@ public class ExcelizePool {
             Source testRun = Source.newBuilder("js", test, "excelize_test.js").build();
             context.eval(testRun);
 
-            this.context=context;
+            this.contexts.add(context);
+        }
     }
 
 
 
     public Context getContext() {
-        return context;
+        try {
+            return contexts.take();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    void release(Context context) {
+        contexts.add(context);
     }
 }

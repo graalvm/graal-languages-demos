@@ -21,16 +21,15 @@ public class ExcelizeService {
 
     private final ResourceResolver resourceResolver;
     private final ExcelizePool excelizePool;
-    private final Context context;
 
     public ExcelizeService(ResourceResolver resourceResolver,ExcelizePool excelizePool) {
         this.resourceResolver = resourceResolver;
         this.excelizePool = excelizePool;
-        this.context = excelizePool.getContext();
     }
 
 
     public void runExcelizeComplete(Object[][] array) throws IOException {
+                Context context = excelizePool.getContext();
                 Value x = context.getBindings("js").getMember("generateExcel");
                 Value jsArray = context.eval("js", "[]");
                 for (Object[] row : array) {
@@ -55,11 +54,12 @@ public class ExcelizeService {
                 } else {
                     System.err.println("No buffer exported from JS.");
                 }
-
+                excelizePool.release(context);
 
             }
 
     public List<Book> readExcelFromFile(byte[] excelBytes) throws IOException {
+        Context context = excelizePool.getContext();
 
             byte[] fileBytes = resourceResolver.getResourceAsStream("classpath:output.xlsx").get().readAllBytes();
             // Convert file bytes to a JS array
@@ -96,6 +96,7 @@ public class ExcelizeService {
                     }
                 }
             }
+            excelizePool.release(context);
             return books;
         }
       }
