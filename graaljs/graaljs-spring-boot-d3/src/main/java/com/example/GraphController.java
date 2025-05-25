@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2024, Oracle and/or its affiliates.
+ *
+ * Licensed under the Universal Permissive License v 1.0 as shown at https://opensource.org/license/UPL.
+ */
+
 package com.example;
 
 import org.springframework.stereotype.Controller;
@@ -16,14 +22,7 @@ public class GraphController {
 
     @GetMapping("/graph")
     public String displayGraph(Model model) {
-        try {
-            String svg = graphService.generateGraph();
-            model.addAttribute("svgContent", svg);
-            return "graph";
-        } catch (IOException e) {
-            model.addAttribute("errorMessage", "Error generating the graph.");
-            model.addAttribute("errorDetails", e.getMessage());
-            return "error";
-        }
+        return graphService.generateGraph(model);
     }
+
 }

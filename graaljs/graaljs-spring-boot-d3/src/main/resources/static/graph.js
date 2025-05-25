@@ -1,15 +1,12 @@
-var d3 = require('./node_modules/d3/dist/d3.js');
-var linkedom = require('linkedom');
+import * as d3 from 'd3';
+import { parseHTML } from 'linkedom';
 
-globalThis.document = linkedom.parseHTML('<html><body></body></html>').document;
+// Creating a simulated 'document' object using linkedom
+globalThis.document = parseHTML('<html><body></body></html>').document;
 
-const width = 600;
-const height = 600;
-const margin = 50;
-const innerRadius = Math.min(width, height) * 0.5 - 60;
-const outerRadius = innerRadius + 20;
-
-const data = [
+// Original chord diagram from D3 ObservableHQ:
+// https://observablehq.com/@d3/chord-diagram/2
+const dataMatrix = [
     [0, 20, 10, 5, 8, 3, 12, 1],
     [20, 0, 15, 7, 6, 9, 4, 2],
     [10, 15, 0, 12, 3, 5, 6, 8],
@@ -20,66 +17,89 @@ const data = [
     [1, 2, 8, 3, 11, 6, 10, 0]
 ];
 
-const names = ["Java", "JavaScript", "Python", "Ruby", "R", "C/C++", "Native Image", "Polyglot"];
-const colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f"];
+const colors = [
+  "#89dceb",
+  "#5fa8d3",
+  "#468faf",
+  "#2c7da0",
+  "#1e6091",
+  "#144552",
+  "#0b2e38",
+  "#000000"
+];
+const sum = dataMatrix.flat().reduce((a, b) => a + b, 0);
+const tickStep = d3.tickStep(0, sum, 100);
+const tickStepMajor = d3.tickStep(0, sum, 20);
+const formatValue = d3.formatPrefix(",.0", tickStep);
 
-const chord = d3.chord()
-    .padAngle(0.05)
-    .sortSubgroups(d3.descending)
-    .sortChords(d3.descending);
 
-const chords = chord(data);
+function renderChord(width, height) {
+    const outerRadius = Math.min(width, height) * 0.5 - 30;
+    const innerRadius = outerRadius - 20;
 
-const arc = d3.arc()
-    .innerRadius(innerRadius)
-    .outerRadius(outerRadius);
+    const chord = d3.chord()
+        .padAngle(20 / innerRadius)
+        .sortSubgroups(d3.descending);
 
-const ribbon = d3.ribbon()
-    .radius(innerRadius);
+    const arc = d3.arc()
+        .innerRadius(innerRadius)
+        .outerRadius(outerRadius);
 
-const color = d3.scaleOrdinal()
-    .domain(names)
-    .range(colors);
+    const ribbon = d3.ribbon()
+        .radius(innerRadius);
 
-const svg = d3.create('svg')
-    .attr('width', width)
-    .attr('height', height)
-    .append('g')
-    .attr('transform', `translate(${width / 2},${height / 2})`);
+    const svg = d3.create("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", [-width / 2, -height / 2, width, height])
+        .attr("style", "max-width: 100%; height: auto; font: 10px sans-serif;");
 
-svg.append('g')
-    .selectAll('g')
-    .data(chords.groups)
-    .enter()
-    .append('g')
-    .append('path')
-    .style('fill', d => color(names[d.index]))
-    .style('stroke', 'black')
-    .attr('d', arc);
+    const chords = chord(dataMatrix);
 
-svg.append('g')
-    .selectAll('path')
-    .data(chords)
-    .enter()
-    .append('path')
-    .attr('d', ribbon)
-    .style('fill', d => color(names[d.source.index]))
-    .style('opacity', 0.8)
-    .style('stroke', 'black');
+    const group = svg.append("g")
+        .selectAll()
+        .data(chords.groups)
+        .join("g");
 
-svg.append('g')
-    .selectAll('text')
-    .data(chords.groups)
-    .enter()
-    .append('text')
-    .each(d => { d.angle = (d.startAngle + d.endAngle) / 2; })
-    .attr('dy', '.35em')
-    .attr('transform', d => `
-        rotate(${(d.angle * 180 / Math.PI - 90)})
-        translate(${outerRadius + 10})
-        ${d.angle > Math.PI ? 'rotate(180)' : ''}
-    `)
-    .style('text-anchor', d => d.angle > Math.PI ? 'end' : null)
-    .text(d => names[d.index]);
+    group.append("path")
+        .attr("fill", d => colors[d.index])
+        .attr("d", arc)
+        .append("title")
 
-module.exports = svg.node().outerHTML;
+    const groupTick = group.append("g")
+        .selectAll()
+        .data(d => groupTicks(d, tickStep))
+        .join("g")
+        .attr("transform", d => `rotate(${d.angle * 180 / Math.PI - 90}) translate(${outerRadius},0)`);
+
+    groupTick.append("line")
+        .attr("stroke", "currentColor")
+        .attr("x2", 6);
+
+    groupTick
+        .filter(d => d.value % tickStepMajor === 0)
+        .append("text")
+        .attr("x", 8)
+        .attr("dy", ".35em")
+        .attr("transform", d => d.angle > Math.PI ? "rotate(180) translate(-16)" : null)
+        .attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
+        .text(d => formatValue(d.value));
+
+    svg.append("g")
+        .attr("fill-opacity", 0.7)
+        .selectAll()
+        .data(chords)
+        .join("path")
+        .attr("d", ribbon)
+        .attr("fill", d => colors[d.target.index])
+        .attr("stroke", "white")
+        .append("title")
+    return svg.node().outerHTML
+}
+
+function groupTicks(d, step) {
+    const k = (d.endAngle - d.startAngle) / d.value;
+    return d3.range(0, d.value, step).map(value => ({value: value, angle: d.startAngle + value * k}));
+}
+
+globalThis.renderChord = renderChord;

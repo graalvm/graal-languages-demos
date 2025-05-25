@@ -31,6 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
-# Ignore maven build output directory
-target
 node_modules/
+bundle/
+.frontend/

@@ -6,8 +6,7 @@
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.3</version>
-		<relativePath/> <!-- lookup parent from repository -->
-	</parent>
+		<relativePath/> </parent>
 	<groupId>com.example</groupId>
 	<artifactId>graaljs-spring-boot-d3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -26,9 +25,6 @@
 		<tag/>
 		<url/>
 	</scm>
-	<properties>
-		<java.version>21</java.version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -38,7 +34,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -62,8 +57,16 @@
 			<type>pom</type>
 		</dependency>
 	</dependencies>
-
 	<build>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>static/**</exclude>
+				</excludes>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -76,7 +79,7 @@
 				<configuration>
 					<nodeVersion>v22.14.0</nodeVersion>
 					<workingDirectory>src/main/resources/static</workingDirectory>
-					<installDirectory>target</installDirectory>
+					<installDirectory>.frontend</installDirectory>
 				</configuration>
 				<executions>
 					<execution>
@@ -96,9 +99,20 @@
 							<arguments>install</arguments>
 						</configuration>
 					</execution>
+					<execution>
+						<id>webpack build</id>
+						<goals>
+							<goal>npm</goal> </goals>
+						<phase>process-resources</phase>
+						<configuration>
+							<arguments>run build</arguments>
+							<environmentVariables>
+								<NODE_ENV>production</NODE_ENV>
+							</environmentVariables>
+						</configuration>
+					</execution>
 				</executions>
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
