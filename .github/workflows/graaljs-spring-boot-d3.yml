@@ -40,4 +40,4 @@ jobs:
       - name: Verify application is running
         run: |
           sleep 30
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8082/graph
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/graph
