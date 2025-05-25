@@ -79,7 +79,7 @@
 				<configuration>
 					<nodeVersion>v22.14.0</nodeVersion>
 					<workingDirectory>src/main/resources/static</workingDirectory>
-					<installDirectory>.frontend</installDirectory>
+					<installDirectory>target</installDirectory>
 				</configuration>
 				<executions>
 					<execution>
