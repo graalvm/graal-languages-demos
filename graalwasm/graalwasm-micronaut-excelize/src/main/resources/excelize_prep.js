@@ -1,3 +1,7 @@
+//this file comes from Dmitrii Nikeshkin
+//Github : https://github.com/DimaNike
+
+
 (async () => {
   global = globalThis;
   const nowOffset = Date.now();

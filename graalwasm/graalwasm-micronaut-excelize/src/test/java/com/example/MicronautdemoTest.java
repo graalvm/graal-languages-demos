@@ -34,8 +34,7 @@ public class MicronautdemoTest {
 
     @Test
     void testUploadExcelEndpoint() throws IOException {
-        Path filePath = Paths.get("src/main/resources/output.xlsx");
-        InputStream is = Files.newInputStream(filePath);
+        InputStream is = getClass().getResourceAsStream("/test.xlsx");
         assertNotNull(is, "output.xlsx should exist in src/test/resources");
 
         MultipartBody body = MultipartBody.builder()

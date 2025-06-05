@@ -1,11 +1,13 @@
+const go = new Go();
+const wasm =WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject);
 function generateExcel(data) {
-  var x=  new Promise((resolve, reject) => {
+  new Promise((resolve, reject) => {
     var start = Date.now();
-    const go = new Go();
+
     global.excelize = {};
 
-    WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject)
-      .then((result) => {
+
+      wasm.then((result) => {
         var endInit = Date.now();
         go.run(result.instance);
         const f = excelize.NewFile();
@@ -26,13 +28,7 @@ function generateExcel(data) {
             return;
           }
         });
-        
-        const ret1 = f.GetCellValue('Sheet1', 'B1');
-        if (ret1.error) {
-          console.log(ret1.error);
-          reject(ret1.error);
-          return;
-        }
+
         
         const { buffer, error } = f.WriteToBuffer();
         if (error) {
@@ -52,27 +48,22 @@ function generateExcel(data) {
 
 }
 
-function readExcel() {
+function readExcel(excelFileBytes) {
   let result ;
 
-  let x =new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     var start = Date.now();
-    const go = new Go();
+
     global.excelize = {};
 
-    WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject)
-      .then((result) => {
+
+      wasm.then((result) => {
         var endInit = Date.now();
         go.run(result.instance);
 
         const f = excelize.OpenReader(new Uint8Array(excelFileBytes)); // No fs.readFileSync
 
-        // Get the value from cell B2
-        const ret1 = f.GetCellValue('Sheet1', 'B2');
-        if (ret1.error) {
-          console.error(ret1.error);
-          reject(ret1.error);  // Reject promise in case of error
-        }
+
 
         // Get all rows from Sheet1
         const ret2 = f.GetRows('Sheet1');
@@ -98,11 +89,5 @@ function readExcel() {
         reject(err);  // Reject promise on error
       });
   });
-
-  x.then(value=>{
-  result = value;
-  })
-  console.log(result)
-  return result;
 }
 

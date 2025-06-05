@@ -1,3 +1,6 @@
+//this file comes from Dmitrii Nikeshkin
+//Github : https://github.com/DimaNike
+
 'use strict';
 
 if (typeof window === 'undefined') {
