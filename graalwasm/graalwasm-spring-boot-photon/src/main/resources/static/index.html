@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Effects Demo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        .effects-nav {
+            margin-bottom: 20px;
+        }
+        .effects-nav a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: blue;
+        }
+        .effects-nav a:hover {
+            text-decoration: underline;
+        }
+        #image-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 80vh;
+        }
+        #image-container img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+        #load-time {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="effects-nav">
+    <a href="#" onclick="changeEffect('default')">Default</a>
+    <a href="#" onclick="changeEffect('flipv')">Flip Vertical</a>
+    <a href="#" onclick="changeEffect('fliph')">Flip Horizontal</a>
+    <a href="#" onclick="changeEffect('solarize')">Solarize</a>
+    <a href="#" onclick="changeEffect('neue')">Neue</a>
+    <a href="#" onclick="changeEffect('lofi')">LoFi</a>
+    <a href="#" onclick="changeEffect('duotone_lilac')">Duotone</a>
+    <a href="#" onclick="changeEffect('ryo')">Ryo</a>
+    <a href="#" onclick="changeEffect('dramatic')">Dramatic</a>
+</div>
+
+<div id="image-container">
+    <img id="effect-image" src="/photo/default" alt="Image with effect">
+</div>
+<div id="load-time"></div>
+
+<script>
+    function changeEffect(effectName) {
+        const startTime = performance.now();
+        const img = document.getElementById('effect-image');
+        img.src = `/photo/${effectName}`;
+        img.onload = () => {
+            const endTime = performance.now();
+            const loadTime = endTime - startTime;
+            document.getElementById('load-time').innerText = `Loaded in ${loadTime.toFixed(2)} ms`;
+        };
+        img.onerror = () => {
+            document.getElementById('load-time').innerText = 'Failed to load image';
+        };
+    }
+
+    // Initially load the image with the default effect
+    document.addEventListener('DOMContentLoaded', (event) => {
+        changeEffect('default');
+    });
+</script>
+
+</body>
+</html>
