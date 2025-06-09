@@ -20,13 +20,9 @@ To start the demo, simply run:
 ./mvnw package spring-boot:run
 ```
 
-When the demo runs, open the following URLs in a browser:
+When the demo runs, open http://localhost:8080/ in a browser.
+To apply a specific effect, navigate to `http://localhost:8080/photo/<effect name>` (e.g., http://localhost:8080/photo/colorize).
 
-- http://localhost:8080/photo/default
-- http://localhost:8080/photo/grayscale
-- http://localhost:8080/photo/colorize
-- http://localhost:8080/photo/fliph
-- http://localhost:8080/photo/flipv
 
 To compile the application with GraalVM Native Image, run:
 
