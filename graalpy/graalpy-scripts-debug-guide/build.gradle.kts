@@ -14,9 +14,9 @@ repositories {
 }
 
 dependencies {
-    implementation("org.graalvm.polyglot:python:24.2.0") // ①
-    implementation("org.graalvm.polyglot:polyglot:24.2.0") // ③
-    implementation("org.graalvm.tools:dap-tool:24.2.0") // ④
+    implementation("org.graalvm.polyglot:python:24.2.1") // ①
+    implementation("org.graalvm.polyglot:polyglot:24.2.1") // ③
+    implementation("org.graalvm.tools:dap-tool:24.2.1") // ④
 }
 
 application {

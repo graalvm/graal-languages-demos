@@ -62,14 +62,14 @@ dependencies automatically.
   <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>python</artifactId> <!-- ① -->
-    <version>24.2.0</version>
+    <version>24.2.1</version>
     <type>pom</type> <!-- ② -->
   </dependency>
 
   <dependency>
     <groupId>org.graalvm.python</groupId>
     <artifactId>python-embedding</artifactId> <!-- ③ -->
-      <version>24.2.0</version>
+      <version>24.2.1</version>
   </dependency>
 </dependencies>
 ```
@@ -93,7 +93,7 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
      <plugin>
        <groupId>org.graalvm.python</groupId>
        <artifactId>graalpy-maven-plugin</artifactId>
-       <version>24.2.0</version>
+       <version>24.2.1</version>
        <configuration>
          <packages> <!-- ① -->
            <package>qrcode==7.4.2</package>
@@ -118,7 +118,7 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
 ```kotlin
 plugins {
     application
-    id("org.graalvm.python") version "24.2.0"
+    id("org.graalvm.python") version "24.2.1"
 }
 
 graalPy {
@@ -135,7 +135,7 @@ In this case, we install the `qrcode` package and pin it to version `7.4.2`.
 Omit this section if you want to include the Python packages into the Java resources (and, for example, ship them in the Jar).
 [Later in the Java code](#external-or-embedded-python-code-java) we can configure the GraalPy runtime to load the package from the filesystem or from resources.
 
-**Note** that due to a bug in the 24.2.0 version of the `org.graalvm.python` plugin for **Gradle** you need to include a resource.
+**Note** that due to a bug in the 24.2.1 version of the `org.graalvm.python` plugin for **Gradle** you need to include a resource.
 A simple workaround is to add a `src/main/resources/META-INF/MANIFEST.MF`:
 ```
 Manifest-Version: 1.0
