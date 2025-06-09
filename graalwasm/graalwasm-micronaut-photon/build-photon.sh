@@ -12,7 +12,7 @@ PHOTON_COMMIT="e95eccf886897c2efe8c2461fae9c6bf1375ff49"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-if [[ -d "$SCRIPT_DIR/target/classes/photon" ]]; then
+if [[ -d "${SCRIPT_DIR}/target/classes/photon" ]]; then
     echo "Photon already built from source. Nothing to do."
     exit 0
 fi
@@ -46,11 +46,11 @@ if [[ ! -d "photon-${PHOTON_COMMIT}" ]]; then
 fi
 pushd "photon-${PHOTON_COMMIT}" > /dev/null
 
-wasm-pack build --dev --target bundler --out-name photon ./crate
+wasm-pack build --release --target bundler --out-name photon --out-dir "${SCRIPT_DIR}"/target/classes/photon ./crate
 
-cp crate/examples/input_images/daisies_fuji.jpg $SCRIPT_DIR/target/classes
-mkdir -p $SCRIPT_DIR/target/classes/photon
-cp crate/pkg/photon* $SCRIPT_DIR/target/classes/photon
+echo "Copying example image..."
+
+cp crate/examples/input_images/daisies_fuji.jpg "${SCRIPT_DIR}"/target/classes
 
 popd > /dev/null
 popd > /dev/null

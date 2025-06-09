@@ -6,6 +6,7 @@
 
 package com.example.demo;
 
+import com.example.demo.Photon.Uint8Array;
 import jakarta.annotation.PreDestroy;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
@@ -60,17 +61,16 @@ public class PhotonPool {
                 .engine(engine)
                 .allowAllAccess(true)
                 .allowExperimentalOptions(true)
-                .option("js.webassembly", "true")
                 .option("js.esm-eval-returns-exports", "true")
                 .option("js.text-encoding", "true")
+                .option("js.webassembly", "true")
                 .build();
 
-        // Get Uint8Array class from JavaScript
-        Value uint8Array = context.eval("js", "Uint8Array");
         // Load Photon module and initialize with wasm content
         Value photonModule = context.eval(photonSource);
+
         // Create Uint8Array with image bytes
-        Value imageContent = uint8Array.newInstance(imageBytes);
+        Uint8Array imageContent = context.getBindings("js").getMember("Uint8Array").newInstance(imageBytes).as(Uint8Array.class);
 
         return new Photon(photonModule, imageContent);
     }

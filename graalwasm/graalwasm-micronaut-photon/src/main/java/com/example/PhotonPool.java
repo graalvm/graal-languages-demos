@@ -6,6 +6,7 @@
 
 package com.example;
 
+import com.example.Photon.Uint8Array;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.core.io.ResourceResolver;
 import jakarta.annotation.PreDestroy;
@@ -53,21 +54,20 @@ public class PhotonPool {
     }
 
     private static Photon createPhoton(Engine engine, Source photonSource, Object imageBytes) {
-        org.graalvm.polyglot.Context context = org.graalvm.polyglot.Context.newBuilder("js", "wasm")
+        var context = org.graalvm.polyglot.Context.newBuilder("js", "wasm")
                 .engine(engine)
                 .allowAllAccess(true)
                 .allowExperimentalOptions(true)
-                .option("js.webassembly", "true")
                 .option("js.esm-eval-returns-exports", "true")
                 .option("js.text-encoding", "true")
+                .option("js.webassembly", "true")
                 .build();
 
-        // Get Uint8Array class from JavaScript
-        Value uint8Array = context.eval("js", "Uint8Array");
         // Load Photon module and initialize with wasm content
         Value photonModule = context.eval(photonSource);
+
         // Create Uint8Array with image bytes
-        Value imageContent = uint8Array.newInstance(imageBytes);
+        Uint8Array imageContent = context.getBindings("js").getMember("Uint8Array").newInstance(imageBytes).as(Uint8Array.class);
 
         return new Photon(photonModule, imageContent);
     }
