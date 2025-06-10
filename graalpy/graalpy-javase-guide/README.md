@@ -135,7 +135,7 @@ In this case, we install the `qrcode` package and pin it to version `7.4.2`.
 Omit this section if you want to include the Python packages into the Java resources (and, for example, ship them in the Jar).
 [Later in the Java code](#external-or-embedded-python-code-java) we can configure the GraalPy runtime to load the package from the filesystem or from resources.
 
-**Note** that due to a bug in the 24.2.1 version of the `org.graalvm.python` plugin for **Gradle** you need to include a resource.
+**Note** if you are using older version 24.2.0: due to a bug in the `org.graalvm.python` plugin for **Gradle** you need to include a resource.
 A simple workaround is to add a `src/main/resources/META-INF/MANIFEST.MF`:
 ```
 Manifest-Version: 1.0
