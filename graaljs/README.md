@@ -7,6 +7,7 @@ This directory contains demo applications and guides for [GraalJS](https://www.g
 ## Demos
 
 - [Minimal Java application that embeds GraalJS](graaljs-starter/)
+- [Embed SVG charting library D3.js with GraalJS in Spring Boot](graaljs-spring-boot-d3/)
 
 ## Guides
 
