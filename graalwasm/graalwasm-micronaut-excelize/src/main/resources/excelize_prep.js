@@ -3,6 +3,16 @@
 
 
 (async () => {
+
+globalThis.setTimeout = (fn, ms) => {
+    // Use GraalVM's Java `Thread.sleep` if available
+    const Thread = Java.type("java.lang.Thread");
+    Thread.sleep(ms);
+    fn(); // run after sleep
+    return 0; // fake timeout ID
+  };
+  globalThis.clearTimeout = function (id) {};
+
   global = globalThis;
   const nowOffset = Date.now();
   const now = () => Date.now() - nowOffset;

@@ -1,19 +1,11 @@
+let f;
+global.excelize = {};
 const go = new Go();
-const wasm =WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject);
+WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject).then((result) => {go.run(result.instance);});
+
 function generateExcel(data) {
   new Promise((resolve, reject) => {
-    var start = Date.now();
-
-    global.excelize = {};
-
-
-      wasm.then((result) => {
-        var endInit = Date.now();
-        go.run(result.instance);
-        const f = excelize.NewFile();
-
-        
-        // Use the data passed as parameter
+           f = excelize.NewFile();
         data.forEach((row, idx) => {
           const ret1 = excelize.CoordinatesToCellName(1, idx + 1);
           if (ret1.error) {
@@ -29,7 +21,7 @@ function generateExcel(data) {
           }
         });
 
-        
+
         const { buffer, error } = f.WriteToBuffer();
         if (error) {
           console.error(error);
@@ -39,11 +31,6 @@ function generateExcel(data) {
           Polyglot.export("excelBuffer", buffer);
           resolve(buffer);
         }
-      })
-      .catch(error => {
-        console.error("Failed to instantiate WebAssembly:", error);
-        reject(error);
-      });
   })
 
 }
@@ -52,16 +39,9 @@ function readExcel(excelFileBytes) {
   let result ;
 
   return new Promise((resolve, reject) => {
-    var start = Date.now();
-
-    global.excelize = {};
 
 
-      wasm.then((result) => {
-        var endInit = Date.now();
-        go.run(result.instance);
-
-        const f = excelize.OpenReader(new Uint8Array(excelFileBytes)); // No fs.readFileSync
+         f = excelize.OpenReader(new Uint8Array(excelFileBytes)); // No fs.readFileSync
 
 
 
@@ -83,11 +63,7 @@ function readExcel(excelFileBytes) {
         }
 
         console.log("Excel read successfully.");
-      })
-      .catch(err => {
-        console.error("Error reading Excel:", err);
-        reject(err);  // Reject promise on error
-      });
+
   });
 }
 

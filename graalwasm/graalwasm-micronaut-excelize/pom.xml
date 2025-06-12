@@ -168,9 +168,37 @@
       <artifactId>junit-jupiter-engine</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-core</artifactId>
+      <version>1.37</version>
+    </dependency>
+    <dependency>
+      <groupId>org.openjdk.jmh</groupId>
+      <artifactId>jmh-generator-annprocess</artifactId>
+      <version>1.37</version>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.5.1</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals><goal>shade</goal></goals>
+            <configuration>
+              <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                  <mainClass>org.openjdk.jmh.Main</mainClass>
+                </transformer>
+              </transformers>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>io.micronaut.maven</groupId>
         <artifactId>micronaut-maven-plugin</artifactId>
@@ -195,6 +223,12 @@
               <artifactId>micronaut-inject-java</artifactId>
               <version>${micronaut.core.version}</version>
             </path>
+            <path>
+              <groupId>org.openjdk.jmh</groupId>
+              <artifactId>jmh-generator-annprocess</artifactId>
+              <version>1.37</version>
+            </path>
+
             <path>
               <groupId>io.micronaut.data</groupId>
               <artifactId>micronaut-data-processor</artifactId>
@@ -234,27 +268,6 @@
           </compilerArgs>
         </configuration>
       </plugin>
-          <plugin>
-            <groupId>software.xdev</groupId>
-            <artifactId>music-maven-plugin</artifactId>
-            <version>1.0.3</version> <!-- check for latest -->
-            <executions>
-              <execution>
-                <phase>validate</phase>
-                <goals>
-                  <goal>music</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <sources>
-                <musicSource><uri>https://incompetech.com/music/royalty-free/mp3-royaltyfree/Corncob.mp3</uri></musicSource>
-                <!-- or use a local file -->
-              </sources>
-              <shuffle>true</shuffle>
-            </configuration>
-          </plugin>
-
     </plugins>
   </build>
 

@@ -7,7 +7,6 @@
 package com.example;
 
 import io.micronaut.runtime.Micronaut;
-import java.io.IOException;
 
 
 public class Application {
