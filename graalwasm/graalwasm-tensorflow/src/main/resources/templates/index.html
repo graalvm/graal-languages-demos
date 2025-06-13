@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>House Price Prediction</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f8f9fa;
+            margin: 0;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: #343a40;
+            margin-bottom: 1.5rem;
+        }
+
+        form {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem 1.5rem;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        input {
+            padding: 0.5rem;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        input:focus {
+            border-color: #80bdff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,123,255,0.25);
+        }
+
+        button {
+            grid-column: span 2;
+            padding: 0.75rem 1.5rem;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .result {
+            margin-top: 2rem;
+            background: #e9f7ef;
+            padding: 1rem 2rem;
+            border-left: 5px solid #28a745;
+            border-radius: 8px;
+            color: #155724;
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 600px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+            button {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h1>Predict House Price</h1>
+
+
+<form th:action="@{/predict}" method="post">
+    <label>Bedrooms:</label>
+    <input type="number" name="bedrooms" placeholder="2" required step="1" value="3"/>
+
+    <label>Bathrooms:</label>
+    <input type="number" name="bathrooms" required step="1" value="2"/>
+
+    <label>Living Area (sqft):</label>
+    <input type="number" name="sqftLiving" required value="1800"/>
+
+    <label>Lot Size (sqft):</label>
+    <input type="number" name="sqftLot" required value="5000"/>
+
+    <label>Floors:</label>
+    <input type="number" name="floors" required step="1" value="1"/>
+
+    <label>Waterfront (1 or 0):</label>
+    <input type="number" name="waterfront" required min="0" max="1" value="0"/>
+
+    <label>View (0–4):</label>
+    <input type="number" name="view" required min="0" max="4" value="0"/>
+
+    <label>Condition (1–5):</label>
+    <input type="number" name="condition" required min="1" max="5" value="3"/>
+
+    <label>Above Ground (sqft):</label>
+    <input type="number" name="sqftAbove" required value="1500"/>
+
+    <label>Basement (sqft):</label>
+    <input type="number" name="sqftBasement" required value="300"/>
+
+    <label>Year Built:</label>
+    <input type="number" name="yrBuilt" required value="1990"/>
+
+    <label>Year Renovated:</label>
+    <input type="number" name="yrRenovated" required value="0"/>
+
+    <button type="submit">Predict Price</button>
+</form>
+
+
+<div th:if="${predictedPrice}" class="result">
+    <h2>Predicted Price: <span th:text="'$' + ${predictedPrice}"></span></h2>
+</div>
+
+</body>
+</html>
