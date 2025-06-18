@@ -13,7 +13,7 @@
 //DEPS org.graalvm.truffle:truffle-runtime:24.2.1
 //PIP qrcode==7.4.2
 
-import org.graalvm.python.embedding.utils.GraalPyResources;
+import org.graalvm.python.embedding.GraalPyResources;
 
 public class qrcode {
 

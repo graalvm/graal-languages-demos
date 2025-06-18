@@ -6,7 +6,7 @@
 package org.example;
 
 import org.graalvm.polyglot.*;
-import org.graalvm.python.embedding.utils.GraalPyResources;
+import org.graalvm.python.embedding.GraalPyResources;
 
 import java.util.Set;
 

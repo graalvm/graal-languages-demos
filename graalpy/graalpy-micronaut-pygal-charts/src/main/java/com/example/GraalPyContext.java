@@ -9,7 +9,7 @@ package com.example;
 import io.micronaut.context.annotation.Context;
 import jakarta.annotation.PreDestroy;
 import org.graalvm.polyglot.Value;
-import org.graalvm.python.embedding.utils.GraalPyResources;
+import org.graalvm.python.embedding.GraalPyResources;
 
 @Context
 public class GraalPyContext {
