@@ -165,7 +165,7 @@ package org.example;
 
 import io.micronaut.context.annotation.Context;
 import jakarta.annotation.PreDestroy;
-import org.graalvm.python.embedding.utils.GraalPyResources;
+import org.graalvm.python.embedding.GraalPyResources;
 
 @Context // ①
 public final class GraalPyContext {

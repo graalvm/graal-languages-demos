@@ -6,7 +6,7 @@
 package org.example;
 
 import org.graalvm.polyglot.Context;
-import org.graalvm.python.embedding.utils.GraalPyResources;
+import org.graalvm.python.embedding.GraalPyResources;
 
 public class App {
     public static void main(String[] args) {

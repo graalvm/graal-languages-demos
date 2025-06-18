@@ -152,7 +152,7 @@ package org.example;
 import java.nio.file.Path;
 
 import org.graalvm.polyglot.Context;
-import org.graalvm.python.embedding.utils.*;
+import org.graalvm.python.embedding.*;
 
 public class GraalPy {
     static VirtualFileSystem vfs;
