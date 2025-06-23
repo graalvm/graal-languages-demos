@@ -7,6 +7,7 @@ This directory contains demo applications and guides for [GraalJS](https://www.g
 ## Demos
 
 - [Minimal Java application that embeds GraalJS](graaljs-starter/)
+- [Server-side rendering (SSR) of React.js charts in Micronaut using GraalJS](graaljs-react-ssr/)
 
 ## Guides
 
