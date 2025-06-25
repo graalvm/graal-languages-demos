@@ -45,12 +45,12 @@ public class BenchmarkRunner {
     @Benchmark
     public void benchmarkExcelExport() throws IOException {
         byte[] data = excelizeService.runExcelizeComplete(sampleBooks);
-        System.out.println(data.length);
+        //System.out.println(data.length);
     }
 
     @Benchmark
     public void benchmarkExcelImport() throws IOException {
         List<Book> books = excelizeService.readExcelFromFile(excelData);
-        System.out.println(books);
+        //System.out.println(books);
     }
 }

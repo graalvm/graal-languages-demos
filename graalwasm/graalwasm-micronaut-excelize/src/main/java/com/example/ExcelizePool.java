@@ -38,18 +38,16 @@ public class ExcelizePool {
 
         // Configure options (same as your write code)
         Map<String, String> options = new HashMap<>();
-        options.put("js.ecmascript-version", "2023");
+        //options.put("engine.CompilationFailureAction", "Diagnose");
         options.put("js.top-level-await", "true");
         options.put("js.webassembly", "true");
         options.put("js.commonjs-require", "true");
-        options.put("js.esm-eval-returns-exports", "true");
         options.put("js.text-encoding","true");
-        options.put("js.unhandled-rejections", "throw");
-        options.put("js.commonjs-require-cwd", Paths.get("./").toAbsolutePath().toString());
 
         Map<String, String> engineOptions = new HashMap<>();
         engineOptions.put("engine.CompilerThreads", "1");
         engineOptions.put("engine.WarnInterpreterOnly", "false");
+        engineOptions.put("engine.CompilationFailureAction", "Diagnose");
         engineOptions.put("engine.MultiTier", "true");
         engineOptions.put("engine.Mode", "throughput");
         int maxThreads = Runtime.getRuntime().availableProcessors();

@@ -1,4 +1,5 @@
 let f;
+let reader = null;
 global.excelize = {};
 const go = new Go();
 WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject).then((result) => {go.run(result.instance);});
@@ -41,19 +42,19 @@ function readExcel(excelFileBytes) {
   return new Promise((resolve, reject) => {
 
 
-         f = excelize.OpenReader(new Uint8Array(excelFileBytes)); // No fs.readFileSync
+         if(reader == null) reader = excelize.OpenReader(new Uint8Array(excelFileBytes));
 
 
 
         // Get all rows from Sheet1
-        const ret2 = f.GetRows('Sheet1');
+        const ret2 = reader.GetRows('Sheet1');
         if (ret2.error) {
           console.error(ret2.error);
           reject(ret2.error);  // Reject promise in case of error
         } else {
           // Format the rows into a simple array format for return
           const resultArray = ret2.result.map(row => row.map(colCell => colCell));
-          console.log("Extracted data:", resultArray);
+          //console.log("Extracted data:", resultArray);
 
 
           // Resolve the promise with the result array
@@ -62,7 +63,7 @@ function readExcel(excelFileBytes) {
           resolve(resultArray);
         }
 
-        console.log("Excel read successfully.");
+        //console.log("Excel read successfully.");
 
   });
 }

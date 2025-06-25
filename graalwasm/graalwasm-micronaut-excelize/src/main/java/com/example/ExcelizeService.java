@@ -57,7 +57,6 @@ public class ExcelizeService {
                     for (int j = 0; j < length; j++) {
                         fileBytes[j] = (byte) buffer.getArrayElement(j).asInt();
                     }
-                    System.out.println("Excel file saved as output.xlsx");
                     return fileBytes;
                 } else {
                     System.err.println("No buffer exported from JS.");
