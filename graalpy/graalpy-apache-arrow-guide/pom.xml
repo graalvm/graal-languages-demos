@@ -13,9 +13,7 @@
         <maven.compiler.target>23</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <arrow.version>17.0.0</arrow.version>
-        <!--Python version needs to be changed when we publish public artefacts-->
-        <!--        <python.version>25.0.0-SNAPSHOT</python.version>-->
-        <python.version>26.0.0</python.version>
+        <python.version>24.2.1</python.version>
     </properties>
 
 
@@ -56,8 +54,8 @@
                     <execution>
                         <configuration>
                             <packages> <!-- ① -->
-                                <package>pandas</package> <!-- ② -->
-                                <package>pyarrow</package> <!-- ③ -->
+                                <package>pandas==2.2.3</package> <!-- ② -->
+                                <package>pyarrow==19.0.0</package> <!-- ③ -->
                             </packages>
                         </configuration>
                         <goals>

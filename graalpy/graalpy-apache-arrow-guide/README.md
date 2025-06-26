@@ -2,7 +2,7 @@
 
 ## 1. Getting Started
 
-This guide demonstrates how to use the Java Apache Arrow implementation library (JArrow) with GraalPy, achieving zero-copy memory when transferring data between Java and Python.
+This guide demonstrates how to use the Java Apache Arrow implementation library (JArrow) with GraalPy, achieving zero-copy memory when transferring data between Java and Python native extensions, such as Pandas.
 
 ## 2. What you will need 
 * Basic knowledge of JArrow
@@ -38,8 +38,8 @@ or
 
 `build.gradle`
 ```
-implementation "org.graalvm.python:python-community:24.2.0" // ①
-implementation "org.graalvm.python:python-embedding:24.2.0" // ③
+implementation "org.graalvm.python:python-community:24.2.1" // ①
+implementation "org.graalvm.python:python-embedding:24.2.1" // ③
 ```
 
 ❶ The `python-community` dependency is a meta-package that transitively depends on all resources and libraries to run GraalPy.
@@ -90,8 +90,8 @@ There is also another option `arrow-memory-netty`. You can read more about Apach
     <execution>
       <configuration>
         <packages> <!-- ① -->
-          <package>pandas</package> <!-- ② -->
-          <package>pyarrow</package> <!-- ③ -->
+          <package>pandas==2.2.3</package> <!-- ② -->
+          <package>pyarrow==19.0.0</package> <!-- ③ -->
         </packages>
       </configuration>
       <goals>
@@ -107,7 +107,7 @@ or
 `build.gradle`
 ```
 plugins {
-    id 'org.graalvm.python' version '24.2.0'
+    id 'org.graalvm.python' version '24.2.1'
     // ...
 ```
 
@@ -116,8 +116,8 @@ plugins {
 graalPy {
     community = true
     packages = [ // ①
-                 'pandas', // ②
-                 'pyarrow' // ③
+                 'pandas==2.2.3', // ②
+                 'pyarrow==19.0.0' // ③
     ]
 }
 ```
@@ -138,7 +138,6 @@ public static Context initContext() throws IOException {
   var fs = VirtualFileSystem.create();
   GraalPyResources.extractVirtualFileSystemResources(fs, resourcesDir); // ②
   return GraalPyResources.contextBuilder(resourcesDir)
-          .option("python.PythonHome", "")
           .option("python.WarnExperimentalFeatures", "false")
           .allowHostAccess(HostAccess.ALL)
           .allowHostClassLookup(_ -> true)
@@ -147,9 +146,9 @@ public static Context initContext() throws IOException {
 }
 ```
 
-❶ Specify directory where resources will be copied.
+❶ Specify directory where python resources will be copied.
 
-❷ Copy the resources from Virtual File System to the directory specified. This step is needed because PyArrow ...? 
+❷ Copy the resources from Virtual File System (from the jar) to the directory specified in previous step. We are using real file system since 
 
 ❸ Create the context with the given configuration. 
 

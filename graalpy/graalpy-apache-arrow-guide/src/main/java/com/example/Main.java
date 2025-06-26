@@ -2,19 +2,14 @@ package com.example;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.Duration;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.apache.arrow.memory.BufferAllocator;
 import org.apache.arrow.memory.RootAllocator;
 import org.apache.arrow.vector.Float8Vector;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.HostAccess;
 import org.graalvm.polyglot.Value;
-import org.graalvm.python.embedding.utils.GraalPyResources;
-import org.graalvm.python.embedding.utils.VirtualFileSystem;
+import org.graalvm.python.embedding.GraalPyResources;
+import org.graalvm.python.embedding.VirtualFileSystem;
 
 public class Main {
 
@@ -25,7 +20,6 @@ public class Main {
         var fs = VirtualFileSystem.create();
         GraalPyResources.extractVirtualFileSystemResources(fs, resourcesDir); // ②
         return GraalPyResources.contextBuilder(resourcesDir)
-                .option("python.PythonHome", "")
                 .option("python.WarnExperimentalFeatures", "false")
                 .allowHostAccess(HostAccess.ALL)
                 .allowHostClassLookup(_ -> true)

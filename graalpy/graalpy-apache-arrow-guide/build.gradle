@@ -1,5 +1,5 @@
 plugins {
-    id 'org.graalvm.python' version '24.2.0'
+    id 'org.graalvm.python' version '24.2.1'
     // ...
     id 'application'
     id 'java'
@@ -12,8 +12,8 @@ description = 'graalpy-apache-arrow-guide'
 graalPy {
     community = true
     packages = [ // ①
-                 'pandas', // ②
-                 'pyarrow' // ③
+                 'pandas==2.2.3', // ②
+                 'pyarrow==19.0.0' // ③
     ]
 }
 
@@ -38,8 +38,8 @@ dependencies {
     implementation "org.apache.arrow:arrow-memory-unsafe:17.0.0" // ②
 
     // GraalPy
-    implementation "org.graalvm.python:python-community:24.2.0" // ①
-    implementation "org.graalvm.python:python-embedding:24.2.0" // ③
+    implementation "org.graalvm.python:python-community:24.2.1" // ①
+    implementation "org.graalvm.python:python-embedding:24.2.1" // ③
 }
 
 application {
