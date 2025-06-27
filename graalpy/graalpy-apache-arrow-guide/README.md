@@ -302,6 +302,11 @@ To run the application using Maven, first define `exec` plugin:
   </configuration>
 </plugin>
 ```
+Before running the application we need to open the internal java.nio package to Apache Arrow. To do this we need to export one environment variable:  
+```bash
+export MAVEN_OPTS="--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED"
+```
+
 Run the application using:
 ```bash
 ./mvnw exec:java -Dexec.mainClass="com.example.Main"
