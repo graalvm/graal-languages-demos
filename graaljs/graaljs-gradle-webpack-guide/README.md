@@ -40,8 +40,8 @@ Add the required dependencies for GraalJS in the `dependencies` block of your `b
 `build.gradle`
 ```gradle
 dependencies {
-    implementation 'org.graalvm.polyglot:polyglot:24.2.0' // ①
-    implementation 'org.graalvm.polyglot:js:24.2.0'       // ②
+    implementation 'org.graalvm.polyglot:polyglot:24.2.1' // ①
+    implementation 'org.graalvm.polyglot:js:24.2.1'       // ②
 }
 ````
 
