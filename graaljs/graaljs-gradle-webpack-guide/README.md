@@ -1,5 +1,7 @@
 
-# Using Node Packages in a Java Application
+# Using Node Packages in a Java Application with Gradle
+
+> **Note**: If you are using Maven, take a look at [this guide](../graaljs-maven-webpack-guide/).
 
 JavaScript libraries can be packaged with plain Java applications.
 The integration is facilitated through [GraalJS](https://www.graalvm.org/javascript) and the [GraalVM Polyglot API](https://www.graalvm.org/latest/reference-manual/embed-languages/), supporting a wide range of project setups.
