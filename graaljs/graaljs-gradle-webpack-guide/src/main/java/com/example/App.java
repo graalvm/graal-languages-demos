@@ -27,7 +27,7 @@ public class App {
             Promise resultPromise = qrCode.toString(input);
             resultPromise.then(
                     (Value result) -> {
-                        System.out.println("Successfully generated QR code for \"" + input + "\".");
+                        System.out.println("Successfully generated QR code using \"Value.as(Class)\" for \"" + input + "\".");
                         System.out.println(result.asString());
                     }
             );
@@ -38,7 +38,7 @@ public class App {
             resultValue.invokeMember("then",
                     (ProxyExecutable) (arguments) -> {
                         Value result = arguments[0];
-                        System.out.println("Successfully generated QR code for \"" + input + "\".");
+                        System.out.println("Successfully generated QR code using Value API for \"" + input + "\".");
                         System.out.println(result.asString());
                         return result;
                     }

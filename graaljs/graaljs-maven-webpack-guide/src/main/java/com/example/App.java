@@ -16,6 +16,7 @@ public class App {
                     .option("engine.WarnInterpreterOnly", "false")
                     .option("js.esm-eval-returns-exports", "true")
                     .option("js.unhandled-rejections", "throw")
+                    .option("js.text-encoding", "true")
                     .build()) {
             Source bundleSrc = Source.newBuilder("js", App.class.getResource("/bundle/bundle.mjs")).build();
             Value exports = context.eval(bundleSrc);
@@ -26,7 +27,7 @@ public class App {
             Promise resultPromise = qrCode.toString(input);
             resultPromise.then(
                 (Value result) -> {
-                    System.out.println("Successfully generated QR code for \"" + input + "\".");
+                    System.out.println("Successfully generated QR code using \"Value.as(Class)\" for \"" + input + "\".");
                     System.out.println(result.asString());
                 }
             );
@@ -37,7 +38,7 @@ public class App {
             resultValue.invokeMember("then",
                 (ProxyExecutable) (arguments) -> {
                     Value result = arguments[0];
-                    System.out.println("Successfully generated QR code for \"" + input + "\".");
+                    System.out.println("Successfully generated QR code using Value API for \"" + input + "\".");
                     System.out.println(result.asString());
                     return result;
                 }
