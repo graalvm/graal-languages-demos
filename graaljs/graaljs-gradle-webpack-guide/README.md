@@ -245,7 +245,6 @@ public class App {
                     .option("engine.WarnInterpreterOnly", "false")
                     .option("js.esm-eval-returns-exports", "true")
                     .option("js.unhandled-rejections", "throw")
-                    .allowExperimentalOptions(true)
                     .option("js.text-encoding", "true")
                     .build()) {
             Source bundleSrc = Source.newBuilder("js", App.class.getResource("/bundle/bundle.mjs")).build(); // ①
