@@ -10,9 +10,7 @@ Using Node (NPM) packages in Java projects often requires a bit more setup, due 
 One way to use such modules is to prepackage them into a single _.js_ or _.mjs_ file using a bundler like [webpack](https://webpack.js.org/).
 This guide explains step-by-step how to integrate the webpack build into a Gradle Java project and embed the generated JavaScript code in the JAR file of the application.
 
-**Note:** This project also exists in a [Maven version](https://github.com/graalvm/graal-languages-demos/tree/main/graaljs/graaljs-maven-webpack-guide). If you're more familiar with Maven, check it out.
-
-# GraalJS QRCode Demo (Gradle)
+# GraalJS QRCode Demo
 
 ## 1. Getting Started
 
@@ -283,7 +281,7 @@ If you followed along with the example, you can now compile and run your applica
 The expected output should be similar to this:
 
 ```
-Successfully generated QR code for "[https://www.graalvm.org/](https://www.graalvm.org/)".
+Successfully generated QR code for "https://www.graalvm.org/".
 
 
     █▀▀▀▀▀█  ▀▄ ▀▄█▄▀ █▀▀▀▀▀█
@@ -301,14 +299,13 @@ Successfully generated QR code for "[https://www.graalvm.org/](https://www.graal
     ▀▀▀▀▀▀▀ ▀ ▀▀▀▀     ▀▀▀▀▀▀
 ```
 
-## 6\. Conclusion
+## 6. Conclusion
 
 By following this guide, you've learned how to:
-
-* Use GraalJS and its Gradle dependencies to embed a JavaScript library in your Java application.
-* Use Webpack to bundle an NPM package into a self-contained `_.mjs` file, including its dependencies and polyfills for Node.js core modules that may be required to run on GraalJS.
+* Use GraalJS and the GraalVM Polyglot API to embed a JavaScript library in your Java application.
+* Use Webpack to bundle an NPM package into a self-contained _.mjs_ file, including its dependencies and polyfills for Node.js core modules that may be required to run on GraalJS.
 * Use the Gradle Node plugin to seamlessly integrate the `npm install` and `webpack` build steps into your Gradle project.
 
-Feel free to use this demo as inspiration and a starting point for your own applications\!
+Feel free to use this demo as inspiration and a starting point for your own applications!
 
 
