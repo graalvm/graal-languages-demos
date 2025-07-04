@@ -1,17 +1,28 @@
 let session = null ;
-async function predict(modelBuffer) {
+async function predict(modelBuffer,dataX,dataY) {
   try {
-    if(session ===null ) session = await ort.InferenceSession.create(new Uint8Array(modelBuffer));
 
-    const input = new Float32Array([
-      3, 1.5, 1340, Math.random()*2000, 1.5, 0, 0, 3, 1340, 0, 1955, 2005
-    ]);
-    const inputTensor = new ort.Tensor("float32", input, [1, input.length]);
+                      const session = await ort.InferenceSession.create(new Uint8Array(modelBuffer));
 
-    const feeds = { input: inputTensor };
-    const results = await session.run(feeds);
-    return results.output.data;
-  } catch (e) {
-    console.error("Failed to run model:", e);
-  }
+                      // prepare inputs. a tensor need its corresponding TypedArray as data
+                      const dataA = Float32Array.from(dataX);
+                      const dataB = Float32Array.from(dataY);
+                      const tensorA = new ort.Tensor('float32', dataA, [3, 4]);
+                      const tensorB = new ort.Tensor('float32', dataB, [4, 3]);
+
+                      // prepare feeds. use model input names as keys.
+                      const feeds = { a: tensorA, b: tensorB };
+
+                      // feed inputs and run
+                      const results = await session.run(feeds);
+
+                      // read from results
+                      const dataC = results.c.data;
+                      console.log(dataC);
+
+                      return dataC;
+                  } catch (e) {
+                      document.write(`failed to inference ONNX model: ${e}.`);
+                  }
+
 }
