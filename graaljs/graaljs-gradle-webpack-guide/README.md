@@ -1,13 +1,14 @@
-# Using Node Packages in a Java Application with Maven
 
-> **Note**: If you are using Gradle, take a look at [this guide](../graaljs-gradle-webpack-guide/).
+# Using Node Packages in a Java Application with Gradle
+
+> **Note**: If you are using Maven, take a look at [this guide](../graaljs-maven-webpack-guide/).
 
 JavaScript libraries can be packaged with plain Java applications.
-The integration is facilitated through [GraalJS Maven artifacts](https://central.sonatype.com/artifact/org.graalvm.polyglot/js) and the [GraalVM Polyglot API](https://www.graalvm.org/latest/reference-manual/embed-languages/), supporting a wide range of project setups.
+The integration is facilitated through [GraalJS](https://www.graalvm.org/javascript) and the [GraalVM Polyglot API](https://www.graalvm.org/latest/reference-manual/embed-languages/), supporting a wide range of project setups.
 
 Using Node (NPM) packages in Java projects often requires a bit more setup, due to the nature of the Node packaging ecosystem.
 One way to use such modules is to prepackage them into a single _.js_ or _.mjs_ file using a bundler like [webpack](https://webpack.js.org/).
-This guide explains step-by-step how to integrate the `webpack` build into a Maven Java project and embed the generated JavaScript code in the JAR file of the application.
+This guide explains step-by-step how to integrate the webpack build into a Gradle Java project and embed the generated JavaScript code in the JAR file of the application.
 
 # GraalJS QRCode Demo
 
@@ -17,109 +18,77 @@ In this guide, you will add the [qrcode](https://www.npmjs.com/package/qrcode) N
 
 To complete this guide, you need the following:
 
- * Some time on your hands
- * A decent text editor or IDE
- * JDK 21 or later
- * Maven 3.6.3 or later
+* Some time on your hands
+* A decent text editor or IDE
+* JDK 21 or later
+* Gradle 8.0 or later
 
 We recommend that you follow the instructions in the next sections and create the application step by step.
 However, you can go right to the completed example.
 
-## 2. Setting Up the Maven Project
+## 2. Setting Up the Gradle Project
 
-You can start with any Maven application that runs on JDK 21 or newer.
-To follow this guide, generating the application from the [Maven Quickstart Archetype](https://maven.apache.org/archetypes/maven-archetype-quickstart/) is sufficient:
+You can start with any Gradle Java project. If you don’t have one yet:
 
 ```shell
-mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.5 -DgroupId=com.example -DartifactId=qrdemo -DinteractiveMode=false
-cd qrdemo
+gradle init --type java-application
 ```
-
 ### 2.1. Adding the GraalJS Dependencies
 
-Add the required dependencies for GraalJS in the `<dependencies>` section of the POM.
+Add the required dependencies for GraalJS in the `dependencies` block of your `build.gradle` file. This mirrors the dependency configuration in the [Maven guide](https://github.com/graalvm/graal-languages-demos/blob/main/graaljs/graaljs-maven-webpack-guide/pom.xml).
 
-`pom.xml`
-```xml
-<!-- <dependencies> -->
-<dependency>
-    <groupId>org.graalvm.polyglot</groupId>
-    <artifactId>polyglot</artifactId> <!-- ① -->
-    <version>24.2.1</version>
-</dependency>
-
-<dependency>
-    <groupId>org.graalvm.polyglot</groupId>
-    <artifactId>js</artifactId> <!-- ② -->
-    <version>24.2.1</version>
-    <type>pom</type> <!-- ③ -->
-</dependency>
-<!-- </dependencies> -->
-```
+`build.gradle`
+```gradle
+dependencies {
+    implementation 'org.graalvm.polyglot:polyglot:24.2.1' // ①
+    implementation 'org.graalvm.polyglot:js:24.2.1'       // ②
+}
+````
 
 ❶ The `polyglot` dependency provides the APIs to manage and use GraalJS from Java.
 
 ❷ The `js` dependency is a meta-package that transitively depends on all libraries and resources to run GraalJS.
 
-❸ Note that the `js` package is not a JAR - it is simply a POM that declares more dependencies.
+### 2.2. Adding the Gradle Node Plugin
 
-### 2.2. Adding the Maven Frontend Plugin
+Most JavaScript packages are hosted on a package registry like [NPM](https://www.npmjs.com/) or [JSR](https://jsr.io/) and can be installed using a package manager such as `npm`. The Node.js ecosystem has conventions about the filesystem layout of installed packages that need to be kept in mind when embedding into Java. To simplify the integration, a bundler can be used to repackage all dependencies in a single file. You can use the [`com.github.node-gradle.node`](https://github.com/node-gradle/gradle-node-plugin) plugin to manage the download, installation, and bundling for you. This is the Gradle equivalent of the [`frontend-maven-plugin`](https://github.com/eirslett/frontend-maven-plugin) used in the [Maven guide](https://github.com/graalvm/graal-languages-demos/blob/main/graaljs/graaljs-maven-webpack-guide/pom.xml).
 
-Most JavaScript packages are hosted on a package registry like [NPM](https://www.npmjs.com/) or [JSR](https://jsr.io/) and can be installed using a package manager such as `npm`.
-The Node.js ecosystem has conventions about the filesystem layout of installed packages that need to be kept in mind when embedding into Java.
-To simplify the integration, a bundler can be used to repackage all dependencies in a single file.
-You can use the [`frontend-maven-plugin`](https://github.com/eirslett/frontend-maven-plugin) to manage the download, installation, and bundling for you.
+`build.gradle`
 
-`pom.xml`
-```xml
-<!-- <build> -->
-<plugins>
-    <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.15.0</version>
+```gradle
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.node-gradle.node' version '7.0.1' // ①
+}
 
-        <configuration>
-            <nodeVersion>v21.7.2</nodeVersion>
-            <workingDirectory>src/main/js</workingDirectory>
-            <installDirectory>target</installDirectory>
-        </configuration>
+node { // ②
+    version = '22.14.0'
+    npmVersion = '10.9.2'
+    download = true
+    workDir = file("<span class="math-inline">\{project\.buildDir\}/node"\)
+    npmWorkDir \= file\("</span>{project.buildDir}/npm")
+    nodeProjectDir = file('src/main/js')
+}
 
-        <executions>
-            <execution>
-                <!-- ① -->
-                <id>install node and npm</id>
-                <goals><goal>install-node-and-npm</goal></goals>
-            </execution>
+tasks.register('webpackBuild', NpmTask) { // ③
+    dependsOn tasks.npmInstall
+    workingDir = file('src/main/js')
+    args = ['run', 'build']
+    environment = ['BUILD_DIR': "${buildDir}/classes/java/main/bundle"]
+}
 
-            <execution>
-                <!-- ② -->
-                <id>npm install</id>
-                <goals><goal>npm</goal></goals>
-            </execution>
+processResources.dependsOn tasks.webpackBuild // ④
 
-            <execution>
-                <!-- ③ -->
-                <id>webpack build</id>
-                <goals><goal>webpack</goal></goals>
-                <configuration>
-                    <arguments>--mode production</arguments>
-                    <environmentVariables>
-                        <BUILD_DIR>${project.build.outputDirectory}/bundle</BUILD_DIR>
-                    </environmentVariables>
-                </configuration>
-            </execution>
-        </executions>
-    </plugin>
-</plugins>
-<!-- </build> -->
 ```
 
-❶ Installs `node` and `npm`.
+❶ Applies the node-gradle plugin, enabling Node.js and npm integration.
 
-❷ Runs `npm install` to download and install all NPM packages in _src/main/js_.
+❷ Configures Node.js and npm versions, download settings, and working directories.
 
-❸ Runs `webpack` to build a bundle of the JS sources in _target/classes/bundle_, which will be later included in the application's JAR file and can be loaded as a resource.
+❸ Registers a 'webpackBuild' task to run 'npm run build' in the frontend directory. It ensures dependencies are installed first and sets the output directory.
+
+❹ Ensures that the webpackBuild task is executed before the processResources task, so the bundled JavaScript is included in your JAR file.
 
 ## 3. Setting Up the JavaScript Build.
 
@@ -211,12 +180,8 @@ const config = {
 
 module.exports = () => config;
 ```
-
 Create `main.mjs`, the entry point of the bundle, with the following contents:
 ```js
-// GraalJS doesn't have built-in TextEncoder support yet. It's easy to import it from a polyfill in the meantime.
-import 'fast-text-encoding';
-
 // Re-export the "qrcode" module as a "QRCode" object in the exports of the bundle.
 export * as QRCode from 'qrcode';
 ```
@@ -310,28 +275,28 @@ You can cast the exported `QRCode` object to the declared `QRCode` interface so 
 If you followed along with the example, you can now compile and run your application from the command line:
 
 ```shell
-mvn package
-mvn exec:java -Dexec.mainClass=com.example.App -Dexec.args="https://www.graalvm.org/"
+./gradlew build
+./gradlew run --args="https://www.graalvm.org/"
 ```
-
 The expected output should be similar to this:
+
 ```
 Successfully generated QR code for "https://www.graalvm.org/".
 
 
-    █▀▀▀▀▀█  ▀▄ ▀▄█▄▀ █▀▀▀▀▀█
-    █ ███ █ █▄ ▄ ▄▄▀▀ █ ███ █
-    █ ▀▀▀ █ █  ▄▀▀▄▄█ █ ▀▀▀ █
-    ▀▀▀▀▀▀▀ █ █▄▀ █▄▀ ▀▀▀▀▀▀▀
-    █ ▀▀▀█▀▄ ▄█▀ █ ▀▄▄▀█▀▀▀▄
-    ██▄  ▀▀▄ ▀▄▄█▀▀█▀█▀█▀▀ ▀█
-    ██▀▀█▄▀█▄▄  ▄█▀▀▄█▀█▀▄▀█▀
-    █ ▄█▄▀▀  ▀▀ ▄▀█▀ █▀██▀ ▀█
-    ▀  ▀ ▀▀ ██▄ ▀▀█▀█▀▀▀█▄▀
-    █▀▀▀▀▀█ ▄ ▄█▀▀  █ ▀ █▄▀▀█
-    █ ███ █ ███▀█▀▀▀█▀█▀█▄█▄▄
-    █ ▀▀▀ █ ▀▄▄▄ ▀█▄▄▄ ▄▄█▀ █
-    ▀▀▀▀▀▀▀ ▀ ▀▀▀▀     ▀▀▀▀▀▀
+    █▀▀▀▀▀█  ▀▄ ▀▄█▄▀ █▀▀▀▀▀█
+    █ ███ █ █▄ ▄ ▄▄▀▀ █ ███ █
+    █ ▀▀▀ █ █  ▄▀▀▄▄█ █ ▀▀▀ █
+    ▀▀▀▀▀▀▀ █ █▄▀ █▄▀ ▀▀▀▀▀▀▀
+    █ ▀▀▀█▀▄ ▄█▀ █ ▀▄▄▀█▀▀▀▄
+    ██▄  ▀▀▄ ▀▄▄█▀▀█▀█▀█▀▀ ▀█
+    ██▀▀█▄▀█▄▄  ▄█▀▀▄█▀█▀▄▀█▀
+    █ ▄█▄▀▀  ▀▀ ▄▀█▀ █▀██▀ ▀█
+    ▀  ▀ ▀▀ ██▄ ▀▀█▀█▀▀▀█▄▀
+    █▀▀▀▀▀█ ▄ ▄█▀▀  █ ▀ █▄▀▀█
+    █ ███ █ ███▀█▀▀▀█▀█▀█▄█▄▄
+    █ ▀▀▀ █ ▀▄▄▄ ▀█▄▄▄ ▄▄█▀ █
+    ▀▀▀▀▀▀▀ ▀ ▀▀▀▀     ▀▀▀▀▀▀
 ```
 
 ## 6. Conclusion
@@ -339,6 +304,8 @@ Successfully generated QR code for "https://www.graalvm.org/".
 By following this guide, you've learned how to:
 * Use GraalJS and the GraalVM Polyglot API to embed a JavaScript library in your Java application.
 * Use Webpack to bundle an NPM package into a self-contained _.mjs_ file, including its dependencies and polyfills for Node.js core modules that may be required to run on GraalJS.
-* Use the Maven Frontend Plugin to seamlessly integrate the `npm install` and `webpack` build steps into your Maven project.
+* Use the Gradle Node plugin to seamlessly integrate the `npm install` and `webpack` build steps into your Gradle project.
 
 Feel free to use this demo as inspiration and a starting point for your own applications!
+
+

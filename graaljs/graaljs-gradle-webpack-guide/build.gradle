@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.node-gradle.node' version '7.0.1'
+}
+repositories {
+    mavenCentral()
+}
+application {
+    mainClass = 'com.example.App'
+}
+dependencies {
+    implementation 'org.graalvm.polyglot:polyglot:24.2.1'
+    implementation 'org.graalvm.polyglot:js:24.2.1'
+
+    testImplementation platform('org.junit:junit-bom:5.11.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params'
+}
+test {
+    useJUnitPlatform()
+}
+node {
+    version = '22.14.0'
+    npmVersion = '10.9.2'
+    download = true
+    workDir = file("${project.buildDir}/node")
+    npmWorkDir = file("${project.buildDir}/npm")
+    nodeProjectDir = file('src/main/js')
+}
+tasks.register('webpackBuild', NpmTask) {
+    dependsOn tasks.npmInstall
+    workingDir = file('src/main/js')
+    args = ['run', 'build']
+    environment = ['BUILD_DIR': "${buildDir}/classes/java/main/bundle"]
+}
+processResources.dependsOn tasks.webpackBuild
+

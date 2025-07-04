@@ -10,4 +10,5 @@ This directory contains demo applications and guides for [GraalJS](https://www.g
 
 ## Guides
 
-- [Use Node Packages in a Java SE application](graaljs-maven-webpack-guide/)
+- [Use Node Packages in a Java SE application with Maven](graaljs-maven-webpack-guide/)
+- [Use Node Packages in a Java SE application with Gradle](graaljs-gradle-webpack-guide/)
