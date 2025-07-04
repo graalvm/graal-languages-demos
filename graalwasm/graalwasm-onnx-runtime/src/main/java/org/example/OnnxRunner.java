@@ -39,9 +39,12 @@ public class OnnxRunner {
         context.eval(Source.newBuilder("js", Objects.requireNonNull(Main.class.getResource("/script.js"))).build());
     }
 
+    int [] x = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    int [] y = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+
     public void predict(byte[] modelData, Blackhole blackhole) {
         Main.GenerateFunction genratedFunction = context.getBindings("js").getMember("predict").as(Main.GenerateFunction.class);
-        Main.Prediction prediction = genratedFunction.apply(modelData);
+        Main.Prediction prediction = genratedFunction.apply(modelData,x,y);
         prediction.then(result -> {
             blackhole.consume(result[0].getArrayElement(0).asInt());
             return null;

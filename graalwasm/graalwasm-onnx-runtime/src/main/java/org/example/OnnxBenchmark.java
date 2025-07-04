@@ -21,7 +21,7 @@ public class OnnxBenchmark {
     @Setup(Level.Trial)
     public void setup() throws Exception {
         runner = new OnnxRunner();
-        modelData = Files.readAllBytes(Paths.get("src/main/resources/house_price_model.onnx"));
+        modelData = Files.readAllBytes(Paths.get("src/main/resources/modeel.onnx"));
     }
 
     @Benchmark

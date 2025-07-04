@@ -1,7 +1,9 @@
 ### ONNX-WASM on GraalVM
 
-This project demonstrates how to use the onnxruntime-web (ONNX Runtime WebAssembly) package inside a Java application powered by GraalVM Polyglot features. It loads and runs ONNX models entirely in the browser or JVM using WebAssembly (WASM) and JavaScript bindings.
+This project is a GraalVM-based reimplementation of the [ONNX Runtime Web Quick Start Demo](https://github.com/microsoft/onnxruntime-inference-examples/blob/main/js/quick-start_onnxruntime-web-script-tag/index.html)
+provided by Microsoft.
 
+It demonstrates how to run ONNX models using the onnxruntime-web package inside a Java application via GraalVM Polyglot features. The core idea is to evaluate ONNX models entirely in the browser or on the JVM using WebAssembly (WASM) and JavaScript, tightly integrated with Java code.
 
 
 ### Technologies Used

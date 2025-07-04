@@ -40,13 +40,16 @@ public class Main {
                 """);
         context.eval(Source.newBuilder("js", Objects.requireNonNull(Main.class.getResource("/ort.js")))
                 .build());
-        byte[] modelData = Files.readAllBytes(Paths.get("src/main/resources/house_price_model.onnx"));
+        byte[] modelData = Files.readAllBytes(Paths.get("src/main/resources/modeel.onnx"));
 
         context.eval(Source.newBuilder("js", Objects.requireNonNull(Main.class.getResource("/script.js")))
                 .build());
+        int [] x = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+        int [] y = {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120};
+
         GenerateFunction genratedFunction = context.getBindings("js").getMember("predict").as(GenerateFunction.class);
-        Prediction prediction = genratedFunction.apply(modelData);
-                prediction.then(result -> {
+        Prediction prediction = genratedFunction.apply(modelData,x,y);
+        prediction.then(result -> {
 
             System.out.println("results from java side : "+result[0].getArrayElement(0).asInt());
             return null;
@@ -55,7 +58,7 @@ public class Main {
 
     @FunctionalInterface
     public interface GenerateFunction {
-        Prediction apply(byte[] model);
+        Prediction apply(byte[] model,int [] x,int [] y);
     }
 
     public interface Prediction {
