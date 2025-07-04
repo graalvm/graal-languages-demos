@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>backend</artifactId>
+    <version>0.1</version>
+    <packaging>${packaging}</packaging>
+
+
+    <parent>
+        <groupId>io.micronaut.platform</groupId>
+        <artifactId>micronaut-parent</artifactId>
+        <version>4.7.6</version>
+    </parent>
+    <properties>
+        <packaging>jar</packaging>
+        <jdk.version>21</jdk.version>
+        <release.version>21</release.version>
+        <micronaut.version>4.7.6</micronaut.version>
+        <micronaut.runtime>netty</micronaut.runtime>
+        <micronaut.aot.enabled>false</micronaut.aot.enabled>
+        <micronaut.aot.packageName>com.example.aot.generated</micronaut.aot.packageName>
+        <exec.mainClass>com.example.Application</exec.mainClass>
+        <python.version>24.2.0</python.version>
+    </properties>
+
+
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
+
+    <dependencies>
+        <!-- GraalPy -->
+        <dependency>
+            <groupId>org.graalvm.python</groupId>
+            <artifactId>python</artifactId> <!-- ① -->
+            <version>${python.version}</version>
+            <type>pom</type> <!-- ② -->
+        </dependency>
+        <dependency>
+            <groupId>org.graalvm.python</groupId>
+            <artifactId>python-embedding</artifactId> <!-- ③ -->
+            <version>${python.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-server-netty</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.serde</groupId>
+            <artifactId>micronaut-serde-jackson</artifactId>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut.test</groupId>
+            <artifactId>micronaut-test-junit5</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <!-- GraalPy -->
+            <plugin>
+                <groupId>org.graalvm.python</groupId>
+                <artifactId>graalpy-maven-plugin</artifactId>
+                <version>${python.version}</version>
+                <configuration>
+                    <packages> <!-- ① -->
+                        <package>cohere==5.14.2</package>
+                        <package>beautifulsoup4==4.13.4</package>
+                        <package>oracledb==3.1.0</package>
+                        <package>jellyfish==0.8.0</package>
+                        <package>langchain==0.3.23</package>
+                        <package>langchain-cohere==0.4.3</package>
+                        <package>langchain-community==0.3.21</package>
+                        <package>langchain-core==0.3.51</package>
+                        <package>langchain-groq==0.3.2</package>
+                        <package>langchain-text-splitters==0.3.8</package>
+                        <package>langchain-ollama==0.2.3</package>
+                        <package>pydantic==2.11.0a2</package>
+                        <package>pydantic_core==2.29.0</package>
+                        <package>tokenizers==0.15.0</package>
+                        <package>huggingface-hub==0.16.4</package>
+                        <package>yake==0.4.8</package>
+                        <package>numpy==1.26.4</package>
+                        <package>cx-Oracle</package>
+                    </packages>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process-graalpy-resources</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.micronaut.maven</groupId>
+                <artifactId>micronaut-maven-plugin</artifactId>
+                <configuration>
+                    <configFile>aot-${packaging}.properties</configFile>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>22</source>
+                    <target>22</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>io.micronaut.data</groupId>
+                            <artifactId>micronaut-data-processor</artifactId>
+                            <version>${micronaut.data.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-Amicronaut.processing.incremental=true</arg>
+                        <arg>-Amicronaut.processing.annotations=com.example.*</arg>
+                    </compilerArgs>
+                </configuration>
+            </plugin>
+        </plugins>
+
+    </build>
+
+
+</project>
