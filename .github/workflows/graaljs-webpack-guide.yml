@@ -1,0 +1,38 @@
+name: Test GraalJS Gradle and Maven Webpack Guide
+
+on:
+  push:
+    paths:
+      - 'graaljs/graaljs-webpack-guide/**'
+      - '.github/workflows/graaljs-webpack-guide.yml'
+  pull_request:
+    paths:
+      - 'graaljs/graaljs-webpack-guide/**'
+      - '.github/workflows/graaljs-webpack-guide.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graaljs-webpack-guide'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24.0.1'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'gradle'
+      - name: Build and run Gradle example
+        run: |
+          cd graaljs/graaljs-webpack-guide
+          ./gradlew build
+          ./gradlew run --args="https://www.graalvm.org/javascript"
+      - name: Build and run Maven example
+        run: |
+          cd graaljs/graaljs-webpack-guide
+          ./mvnw --no-transfer-progress package
+          ./mvnw --no-transfer-progress exec:java -Dexec.mainClass=com.example.App -Dexec.args="https://www.graalvm.org/javascript"
