@@ -34,11 +34,9 @@ You will need:
 - Gradle 8.0 or later, or Maven 3.6.3 or later
 - A decent text editor or IDE
 
-
 ## 1. Set Up the Java Project
 
 You can use either **Gradle** or **Maven** to set up your Java project:
-
 
 ### Create a New Gradle Java Project
 
@@ -307,9 +305,9 @@ const config = {
 module.exports = () => config;
 ```
 
-Create `main.mjs`, the entry point of the bundle, with the following contents:
+Create _main.mjs_, the entry point of the bundle, with the following contents:
 
-`main.mjs`
+_main.mjs_
 
 ```js
 // GraalJS doesn't have built-in TextEncoder support yet. It's easy to import it from a polyfill in the meantime.
@@ -328,7 +326,7 @@ You can choose interface names freely, but it's best to base them on the JavaScr
 
 Define an interface that matches the JavaScript qrcode:
 
-`src/main/java/com/example/QRCode.java`
+_src/main/java/com/example/QRCode.java_
 
 ```java
 package com.example;
@@ -340,7 +338,7 @@ interface QRCode {
 
 Define an interface for handling JavaScript Promises:
 
-`src/main/java/com/example/Promise.java`
+_src/main/java/com/example/Promise.java_
 
 ```java
 package com.example;
@@ -354,7 +352,7 @@ public interface Promise {
 
 Define a functional interface for consuming Polyglot values:
 
-`src/main/java/com/example/ValueConsumer.java`
+_src/main/java/com/example/ValueConsumer.java_
 
 ```java
 package com.example;
@@ -371,7 +369,7 @@ public interface ValueConsumer extends Consumer<Value> {
 
 Use the following `Context` class and interfaces to create QR codes and convert them to a Unicode string representation or an image:
 
-`src/main/java/com/example/App.java`
+_src/main/java/com/example/App.java_
 
 ```java
 package com.example;
@@ -421,7 +419,7 @@ If using Gradle, run the following commands to build and run your application:
 ./gradlew run --args="https://www.graalvm.org/"
 ```
 
- If using Maven, run the following commands to build and run your application:
+If using Maven, run the following commands to build and run your application:
 
 ```shell
 mvn package
