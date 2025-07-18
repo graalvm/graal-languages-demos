@@ -39,8 +39,6 @@ You will need:
 
 You can use either **Gradle** or **Maven** to set up your Java project:
 
-- for Gradle projects, navigate to the Gradle folder with `cd gradle`
-- for Maven projects, navigate to the Maven folder with `cd maven`
 
 ### Create a New Gradle Java Project
 
