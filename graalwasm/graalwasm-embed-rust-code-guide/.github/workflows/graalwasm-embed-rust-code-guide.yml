@@ -1,0 +1,51 @@
+name: Test GraalWasm Embed C in Java Guide
+on:
+  push:
+    paths:
+      - 'graalwasm/graalwasm-embed-rust-code-guide/**'
+      - '.github/workflows/graalwasm-embed-rust-code-guide.yml'
+  pull_request:
+    paths:
+      - 'graalwasm/graalwasm-embed-rust-code-guide/**'
+      - '.github/workflows/graalwasm-embed-rust-code-guide.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graalwasm-embed-rust-code-guide'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    teps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Rust (stable)
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: stable
+
+      - name: Add wasm32-wasi target
+        run: rustup target add wasm32-wasi
+
+      - name: Install just (build tool, optional)
+        run: cargo install just
+
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24.0.2'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+
+      - name: Build Rust to WASM
+        run: |
+          cd graalwasm/graalwasm-embed-wasm-code-guide/rust-module
+          cargo build --target wasm32-wasi --release
+
+      - name: Run Java with GraalVM + WASM
+        run: |
+          cd graalwasm/graalwasm-embed-rust-code-guide
+          ./mvnw --no-transfer-progress package
+          ./mvnw --no-transfer-progress exec:java
