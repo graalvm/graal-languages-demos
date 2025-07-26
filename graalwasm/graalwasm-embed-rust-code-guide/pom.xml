@@ -99,6 +99,14 @@
           <artifactId>maven-project-info-reports-plugin</artifactId>
           <version>3.6.1</version>
         </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.5.1</version>
+          <configuration>
+            <mainClass>com.example.App</mainClass> <!-- Change to your actual main class -->
+          </configuration>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>
