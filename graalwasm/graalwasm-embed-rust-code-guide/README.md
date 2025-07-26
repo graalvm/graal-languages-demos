@@ -1,4 +1,4 @@
-# Embed C in Java Using GraalWasm
+# Embed RUST in Java Using GraalWasm
 
 The example below demonstrates how to compile a RUST function to WebAssembly and run it embedded in a Java application.
 
@@ -61,7 +61,7 @@ cargo new hello-rust
 
 ### 2.2. Writing RUST Code
 
-Put the following C program in _src/main/c/floyd.c_:
+Put the following Go program in _hello-rust/src/main.rs_:
 
 ```c
 fn main() {
@@ -125,8 +125,7 @@ mvw package
 mvn exec:java -Dexec.mainClass=com.example.App
 ```
 
-The expected output should contain the first 10 lines of [Floyd's triangle](https://en.wikipedia.org/wiki/Floyd%27s_triangle), printed using the C function:
-
+The expected output should contain:
 ```
 hello from RUST
 ```
