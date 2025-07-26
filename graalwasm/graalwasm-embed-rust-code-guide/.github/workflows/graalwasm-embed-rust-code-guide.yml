@@ -16,7 +16,7 @@ jobs:
     name: 'graalwasm-embed-rust-code-guide'
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    teps:
+    steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
