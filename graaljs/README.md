@@ -7,6 +7,7 @@ This directory contains demo applications and guides for [GraalJS](https://www.g
 ## Demos
 
 - [Minimal Java application that embeds GraalJS](graaljs-starter/)
+- [Micronaut application converting PDF to HTML using pdf.js in GraalJS](graaljs-micronaut-pdf-to-html/)
 
 ## Guides
 
