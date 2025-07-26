@@ -42,7 +42,7 @@ jobs:
       - name: Build Rust to WASM
         run: |
           cd graalwasm/graalwasm-embed-rust-code-guide/hello-rust
-          cargo build --target wasm32-wasi --release
+          cargo build --target wasm32-wasip1 --release
 
       - name: Run Java with GraalVM + WASM
         run: |
