@@ -1,0 +1,50 @@
+name: Test GraalWasm Embed Go in Java Guide
+on:
+  push:
+    paths:
+      - 'graalwasm/graalwasm-embed-go-code-guide/**'
+      - '.github/workflows/graalwasm-embed-go-code-guide.yml'
+  pull_request:
+    paths:
+      - 'graalwasm/graalwasm-embed-go-code-guide/**'
+      - '.github/workflows/graalwasm-embed-go-code-guide.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graalwasm-embed-go-code-guide'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up go (stable)
+        uses: actions/checkout@v4
+        with:
+          go-version: stable
+
+      - name: Install TinyGo
+        run: |
+          wget https://github.com/tinygo-org/tinygo/releases/download/v0.31.2/tinygo_0.31.2_amd64.deb
+          sudo dpkg -i tinygo_0.31.2_amd64.deb
+
+      - name: Set up GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24.0.2'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+
+      - name: Build Go to WASM using TinyGo
+        run: |
+          cd graalwasm/graalwasm-embed-go-code-guide/demo
+          tinygo build -o main.wasm -target=wasi main.go
+
+      - name: Run Java with GraalVM + WASM
+        run: |
+          cd graalwasm/graalwasm-embed-go-code-guide
+          ./mvnw --no-transfer-progress package
+          ./mvnw --no-transfer-progress exec:java
