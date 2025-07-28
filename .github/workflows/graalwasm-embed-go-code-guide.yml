@@ -45,6 +45,6 @@ jobs:
 
       - name: Run Java with GraalVM + WASM
         run: |
-          cd graalwasm/graalwasm-embed-go-code-guide
+          cd graalwasm/graalwasm-embed-go-code-guide/demo
           ./mvnw --no-transfer-progress package
           ./mvnw --no-transfer-progress exec:java
