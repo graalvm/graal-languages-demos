@@ -1,4 +1,4 @@
-name: Test GraalWasm Embed C in Java Guide
+name: Test GraalWasm Embed Rust in Java Guide
 on:
   push:
     paths:
@@ -28,9 +28,6 @@ jobs:
       - name: Add wasm32-wasi target
         run: rustup target add wasm32-wasip1
 
-      - name: Install just (build tool, optional)
-        run: cargo install just
-
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
         with:
@@ -39,12 +36,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
 
-      - name: Build Rust to WASM
-        run: |
-          cd graalwasm/graalwasm-embed-rust-code-guide/hello-rust
-          cargo build --target wasm32-wasip1 --release
-
-      - name: Run Java with GraalVM + WASM
+      - name: Run Java with GraalVM + Wasm
         run: |
           cd graalwasm/graalwasm-embed-rust-code-guide
           ./mvnw --no-transfer-progress package

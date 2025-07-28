@@ -108,6 +108,33 @@
           </configuration>
         </plugin>
       </plugins>
+
     </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>build-rust-to-wasm</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>cargo</executable>
+              <workingDirectory>${project.basedir}/hello-rust</workingDirectory>
+              <arguments>
+                <argument>build</argument>
+                <argument>--target</argument>
+                <argument>wasm32-wasip1</argument>
+                <argument>--release</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>

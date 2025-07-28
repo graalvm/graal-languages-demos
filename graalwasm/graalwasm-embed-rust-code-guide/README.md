@@ -1,12 +1,12 @@
-# Embed RUST in Java Using GraalWasm
+# Embed Rust in Java Using GraalWasm
 
-The example below demonstrates how to compile a RUST function to WebAssembly and run it embedded in a Java application.
+The example below demonstrates how to compile a Rust function to WebAssembly and run it embedded in a Java application.
 
 ### Prerequisites
 
 To complete this guide, you need the following:
 - [GraalVM JDK](https://www.graalvm.org/downloads/)
-- [RUST](https://www.rust-lang.org/tools/install)
+- [Rust](https://www.rust-lang.org/tools/install)
 - [Maven](https://maven.apache.org/)
 
 ## 1. Setting up the Maven Project
@@ -49,9 +49,9 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
     <!-- </dependencies> -->
     ```
 
-## 2. Setting Up RUST Code
+## 2. Setting Up Rust Code
 
-Next, Create a RUST project and then write a Rust function and compile it into a WebAssembly module.
+Next, Create a Rust project and then write a Rust function and compile it into a WebAssembly module.
 
 ### 2.1  Creating rust project
 ```BASH
@@ -59,20 +59,21 @@ cargo new hello-rust
 
 ```
 
-### 2.2. Writing RUST Code
+### 2.2. Writing Rust Code
 
-Put the following Go program in _hello-rust/src/main.rs_:
+Put the following Go program in _hello-rust/src/lib.rs_:
 
 ```c
-fn main() {
-    println!("hello from RUST");
-
+#[unsafe(no_mangle)]
+pub extern "C" fn add(a: i32, b: i32) -> i32 {
+    a + b
 }
+
 
 ```
 
 
-### 2.3. Compiling RUST Code to WebAssembly
+### 2.3. Compiling Rust Code to WebAssembly
 
 Enter the following command into your terminal:
 ```shell
@@ -92,7 +93,7 @@ cargo build --target wasm32-wasip1
 Now you can embed this WebAssembly function in a Java application. Make sure to move your wasm file from hello-rust/target/wasm32-wasip1/release/hello-rust.wasm to your resources folder and then put the following in _src/main/java/com/example/App.java_:
 
 ```java
-package org.example;
+package com.example;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
@@ -101,17 +102,16 @@ import org.graalvm.polyglot.Value;
 import java.io.IOException;
 import java.net.URL;
 
-public class Main {
+public class App {
   public static void main(String[] args) throws IOException {
-    Context context = Context.newBuilder("wasm")
-            .option("wasm.Builtins", "wasi_snapshot_preview1")
-            .build();
-    URL wasmFile = Main.class.getResource("/hello-rust.wasm");
-    Source source = Source.newBuilder("wasm",wasmFile).build();
-    Value wasmBindings = context.eval( source);
+    Context context = Context.newBuilder("wasm").option("wasm.Builtins", "wasi_snapshot_preview1").build();
+    URL wasmFile = App.class.getResource("/hello_rust.wasm");
+    Source source = Source.newBuilder("wasm", wasmFile).build();
+    Value wasmBindings = context.eval(source);
+    Value add = wasmBindings.getMember("add");
 
-    Value main = wasmBindings.getMember("_start");
-    main.execute();
+    int result = add.execute(5, 7).asInt();
+    System.out.println("5 + 7 = " + result);
   }
 }
 ```
@@ -127,15 +127,15 @@ mvn exec:java -Dexec.mainClass=com.example.App
 
 The expected output should contain:
 ```
-hello from RUST
+5 + 7 = 12
 ```
 
 ## Conclusion
 
 By following this guide, you have learned how to:
-* Compile RUST code to a WebAssembly module and export RUST functions as WebAssembly exports.
+* Compile Rust code to a WebAssembly module and export Rust functions as WebAssembly exports.
 * Load WebAssembly modules in Java using GraalWasm.
-* Call functions exported from RUST in your Java application.
+* Call functions exported from Rust in your Java application.
 
 ### Learn More
 
