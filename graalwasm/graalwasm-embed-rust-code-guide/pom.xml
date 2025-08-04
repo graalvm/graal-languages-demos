@@ -128,7 +128,7 @@
             </goals>
             <configuration>
               <executable>wasm-pack</executable>
-              <workingDirectory>${project.basedir}/mywasmlib</workingDirectory>
+              <workingDirectory>${project.basedir}/src/main/mywasmlib</workingDirectory>
               <arguments>
                 <argument>build</argument>
                 <argument>--target</argument>

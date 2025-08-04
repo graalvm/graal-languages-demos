@@ -1,6 +1,6 @@
 package com.example;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import org.junit.jupiter.api.Test;
 
@@ -14,6 +14,6 @@ public class AppTest {
      */
     @Test
     public void shouldAnswerWithTrue() {
-        assertTrue(true);
+        assertDoesNotThrow(() -> App.main(new String[0]));
     }
 }

@@ -55,7 +55,7 @@ Next, Create a Rust project and then write a Rust function and compile it into a
 
 ### 2.1  Creating Rust project
 ```BASH
-cargo new --lib mywasmlib 
+cargo new --lib src/main/mywasmlib 
 
 ```
 
@@ -106,7 +106,7 @@ This configuration runs the Rust wasm-pack build command automatically during th
             </goals>
             <configuration>
               <executable>wasm-pack</executable>
-              <workingDirectory>${project.basedir}/mywasmlib</workingDirectory>
+              <workingDirectory>${project.basedir}/src/main/mywasmlib</workingDirectory>
               <arguments>
                 <argument>build</argument>
                 <argument>--target</argument>
