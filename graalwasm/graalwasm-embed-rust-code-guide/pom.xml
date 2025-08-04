@@ -44,14 +44,18 @@
     <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>polyglot</artifactId>
-      <version>24.2.1</version>
+      <version>25.0.0-SNAPSHOT</version>
     </dependency>
-    <!-- </dependencies> -->
-    <!-- <dependencies> -->
+    <dependency>
+      <groupId>org.graalvm.polyglot</groupId>
+      <artifactId>js</artifactId>
+      <version>25.0.0-SNAPSHOT</version>
+      <type>pom</type>
+    </dependency>
     <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>wasm</artifactId>
-      <version>24.2.1</version>
+      <version>25.0.0-SNAPSHOT</version>
       <type>pom</type>
     </dependency>
     <!-- </dependencies> -->
@@ -117,20 +121,40 @@
         <version>3.1.0</version>
         <executions>
           <execution>
-            <id>build-rust-to-wasm</id>
-            <phase>process-resources</phase>
+            <id>build-rust</id>
+            <phase>compile</phase>
             <goals>
               <goal>exec</goal>
             </goals>
             <configuration>
-              <executable>cargo</executable>
-              <workingDirectory>${project.basedir}/hello-rust</workingDirectory>
+              <executable>wasm-pack</executable>
+              <workingDirectory>${project.basedir}/mywasmlib</workingDirectory>
               <arguments>
                 <argument>build</argument>
                 <argument>--target</argument>
-                <argument>wasm32-wasip1</argument>
-                <argument>--release</argument>
+                <argument>bundler</argument>
+                <argument>--out-dir</argument>
+                <argument>../target</argument>
               </arguments>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <copy todir="${project.build.directory}">
+                  <fileset dir="src/main/js" includes="**/*.js"/>
+                </copy>
+              </target>
             </configuration>
           </execution>
         </executions>

@@ -1,4 +1,4 @@
-# Embed Rust in Java Using GraalWasm
+# Embed Rust in Java Using GraalWasm and JS
 
 The example below demonstrates how to compile a Rust function to WebAssembly and run it embedded in a Java application.
 
@@ -27,27 +27,27 @@ The GraalWasm artifact should be on the Java module or class path too.
 
 Add the following set of dependencies to the `<dependencies>` section of your project's _pom.xml_:
 
-- To add the Polyglot API:
-    ```xml
-    <!-- <dependencies> -->
-    <dependency>
-        <groupId>org.graalvm.polyglot</groupId>
-        <artifactId>polyglot</artifactId>
-        <version>24.2.1</version>
-    </dependency>
-    <!-- </dependencies> -->
-    ```
-- To add GraalWasm:
-    ```xml
-    <!-- <dependencies> -->
-    <dependency>
-        <groupId>org.graalvm.polyglot</groupId>
-        <artifactId>wasm</artifactId>
-        <version>24.2.1</version>
-        <type>pom</type>
-    </dependency>
-    <!-- </dependencies> -->
-    ```
+```xml
+<!-- <dependencies> -->
+  <dependency>
+      <groupId>org.graalvm.polyglot</groupId>
+      <artifactId>polyglot</artifactId>
+      <version>25.0.0-SNAPSHOT</version>
+  </dependency>
+  <dependency>
+      <groupId>org.graalvm.polyglot</groupId>
+      <artifactId>wasm</artifactId>
+      <version>25.0.0-SNAPSHOT</version>
+      <type>pom</type>
+  </dependency>
+  <dependency>
+      <groupId>org.graalvm.polyglot</groupId>
+      <artifactId>js</artifactId>
+      <version>25.0.0-SNAPSHOT</version>
+      <type>pom</type>
+  </dependency>
+<!-- </dependencies> -->
+```
 
 ## 2. Setting Up Rust Code
 
@@ -55,65 +55,121 @@ Next, Create a Rust project and then write a Rust function and compile it into a
 
 ### 2.1  Creating rust project
 ```BASH
-cargo new hello-rust
+cargo new --lib mywasmlib 
 
 ```
 
 ### 2.2. Writing Rust Code
 
-Put the following Go program in _hello-rust/src/lib.rs_:
+Put the following Go program in _mywasmlib/src/lib.rs_:
 
 ```c
-#[unsafe(no_mangle)]
-pub extern "C" fn add(a: i32, b: i32) -> i32 {
-    a + b
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+pub fn add(left: i32, right: i32) -> i32 {
+    left + right
 }
 
 
+
+```
+
+Make sure your _Cargo.toml_ looks like this :
+
+```declarative
+[package]
+name = "mywasmlib"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+wasm-bindgen = "0.2"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
 ```
 
 
 ### 2.3. Compiling Rust Code to WebAssembly
 
-Enter the following command into your terminal:
-```shell
-rustup target add wasm32-wasip1
+This configuration runs the Rust wasm-pack build command automatically during the Maven build process. It uses the Maven Exec Plugin to compile the Rust library in the mywasmlib directory to WebAssembly, ensuring the WASM and JavaScript bindings are always up-to-date whenever you build the project with Maven.
+```xml
+
+
+        <executions>
+          <execution>
+            <id>build-rust</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>wasm-pack</executable>
+              <workingDirectory>${project.basedir}/mywasmlib</workingDirectory>
+              <arguments>
+                <argument>build</argument>
+                <argument>--target</argument>
+                <argument>bundler</argument>
+                <argument>--out-dir</argument>
+                <argument>../target</argument>
+              </arguments>
+            </configuration>
+          </execution>
+        </executions>
 
 ```
-```shell
-cd hello-rust
+## 3. Using the WebAssembly Module from Java using JS glue code
+
+### 3.1 . Using Rust-Generated JS Glue Code with Maven
+When you compile a Rust library to WebAssembly (WASM) using wasm-bindgen and wasm-pack, both the .wasm binary and the appropriate JavaScript glue code are generated for you. Instead of writing custom glue code, this project simply reuses the JS file created by wasm-pack \
+To use them in your project , first add the following exec-plugin in your pom.xml :
+```xml
+<plugin>
+    <artifactId>maven-antrun-plugin</artifactId>
+    <version>3.1.0</version>
+    <executions>
+        <execution>
+            <phase>process-resources</phase>
+            <goals>
+                <goal>run</goal>
+            </goals>
+            <configuration>
+                <target>
+                    <copy todir="${project.build.directory}">
+                        <fileset dir="src/main/js" includes="**/*.js"/>
+                  </copy>
+                </target>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
 ```
-```shell
-cargo build --target wasm32-wasip1
+
+Next, we need to add the following wasm binding code in your _src/main/js/main.js_ file:
+```
+import * as wasm from "./mywasmlib.js";
+console.log(wasm.add(1,3))
+
 ```
 
 
-## 3. Using the WebAssembly Module from Java
-
-Now you can embed this WebAssembly function in a Java application. Make sure to move your wasm file from hello-rust/target/wasm32-wasip1/release/hello-rust.wasm to your resources folder and then put the following in _src/main/java/com/example/App.java_:
-
+### 3.2 Creating Java main class.
+Now you can embed this WebAssembly function in a Java application.
 ```java
-package com.example;
-
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
-
-import java.io.IOException;
-import java.net.URL;
-
 public class App {
-  public static void main(String[] args) throws IOException {
-    Context context = Context.newBuilder("wasm").option("wasm.Builtins", "wasi_snapshot_preview1").build();
-    URL wasmFile = App.class.getResource("/hello_rust.wasm");
-    Source source = Source.newBuilder("wasm", wasmFile).build();
-    Value wasmBindings = context.eval(source);
-    Value add = wasmBindings.getMember("add");
-
-    int result = add.execute(5, 7).asInt();
-    System.out.println("5 + 7 = " + result);
-  }
+    public static void main(String[] args) throws IOException {
+        Context context = Context.newBuilder("js","wasm")
+                .allowAllAccess(true)
+                .option("js.esm-eval-returns-exports", "true")
+                .option("js.webassembly", "true")
+                .option("js.text-encoding","true").build();
+        Path jsFilePath = Paths.get("target", "main.js");
+        Source jsSource = Source.newBuilder("js", jsFilePath.toFile()).mimeType("application/javascript+module").build();
+        context.eval(jsSource);
+    }
 }
+
 ```
 
 ## 4. Building and Testing the Application
@@ -121,20 +177,20 @@ public class App {
 Compile and run this Java application with Maven:
 
 ```shell
-mvw package
+mvn package
 mvn exec:java -Dexec.mainClass=com.example.App
 ```
 
 The expected output should contain:
 ```
-5 + 7 = 12
+5
 ```
 
 ## Conclusion
 
 By following this guide, you have learned how to:
 * Compile Rust code to a WebAssembly module and export Rust functions as WebAssembly exports.
-* Load WebAssembly modules in Java using GraalWasm.
+* Load WebAssembly modules in Java using GraalWasm and Javascript.
 * Call functions exported from Rust in your Java application.
 
 ### Learn More
