@@ -53,7 +53,7 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
 
 Next, Create a Rust project and then write a Rust function and compile it into a WebAssembly module.
 
-### 2.1  Creating rust project
+### 2.1  Creating Rust project
 ```BASH
 cargo new --lib mywasmlib 
 
