@@ -61,7 +61,7 @@ cargo new --lib src/main/mywasmlib
 
 ### 2.2. Writing Rust Code
 
-Put the following Go program in _mywasmlib/src/lib.rs_:
+Put the following  program in _mywasmlib/src/lib.rs_:
 
 ```c
 use wasm_bindgen::prelude::*;
@@ -71,6 +71,27 @@ pub fn add(left: i32, right: i32) -> i32 {
     left + right
 }
 
+#[wasm_bindgen]
+pub struct Person {
+    name: String,
+}
+
+#[wasm_bindgen]
+impl Person {
+    #[wasm_bindgen]
+    pub fn say_hello(&self) -> String {
+        format!("Hello, {}!", self.name)
+    }
+}
+
+#[wasm_bindgen]
+pub fn new_person(name: String) -> Person {
+    Person { name }
+}
+#[wasm_bindgen]
+pub fn reverse_string(input: String) -> String {
+    input.chars().rev().collect()
+}
 
 
 ```
@@ -95,78 +116,61 @@ crate-type = ["cdylib", "rlib"]
 
 This configuration runs the Rust wasm-pack build command automatically during the Maven build process. It uses the Maven Exec Plugin to compile the Rust library in the mywasmlib directory to WebAssembly, ensuring the WASM and JavaScript bindings are always up-to-date whenever you build the project with Maven.
 ```xml
-
-
-        <executions>
-          <execution>
-            <id>build-rust</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-            <configuration>
-              <executable>wasm-pack</executable>
-              <workingDirectory>${project.basedir}/src/main/mywasmlib</workingDirectory>
-              <arguments>
-                <argument>build</argument>
-                <argument>--target</argument>
-                <argument>bundler</argument>
-                <argument>--out-dir</argument>
-                <argument>../target</argument>
-              </arguments>
-            </configuration>
-          </execution>
-        </executions>
-
-```
-## 3. Using the WebAssembly Module from Java using JS glue code
-
-### 3.1 . Using Rust-Generated JS Glue Code with Maven
-When you compile a Rust library to WebAssembly (WASM) using wasm-bindgen and wasm-pack, both the .wasm binary and the appropriate JavaScript glue code are generated for you. Instead of writing custom glue code, this project simply reuses the JS file created by wasm-pack \
-To use them in your project , first add the following exec-plugin in your pom.xml :
-```xml
 <plugin>
-    <artifactId>maven-antrun-plugin</artifactId>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>exec-maven-plugin</artifactId>
     <version>3.1.0</version>
     <executions>
         <execution>
-            <phase>process-resources</phase>
+            <id>build-rust</id>
+            <phase>compile</phase>
             <goals>
-                <goal>run</goal>
+                <goal>exec</goal>
             </goals>
             <configuration>
-                <target>
-                    <copy todir="${project.build.directory}">
-                        <fileset dir="src/main/js" includes="**/*.js"/>
-                  </copy>
-                </target>
+                <executable>wasm-pack</executable>
+                <workingDirectory>${project.basedir}/src/main/mywasmlib</workingDirectory>
+                <arguments>
+                    <argument>build</argument>
+                    <argument>--target</argument>
+                    <argument>bundler</argument>
+                    <argument>--out-dir</argument>
+                    <argument>${project.build.outputDirectory}/mywasmlib</argument>
+                </arguments>
             </configuration>
         </execution>
     </executions>
 </plugin>
 ```
+## 3. Using the WebAssembly Module from Java using JS glue code
 
-Next, we need to add the following wasm binding code in your _src/main/js/main.js_ file:
-```
-import * as wasm from "./mywasmlib.js";
-console.log(wasm.add(1,3))
-
-```
-
-
-### 3.2 Creating Java main class.
-Now you can embed this WebAssembly function in a Java application.
+### 3.1 Creating Java main class.
+Now you can embed Rust functions in a Java application.
 ```java
 public class App {
-    public static void main(String[] args) throws IOException {
-        Context context = Context.newBuilder("js","wasm")
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        Context context = Context.newBuilder("js", "wasm")
                 .allowAllAccess(true)
                 .option("js.esm-eval-returns-exports", "true")
                 .option("js.webassembly", "true")
-                .option("js.text-encoding","true").build();
-        Path jsFilePath = Paths.get("target", "main.js");
-        Source jsSource = Source.newBuilder("js", jsFilePath.toFile()).mimeType("application/javascript+module").build();
-        context.eval(jsSource);
+                .option("js.text-encoding", "true").build();
+        URL myWasmLibURL = App.class.getResource("/mywasmlib/mywasmlib.js");
+        Source jsSource = Source.newBuilder("js", myWasmLibURL).mimeType("application/javascript+module").build();
+        MyWasmLib myWasmLibModule = context.eval(jsSource).as(MyWasmLib.class);
+        System.out.println(myWasmLibModule.add(2, 3));
+        System.out.println(myWasmLibModule.new_person("Anwar").say_hello());
+        System.out.println(myWasmLibModule.reverse_string("Hello There!"));
+    }
+
+    interface MyWasmLib {
+        int add(int left, int right);
+
+        Person new_person(String name);
+
+        interface Person {
+            String say_hello();
+        }
+        String  reverse_string (String word);
     }
 }
 
@@ -184,6 +188,9 @@ mvn exec:java -Dexec.mainClass=com.example.App
 The expected output should contain:
 ```
 5
+Hello, Anwar!
+!erehT olleH
+
 ```
 
 ## Conclusion
