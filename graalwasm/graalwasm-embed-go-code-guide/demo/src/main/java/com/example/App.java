@@ -2,26 +2,22 @@ package com.example;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
-import org.graalvm.polyglot.Value;
 
 import java.io.IOException;
-import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 public class App {
-    public static void main(String[] args)  {
-        try (Context context = Context.newBuilder("wasm")
-                .option("engine.WarnInterpreterOnly", "false")
-                .option("wasm.Builtins", "wasi_snapshot_preview1")
+    public static void main(String[] args) throws IOException {
+        Context context = Context.newBuilder("js","wasm")
+                .option("js.webassembly", "true")
+                .option("js.commonjs-require", "true")
                 .allowAllAccess(true)
-                .build()) {
-        URL wasmFile = App.class.getResource("/main.wasm");
-        Source source = Source.newBuilder("wasm",wasmFile).build();
-        Value wasmBindings = context.eval( source);
+                .option("js.text-encoding","true").build();
+        byte [] wasmData = Files.readAllBytes(Path.of("src/main/resources/main.wasm"));
+        context.getBindings("js").putMember("wasmData",wasmData);
+        context.eval(Source.newBuilder("js",App.class.getResource("/wasm_exec.js")).build());
+        context.eval(Source.newBuilder("js",App.class.getResource("/main.js")).build());
 
-        Value main = wasmBindings.getMember("foo");
-        main.execute();
-        } catch ( IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 }
