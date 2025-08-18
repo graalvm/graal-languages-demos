@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
   entry: './graph.js',
   output: {
-    path: path.resolve(__dirname, '../../../../target/classes/static/bundle'),
+    path: path.resolve(__dirname, '../../../target/classes/js/bundle'),
     filename: 'graph.bundle.js',
     libraryTarget: 'umd',
     globalObject: 'this',

@@ -24,7 +24,7 @@
             margin-left: -200px;
         }
 
-        svg {
+        div {
             max-width: 800px;
             width: 100%;
             height: auto;
@@ -33,7 +33,7 @@
             margin: 20px auto;
         }
 
-        svg text {
+        div text {
             font-size: 0.8em;
             fill: #555;
         }
@@ -41,6 +41,6 @@
 </head>
 <body>
 <h1>Chord Diagram</h1>
-<svg th:utext="${svgContent}"></svg>
+<div th:utext="${svgContent}"></div>
 </body>
 </html>

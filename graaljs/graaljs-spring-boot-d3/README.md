@@ -17,24 +17,6 @@ Before starting, make sure you have the following installed:
 
 ---
 
-## Key Features
-
-### Server-Side SVG Rendering
-
-- The SVG is generated **completely on the server** by running JavaScript code (D3.js) directly within GraalVM's JavaScript runtime.
-- No frontend rendering — this allows SVGs to be embedded in HTML emails, PDFs, and server-rendered pages.
-
-### Webpack for Bundling
-
-- All frontend logic is bundled into a single `graph.bundle.js` using **Webpack** for compatibility and maintainability.
-- Modern JavaScript (ES Modules) is supported and transpiled using Babel.
-
-### Virtual DOM Simulation
-
-- Since there is no browser environment, we use [`linkedom`](https://github.com/WebReflection/linkedom) to simulate a minimal DOM so that D3.js can append SVG nodes.
-
----
-
 ## How It Works
 
 ### 1. Frontend (D3 + Linkedom)
@@ -120,5 +102,3 @@ Open [http://localhost:8080/graph](https://www.google.com/search?q=http://localh
 - Secure, fast, and polyglot execution
 - Perfect for SSR (Server-Side Rendering), data transformation, or embedded logic
 
-
-```

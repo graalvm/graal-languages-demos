@@ -20,24 +20,20 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-
-      # Setup GraalVM and Java
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '24.0.0'
+          java-version: '24.0.2'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
 
-      # Build, test, and run Spring Boot application
       - name: Build, test, and run Spring Boot application
         run: |
           cd graaljs/graaljs-spring-boot-d3
           ./mvnw clean package -DskipTests
           ./mvnw spring-boot:run &
 
-      # Wait for application to start and run test
-      - name: Verify application is running
+      - name: Wait for application to start and run test
         run: |
-          sleep 30
+          sleep 10
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/graph

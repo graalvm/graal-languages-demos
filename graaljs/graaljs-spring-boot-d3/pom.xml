@@ -1,84 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
 		<version>3.4.3</version>
-		<relativePath/> </parent>
+		<relativePath/>
+	</parent>
+
 	<groupId>com.example</groupId>
 	<artifactId>graaljs-spring-boot-d3</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>graaljs-spring-boot-d3</name>
-	<description>Demo project</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<description>Demo project for Spring with GraalJS</description>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.graalvm.polyglot</groupId>
 			<artifactId>polyglot</artifactId>
-			<version>24.2.0</version>
+			<version>24.2.2</version>
 		</dependency>
+
 		<dependency>
 			<groupId>org.graalvm.polyglot</groupId>
 			<artifactId>js</artifactId>
-			<version>24.2.0</version>
+			<version>24.2.2</version>
 			<type>pom</type>
 		</dependency>
 	</dependencies>
+
 	<build>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-				<filtering>false</filtering>
-				<excludes>
-					<exclude>static/**</exclude>
-				</excludes>
-			</resource>
-		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+
 			<plugin>
 				<groupId>com.github.eirslett</groupId>
 				<artifactId>frontend-maven-plugin</artifactId>
 				<version>1.12.1</version>
 				<configuration>
 					<nodeVersion>v22.14.0</nodeVersion>
-					<workingDirectory>src/main/resources/static</workingDirectory>
+					<workingDirectory>src/main/js</workingDirectory>
 					<installDirectory>target</installDirectory>
 				</configuration>
 				<executions>
@@ -89,6 +80,7 @@
 						</goals>
 						<phase>generate-resources</phase>
 					</execution>
+
 					<execution>
 						<id>npm install</id>
 						<goals>
@@ -99,10 +91,12 @@
 							<arguments>install</arguments>
 						</configuration>
 					</execution>
+
 					<execution>
 						<id>webpack build</id>
 						<goals>
-							<goal>npm</goal> </goals>
+							<goal>npm</goal>
+						</goals>
 						<phase>process-resources</phase>
 						<configuration>
 							<arguments>run build</arguments>
@@ -115,4 +109,5 @@
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
