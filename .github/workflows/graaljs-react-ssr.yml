@@ -25,7 +25,7 @@ jobs:
 
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '24.0.0'
+          java-version: '24.0.2'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
@@ -38,5 +38,5 @@ jobs:
 
       - name: Verify application is running
         run: |
-          sleep 30
+          sleep 10
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080
