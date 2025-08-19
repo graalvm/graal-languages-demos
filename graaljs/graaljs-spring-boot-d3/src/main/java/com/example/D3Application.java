@@ -10,10 +10,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class GraalJSSpringBootD3Application {
+public class D3Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(GraalJSSpringBootD3Application.class, args);
+        SpringApplication.run(D3Application.class, args);
     }
 
 }

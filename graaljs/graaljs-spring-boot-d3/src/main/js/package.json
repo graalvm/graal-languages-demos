@@ -1,11 +1,7 @@
 {
   "name": "static",
   "version": "1.0.0",
-  "main": "graph.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --config webpack.config.js"
-  },
+  "main": "d3-chord.js",
   "keywords": [],
   "author": "",
   "license": "ISC",

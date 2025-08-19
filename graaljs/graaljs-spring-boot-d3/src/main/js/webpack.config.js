@@ -1,10 +1,10 @@
 const path = require('path');
 
 module.exports = {
-  entry: './graph.js',
+  entry: './d3-chord.js',
   output: {
-    path: path.resolve(__dirname, '../../../target/classes/js/bundle'),
-    filename: 'graph.bundle.js',
+    path: path.resolve(process.env.BUILD_DIR) || path.resolve(__dirname, '../../../target/classes/js'),
+    filename: 'd3-chord.bundle.js',
     libraryTarget: 'umd',
     globalObject: 'this',
   },

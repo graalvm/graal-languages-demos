@@ -14,18 +14,17 @@ import org.springframework.ui.ConcurrentModel;
 import org.springframework.ui.Model;
 
 @SpringBootTest
-class GraalJSSpringBootD3ApplicationTests {
+class D3ApplicationTests {
 
     @Autowired
-    private GraphService graphService;
+    private D3Service d3Service;
 
     @Test
-    void testGenerateGraph() {
-
+    void testRenderChord() {
         Model model = new ConcurrentModel();
-        String result = graphService.generateGraph(model);
+        String result = d3Service.renderChord(model);
 
-        Assertions.assertEquals("graph", result);
+        Assertions.assertEquals("d3-chord", result);
         String svgContent = (String) model.getAttribute("svgContent");
         Assertions.assertNotNull(svgContent, "SVG content must not be null");
         Assertions.assertTrue(svgContent.contains("<svg") && svgContent.contains("</svg>"),

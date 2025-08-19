@@ -11,17 +11,17 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class GraphController {
+public class D3Controller {
 
-    private final GraphService graphService;
+    private final D3Service d3Service;
 
-    GraphController(GraphService graphService) {
-        this.graphService = graphService;
+    D3Controller(D3Service d3Service) {
+        this.d3Service = d3Service;
     }
 
-    @GetMapping("/graph")
-    public String displayGraph(Model model) {
-        return graphService.generateGraph(model);
+    @GetMapping("/d3-chord")
+    public String renderChord(Model model) {
+        return d3Service.renderChord(model);
     }
 
 }

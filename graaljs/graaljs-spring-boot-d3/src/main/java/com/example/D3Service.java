@@ -20,8 +20,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
-public class GraphService {
-
+public class D3Service {
     private final Engine sharedEngine = Engine.create();
     private final BlockingQueue<RenderChordFunction> renderChordFunctionPool;
 
@@ -30,28 +29,28 @@ public class GraphService {
         String apply(int width, int height);
     }
 
-    public GraphService() throws IOException {
-        Source graphBundleSource = Source.newBuilder("js", new ClassPathResource("js/bundle/graph.bundle.js").getURL())
+    public D3Service() throws IOException {
+        Source d3ChordBundleSource = Source.newBuilder("js", new ClassPathResource("js/d3-chord.bundle.js").getURL())
                 .mimeType("application/javascript+module").build();
         int maxThreads = Runtime.getRuntime().availableProcessors();
         renderChordFunctionPool = new LinkedBlockingQueue<>(maxThreads);
         for (int i = 0; i < maxThreads; i++) {
             Context context = createContext();
-            context.eval(graphBundleSource);
+            context.eval(d3ChordBundleSource);
             RenderChordFunction renderChordFunction =
                     context.getBindings("js").getMember("renderChord").as(RenderChordFunction.class);
             renderChordFunctionPool.add(renderChordFunction);
         }
     }
 
-    public String generateGraph(Model model) {
+    public String renderChord(Model model) {
         RenderChordFunction renderChordFunction = null;
         try {
             renderChordFunction = renderChordFunctionPool.take();
             model.addAttribute("svgContent", renderChordFunction.apply(640, 640));
-            return "graph";
+            return "d3-chord";
         } catch (PolyglotException | InterruptedException e) {
-            model.addAttribute("errorMessage", "Error generating the graph.");
+            model.addAttribute("errorMessage", "Error generating the diagram.");
             model.addAttribute("errorDetails", e.getMessage());
             return "error";
         } finally {

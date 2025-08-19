@@ -21,7 +21,7 @@ Before starting, make sure you have the following installed:
 
 ### 1. Frontend (D3 + Linkedom)
 
-In `graph.js`, we:
+In `d3-chord.js`, we:
 
 - Create a fake `document` using `linkedom`
 - Generate a chord diagram using D3
@@ -29,7 +29,7 @@ In `graph.js`, we:
 - Export a function `renderChord` that takes `width` and `height` as arguments and returns the SVG string.
 
 ```js
-// In graph.js
+// In d3-chord.js
 globalThis.document = parseHTML('<html><body></body></html>').document;
 // ... D3.js chord diagram generation logic ...
 function renderChord(width, height) {
@@ -45,16 +45,16 @@ Webpack bundles the code into a single file:
 
 ```js
 // webpack.config.js
-entry: './graph.js',
+entry: './d3-chord.js',
 output: {
-  filename: 'graph.bundle.js',
+  filename: 'd3-chord.bundle.js',
   libraryTarget: 'umd'
 }
 ```
 
 ### 3\. Java Backend with Graal.js
 
-In `GraphService.java`, we:
+In `D3Service.java`, we:
 
 - Use GraalVM's polyglot API to load and evaluate the JavaScript bundle.
 - Retrieve the `renderChord` function from the JavaScript context.
@@ -64,7 +64,7 @@ In `GraphService.java`, we:
 <!-- end list -->
 
 ```java
-// In GraphService.java
+// In D3Service.java
 // ...
 RenderChordFunction renderChordFunction = context.getBindings("js").getMember("renderChord").as(RenderChordFunction.class);
 model.addAttribute("svgContent", renderChordFunction.apply(640, 640));
@@ -85,14 +85,14 @@ model.addAttribute("svgContent", renderChordFunction.apply(640, 640));
 2.  **Build and run the Spring Boot application:**
  
     ```bash
-    ./mvnw package spring-boot:run
+    ./mvnw spring-boot:run
     ```
 
 -----
 
 ## Result
 
-Open [http://localhost:8080/graph](https://www.google.com/search?q=http://localhost/graph) and you'll see an SVG chord diagram rendered **server-side** with no client JS required.
+Open [http://localhost:8080/d3-chord](http://localhost:8080/d3-chord) and you'll see an SVG chord diagram rendered **server-side** with no client JS required.
 
 -----
 
