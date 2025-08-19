@@ -34,6 +34,7 @@ jobs:
 
       - name: Build native 'graaljs-spring-boot-d3'
         run: |
+          cd graaljs/graaljs-spring-boot-d3
           ./mvnw --no-transfer-progress clean -Pnative native:compile
           ./target/graaljs-spring-boot-d3 &
           sleep 10
