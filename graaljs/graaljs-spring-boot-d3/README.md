@@ -1,11 +1,16 @@
 ## SVG Server-Side Rendering with Spring Boot and GraalJS
 
-This project is a Spring Boot application that uses [GraalJS](https://www.graalvm.org/javascript/) to render [this chord diagram](https://observablehq.com/@d3/chord-diagram/2) using [D3.js](https://d3js.org/what-is-d3) on the server.
-Since D3.js typically runs in a browser environment, this project uses [linkedom](https://www.npmjs.com/package/linkedom/) to simulate a minimal Document Object Model (DOM) inside the JavaScript context, allowing D3.js to render SVG elements.
+This Spring Boot application uses [GraalJS](https://www.graalvm.org/javascript/) to render [this chord diagram](https://observablehq.com/@d3/chord-diagram/2) with [D3.js](https://d3js.org/what-is-d3) on the server.
 
-The JavaScript code responsible for generating the SVG is written in modern ES6 syntax and bundled using [Webpack](https://webpack.js.org/).
-This bundle includes D3.js and the DOM simulation logic, and is executed on the Java backend using [GraalVM Polyglot API](https://www.graalvm.org/latest/reference-manual/embed-languages/).
-Once the SVG is rendered, it is extracted as a string and passed to the server-side view layer [Thymeleaf](https://www.thymeleaf.org/), enabling the client to receive a fully-rendered SVG, with no need for client-side rendering or JavaScript execution.
+Because D3.js typically runs in a browser, use [linkedom](https://www.npmjs.com/package/linkedom/) to simulate a minimal Document Object Model (DOM) inside the JavaScript context.
+This lets D3.js render SVG elements.
+
+Write the JavaScript code that generates the SVG in modern ES6 syntax and bundle it with [Webpack](https://webpack.js.org/).
+
+This bundle includes D3.js and the DOM simulation logic, and you can execute it on the Java backend using the [GraalVM Polyglot API](https://www.graalvm.org/latest/reference-manual/embed-languages/).
+
+After rendering the SVG, the server extracts it as a string and passes it to the [Thymeleaf](https://www.thymeleaf.org/) view layer.
+The client receives a fully rendered SVG, with no need for client-side rendering or JavaScript execution.
 
 ---
 
@@ -14,7 +19,7 @@ Once the SVG is rendered, it is extracted as a string and passed to the server-s
 Before starting, make sure you have the following:
 
 * A bit of time to explore and experiment
-* Your favorite IDE or text editor to code comfortably
+* Your favorite IDE or text editor for coding comfortably
 * JDK 21 or later
 
 ---
@@ -42,12 +47,12 @@ Before starting, make sure you have the following:
 
 ### 1. Frontend (D3.js + linkedom)
 
-In `d3-chord.js`, we:
+`d3-chord.js`
 
-- create a fake `document` using `linkedom`
-- generate a chord diagram using D3
-- extract the generated SVG as a string
-- export a function `renderChord` that takes `width` and `height` as arguments and returns the SVG string.
+1. creates a fake `document` using `linkedom`
+2. generates a chord diagram using D3
+3. extracts the generated SVG as a string
+4. exports a function `renderChord` that takes `width` and `height` as arguments and returns the SVG string
 
 ```js
 // In d3-chord.js
@@ -58,11 +63,11 @@ function renderChord(width, height) {
     return svg.node().outerHTML;
 }
 globalThis.renderChord = renderChord;
-````
+```
 
 ### 2. Webpack Bundling
 
-Webpack bundles the code into a single file:
+Use webpack to bundle the code into a single file:
 
 ```js
 // webpack.config.js
@@ -75,18 +80,22 @@ output: {
 
 ### 3. Java Backend with GraalJS
 
-In `D3Service.java`, we:
+`D3Service.java`
 
-- use GraalVM's polyglot API to load and evaluate the JavaScript bundle.
-- retrieve the `renderChord` function from the JavaScript context.
-- use a pool of `renderChord` functions to maximize throughput.
-- invoke one of the `renderChord` functions with specified dimensions per request.
-- pass the returned SVG string to Thymeleaf for rendering in HTML.
+1. uses GraalVM's polyglot API to load and evaluate the JavaScript bundle
+2. retrieves the `renderChord` function from the JavaScript context
+3. uses a pool of `renderChord` functions to maximize throughput
+4. invokes one of the `renderChord` functions with specified dimensions per request
+5. passes the returned SVG string to Thymeleaf for rendering in HTML
 
 ```java
-// In D3Service.java
 // ...
-RenderChordFunction renderChordFunction = context.getBindings("js").getMember("renderChord").as(RenderChordFunction.class);
-model.addAttribute("svgContent", renderChordFunction.apply(640, 640));
+public String renderChord(Model model) {
+    // ...
+    renderChordFunction = renderChordFunctionPool.take();
+    model.addAttribute("svgContent", renderChordFunction.apply(640, 640));
+    return "d3-chord";
+    // ...
+}
 // ...
 ```
