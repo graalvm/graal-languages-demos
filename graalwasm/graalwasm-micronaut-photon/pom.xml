@@ -13,7 +13,7 @@
         <version>4.8.2</version>
     </parent>
     <properties>
-        <graal.languages.version>24.2.1</graal.languages.version>
+        <graal.languages.version>24.2.2</graal.languages.version>
         <photon.version>0.1.30</photon.version>
         <photon.download.url>
             https://raw.githubusercontent.com/fineshopdesign/cf-wasm/refs/tags/%40cf-wasm/satori%40${photon.version}/packages/photon/src/lib

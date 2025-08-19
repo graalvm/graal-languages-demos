@@ -40,7 +40,7 @@ If you want to follow along using Maven, you can start with this minimal `pom.xm
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-controls</artifactId>
-      <version>24.0.1</version>
+      <version>24.0.2</version>
     </dependency>
   </dependencies>
 
@@ -67,7 +67,7 @@ plugins {
 }
 
 javafx {
-    version = "24.0.1"
+    version = "24.0.2"
     modules = listOf("javafx.controls")
 }
 
@@ -87,27 +87,27 @@ Add the required dependencies for GraalPy in the `<dependencies>` section of the
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>python</artifactId> <!-- ① -->
-    <version>24.2.1</version>
+    <version>24.2.2</version>
     <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>polyglot</artifactId> <!-- ③ -->
-    <version>24.2.1</version>
+    <version>24.2.2</version>
 </dependency>
 <dependency>
     <groupId>org.graalvm.tools</groupId>
     <artifactId>dap-tool</artifactId> <!-- ④ -->
-    <version>24.2.1</version>
+    <version>24.2.2</version>
 </dependency>
 ```
 
 `build.gradle.kts`
 ```kotlin
 dependencies {
-    implementation("org.graalvm.polyglot:python:24.2.1") // ①
-    implementation("org.graalvm.polyglot:polyglot:24.2.1") // ③
-    implementation("org.graalvm.tools:dap-tool:24.2.1") // ④
+    implementation("org.graalvm.polyglot:python:24.2.2") // ①
+    implementation("org.graalvm.polyglot:polyglot:24.2.2") // ③
+    implementation("org.graalvm.tools:dap-tool:24.2.2") // ④
 }
 ```
 

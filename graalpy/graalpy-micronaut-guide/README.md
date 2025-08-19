@@ -72,13 +72,13 @@ related dependencies automatically.
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>24.2.1</version>
+  <version>24.2.2</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>24.2.1</version>
+  <version>24.2.2</version>
 </dependency>
 <dependency>
     <groupId>io.micronaut.views</groupId>
@@ -112,7 +112,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 <plugin>
   <groupId>org.graalvm.python</groupId>
   <artifactId>graalpy-maven-plugin</artifactId>
-  <version>24.2.1</version>
+  <version>24.2.2</version>
   <configuration>
     <packages> <!-- ① -->
       <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
@@ -132,7 +132,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `build.gradle.kts`
 ```
 plugins {
-    id("org.graalvm.python") version "24.2.1"
+    id("org.graalvm.python") version "24.2.2"
     // ...
 ```
 

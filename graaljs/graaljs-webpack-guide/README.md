@@ -54,8 +54,8 @@ _build.gradle_
 
 ```gradle
 dependencies {
-    implementation 'org.graalvm.polyglot:polyglot:24.2.1' // ①
-    implementation 'org.graalvm.polyglot:js:24.2.1'       // ②
+    implementation 'org.graalvm.polyglot:polyglot:24.2.2' // ①
+    implementation 'org.graalvm.polyglot:js:24.2.2'       // ②
 }
 ```
 
@@ -129,13 +129,13 @@ _pom.xml_
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>polyglot</artifactId> <!-- ① -->
-    <version>24.2.1</version>
+    <version>24.2.2</version>
 </dependency>
 
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>js</artifactId> <!-- ② -->
-    <version>24.2.1</version>
+    <version>24.2.2</version>
     <type>pom</type> <!-- ③ -->
 </dependency>
 <!-- </dependencies> -->

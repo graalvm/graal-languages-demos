@@ -1,6 +1,6 @@
 plugins {
     application
-    id("org.graalvm.python") version "24.2.1"
+    id("org.graalvm.python") version "24.2.2"
 }
 
 graalPy {
