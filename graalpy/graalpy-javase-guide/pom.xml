@@ -18,14 +18,14 @@
     <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>python</artifactId> <!-- ① -->
-      <version>24.2.1</version>
+      <version>24.2.2</version>
       <type>pom</type> <!-- ② -->
     </dependency>
 
     <dependency>
       <groupId>org.graalvm.python</groupId>
       <artifactId>python-embedding</artifactId> <!-- ③ -->
-      <version>24.2.1</version>
+      <version>24.2.2</version>
     </dependency>
   </dependencies>
 
@@ -34,7 +34,7 @@
       <plugin>
         <groupId>org.graalvm.python</groupId>
         <artifactId>graalpy-maven-plugin</artifactId>
-        <version>24.2.1</version>
+        <version>24.2.2</version>
         <configuration>
           <packages> <!-- ① -->
             <package>qrcode==7.4.2</package>
