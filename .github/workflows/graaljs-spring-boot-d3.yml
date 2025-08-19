@@ -4,10 +4,10 @@ on:
     paths:
       - 'graaljs/graaljs-spring-boot-d3/**'
       - '.github/workflows/graaljs-spring-boot-d3.yml'
-    pull_request:
-      paths:
-        - 'graaljs/graaljs-spring-boot-d3/**'
-        - '.github/workflows/graaljs-spring-boot-d3.yml'
+  pull_request:
+    paths:
+      - 'graaljs/graaljs-spring-boot-d3/**'
+      - '.github/workflows/graaljs-spring-boot-d3.yml'
   workflow_dispatch:
 
 permissions:
@@ -27,13 +27,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
 
-      - name: Build, test, and run Spring Boot application
+      - name:  Package 'graaljs-spring-boot-d3'
         run: |
           cd graaljs/graaljs-spring-boot-d3
-          ./mvnw clean package -DskipTests
-          ./mvnw spring-boot:run &
+          ./mvnw --no-transfer-progress clean package
 
-      - name: Wait for application to start and run test
+      - name: Build native 'graaljs-spring-boot-d3'
         run: |
+          ./mvnw --no-transfer-progress clean -Pnative native:compile
+          ./target/graaljs-spring-boot-d3 &
           sleep 10
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/graph
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/d3-chord

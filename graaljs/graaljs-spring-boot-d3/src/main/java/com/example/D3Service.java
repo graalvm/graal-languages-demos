@@ -6,11 +6,15 @@
 
 package com.example;
 
+import com.example.D3Service.D3RuntimeHints;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.io.IOAccess;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
@@ -20,6 +24,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
+@ImportRuntimeHints(D3RuntimeHints.class)
 public class D3Service {
     private final Engine sharedEngine = Engine.create();
     private final BlockingQueue<RenderChordFunction> renderChordFunctionPool;
@@ -65,5 +70,18 @@ public class D3Service {
                 .engine(sharedEngine)
                 .allowIO(IOAccess.newBuilder().allowHostFileAccess(true).build())
                 .build();
+    }
+
+    /**
+     * Hints for GraalVM Native Image support.
+     */
+    static class D3RuntimeHints implements RuntimeHintsRegistrar {
+        @Override
+        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+            // Ensure bundle.js is included
+            hints.resources().registerPattern("js/d3-chord.bundle.js");
+            // Ensure RenderChordFunction interface is registered as proxy
+            hints.proxies().registerJdkProxy(RenderChordFunction.class);
+        }
     }
 }
