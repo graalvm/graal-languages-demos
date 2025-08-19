@@ -12,8 +12,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class GraalJSSpringBootD3Application {
 
-	public static void main(String[] args) {
-		SpringApplication.run(GraalJSSpringBootD3Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(GraalJSSpringBootD3Application.class, args);
+    }
 
 }
