@@ -6,6 +6,7 @@
 
 package com.example.demo;
 
+import com.example.demo.Photon.PhotonImage;
 import jakarta.annotation.PreDestroy;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
@@ -85,6 +86,7 @@ public class PhotonPool {
             hints.resources()
                     .registerPattern("photon/*")
                     .registerPattern("daisies_fuji.jpg");
+            hints.proxies().registerJdkProxy(PhotonImage.class);
         }
     }
 }

@@ -6,11 +6,15 @@
 
 package com.example.demo;
 
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
+@ImportRuntimeHints(SentimentAnalysisService.SentimentIntensityAnalyzerRuntimeHints.class)
 public class SentimentAnalysisService {
     private final SentimentIntensityAnalyzer sentimentIntensityAnalyzer;
 
@@ -24,5 +28,12 @@ public class SentimentAnalysisService {
 
     public Map<String, Double> getSentimentScore(String text) {
         return sentimentIntensityAnalyzer.polarity_scores(text); // ③
+    }
+
+    static class SentimentIntensityAnalyzerRuntimeHints implements RuntimeHintsRegistrar { // ④
+        @Override
+        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+            hints.proxies().registerJdkProxy(SentimentIntensityAnalyzer.class);
+        }
     }
 }

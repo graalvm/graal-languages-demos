@@ -216,11 +216,15 @@ Using this Java interface and the GraalPy context, you can now construct a bean 
 ```java
 package com.example.demo;
 
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
+@ImportRuntimeHints(SentimentAnalysisService.SentimentIntensityAnalyzerRuntimeHints.class)
 public class SentimentAnalysisService {
     private final SentimentIntensityAnalyzer sentimentIntensityAnalyzer;
 
@@ -235,6 +239,13 @@ public class SentimentAnalysisService {
     public Map<String, Double> getSentimentScore(String text) {
         return sentimentIntensityAnalyzer.polarity_scores(text); // ③
     }
+
+    static class SentimentIntensityAnalyzerRuntimeHints implements RuntimeHintsRegistrar { // ④
+        @Override
+        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+            hints.proxies().registerJdkProxy(SentimentIntensityAnalyzer.class);
+        }
+    }
 }
 ```
 
@@ -244,6 +255,8 @@ Note that the GraalPy context preserves its state and an eventual subsequent `ev
 ❷ Map the obtained `org.graalvm.polyglot.Value` to the `SentimentIntensityAnalyzer` type.
 
 ❸ Return the `sentimentIntensityAnalyzer` object.
+
+❹ Register interface as proxy for `Value.as()` (see [7.1](#71-native-executable-metadata) for more details).
 
 ### 4.6 Index page
 
@@ -472,16 +485,9 @@ This will start the application on port 8080.
 
 The [GraalVM](https://www.graalvm.org/) Native Image compilation requires metadata to properly run code that uses [dynamic proxies](https://www.graalvm.org/latest/reference-manual/native-image/metadata/#dynamic-proxy).
 
-For the case that also a native executable has to be generated, create a proxy configuration file:
+To compile the application into a native executable, `SentimentAnalysisService` is annotated with `@ImportRuntimeHints` (see [4.5](#45-using-a-python-library-from-java)) and the corresponding `SentimentIntensityAnalyzerRuntimeHints` register `SentimentIntensityAnalyzer` for proxy access.
 
-`src/main/resources/META-INF/native-image/proxy-config.json`
-```json
-[
-  ["com.example.demo.SentimentIntensityAnalyzer"]
-]
-```
-
-### 7.2. Generate a Native Executable with GraalVM
+### 7.2 Generate a Native Executable with GraalVM
 
 We will use GraalVM, the polyglot embeddable virtual machine, to generate a native executable of our Spring Boot application.
 

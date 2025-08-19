@@ -8,12 +8,17 @@ package com.example.demo;
 
 import com.example.demo.GraalPyContextConfiguration.GraalPyContext;
 import org.graalvm.polyglot.Value;
+import org.springframework.aot.hint.MemberCategory;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.stereotype.Service;
 
 import java.util.stream.IntStream;
 
 
 @Service
+@ImportRuntimeHints(PyGalServicePureJava.PyGalServicePureJavaRuntimeHints.class)
 public class PyGalServicePureJava implements PyGalService {
     private final PyGal pyGalModule;
 
@@ -50,5 +55,18 @@ public class PyGalServicePureJava implements PyGalService {
         xyChart.add("y = 1", new int[][]{{-5, 1}, {5, 1}});
         xyChart.add("y = -1", new int[][]{{-5, -1}, {5, -1}});
         return xyChart.render().decode();
+    }
+
+    static class PyGalServicePureJavaRuntimeHints implements RuntimeHintsRegistrar {
+        @Override
+        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+            // Register interfaces as proxy for Value.as().
+            hints.proxies().registerJdkProxy(PyGal.class);
+            hints.proxies().registerJdkProxy(XY.class);
+            hints.proxies().registerJdkProxy(BytesIO.class);
+
+            // Provide access to title default method.
+            hints.reflection().registerType(XY.class, MemberCategory.INTROSPECT_DECLARED_METHODS);
+        }
     }
 }
