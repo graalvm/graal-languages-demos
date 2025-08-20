@@ -30,13 +30,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
 
-      - name: Build and run Micronaut app
+      - name: Build, test, and run Micronaut app
         run: |
           cd graaljs/graaljs-micronaut-react-ssr
-          ./mvnw clean package -DskipTests
-          ./mvnw mn:run &
-
-      - name: Verify application is running
-        run: |
-          sleep 30
+          ./mvnw --no-transfer-progress clean package
+          ./mvnw --no-transfer-progress mn:run &
+          mnpid="$!"
+          sleep 10
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080
+          kill $mnpid
