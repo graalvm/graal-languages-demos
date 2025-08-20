@@ -1,7 +1,7 @@
 /* Original Recharts example at: https://recharts.org/en-US/examples/SimpleAreaChart */
 
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 
 const data = [
     {
@@ -64,6 +64,7 @@ const SimpleAreaChart = ({width, height}) => {
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis />
+            <Tooltip />
             <Area type="monotone" dataKey="uv" stroke="#8884d8" fill="#8884d8" />
         </AreaChart>
     );

@@ -9,6 +9,7 @@ import {
     XAxis,
     YAxis,
     CartesianGrid,
+    Tooltip,
     Legend,
 } from 'recharts';
 
@@ -68,6 +69,7 @@ const VerticalComposedChart = ({width, height}) => {
             <CartesianGrid stroke="#f5f5f5" />
             <XAxis type="number" />
             <YAxis dataKey="name" type="category" scale="band" />
+            <Tooltip />
             <Legend />
             <Area dataKey="amt" fill="#8884d8" stroke="#8884d8" />
             <Bar dataKey="pv" barSize={20} fill="#413ea0" />
