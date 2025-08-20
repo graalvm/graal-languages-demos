@@ -7,8 +7,8 @@ This directory contains demo applications and guides for [GraalJS](https://www.g
 ## Demos
 
 - [Minimal Java application that embeds GraalJS](graaljs-starter/)
-- [Embed SVG charting library D3.js with GraalJS in Spring Boot](graaljs-spring-boot-d3/)
-- [Render React.js charts in Micronaut using GraalJS](graaljs-micronaut-react-ssr/)
+- [Render SVG charts with D3.js and GraalJS in Spring Boot](graaljs-spring-boot-d3/)
+- [Render SVG charts with Recharts, React, and GraalJS in Micronaut](graaljs-micronaut-react-ssr/)
 
 ## Guides
 

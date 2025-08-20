@@ -36,6 +36,6 @@ jobs:
           ./mvnw --no-transfer-progress clean package
           ./mvnw --no-transfer-progress mn:run &
           mnpid="$!"
-          sleep 10
+          sleep 30
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080
           kill $mnpid
