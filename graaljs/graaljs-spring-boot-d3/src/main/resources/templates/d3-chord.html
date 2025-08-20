@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chord Diagram</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f4f4f4;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+         h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #2c3e50;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            margin-left: -200px;
+        }
+
+        div {
+            max-width: 800px;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+            display: block;
+            margin: 20px auto;
+        }
+
+        div text {
+            font-size: 0.8em;
+            fill: #555;
+        }
+    </style>
+</head>
+<body>
+<h1>Chord Diagram</h1>
+<div th:utext="${svgContent}"></div>
+</body>
+</html>

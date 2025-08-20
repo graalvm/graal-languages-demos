@@ -1,0 +1,41 @@
+name: Test GraalJS Spring Boot D3
+on:
+  push:
+    paths:
+      - 'graaljs/graaljs-spring-boot-d3/**'
+      - '.github/workflows/graaljs-spring-boot-d3.yml'
+  pull_request:
+    paths:
+      - 'graaljs/graaljs-spring-boot-d3/**'
+      - '.github/workflows/graaljs-spring-boot-d3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    name: 'graaljs-spring-boot-d3'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24.0.2'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+
+      - name:  Package 'graaljs-spring-boot-d3'
+        run: |
+          cd graaljs/graaljs-spring-boot-d3
+          ./mvnw --no-transfer-progress clean package
+
+      - name: Build native 'graaljs-spring-boot-d3'
+        run: |
+          cd graaljs/graaljs-spring-boot-d3
+          ./mvnw --no-transfer-progress clean -Pnative native:compile
+          ./target/graaljs-spring-boot-d3 &
+          sleep 10
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/d3-chord
