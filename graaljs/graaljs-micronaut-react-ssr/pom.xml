@@ -3,7 +3,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.example</groupId>
-  <artifactId>graaljs-react-ssr</artifactId>
+  <artifactId>graaljs-micronaut-react-ssr</artifactId>
   <version>0.1</version>
   <packaging>${packaging}</packaging>
 
@@ -169,7 +169,7 @@
           </annotationProcessorPaths>
           <compilerArgs>
             <arg>-Amicronaut.processing.group=com.example</arg>
-            <arg>-Amicronaut.processing.module=graaljs-react-ssr</arg>
+            <arg>-Amicronaut.processing.module=graaljs-micronaut-react-ssr</arg>
           </compilerArgs>
         </configuration>
       </plugin>

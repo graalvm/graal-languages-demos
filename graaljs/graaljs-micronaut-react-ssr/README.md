@@ -17,7 +17,7 @@ Before you begin, make sure you have the following installed:
 
    ```bash
    git clone https://github.com/graalvm/graal-languages-demos.git
-   cd graaljs/graaljs-react-ssr
+   cd graaljs/graaljs-micronaut-react-ssr
    ```
 
 2. **Build and run the Micronaut application:**

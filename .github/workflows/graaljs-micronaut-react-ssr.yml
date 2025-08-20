@@ -3,12 +3,12 @@ name: Test GraalJS React SSR with Micronaut
 on:
   push:
     paths:
-      - 'graaljs/graaljs-react-ssr/**'
-      - '.github/workflows/graaljs-react-ssr.yml'
+      - 'graaljs/graaljs-micronaut-react-ssr/**'
+      - '.github/workflows/graaljs-micronaut-react-ssr.yml'
   pull_request:
     paths:
-      - 'graaljs/graaljs-react-ssr/**'
-      - '.github/workflows/graaljs-react-ssr.yml'
+      - 'graaljs/graaljs-micronaut-react-ssr/**'
+      - '.github/workflows/graaljs-micronaut-react-ssr.yml'
   workflow_dispatch:
 
 permissions:
@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   run:
-    name: 'graaljs-react-ssr'
+    name: 'graaljs-micronaut-react-ssr'
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -32,7 +32,7 @@ jobs:
 
       - name: Build and run Micronaut app
         run: |
-          cd graaljs/graaljs-react-ssr
+          cd graaljs/graaljs-micronaut-react-ssr
           ./mvnw clean package -DskipTests
           ./mvnw mn:run &
 
