@@ -16,7 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest
 public class RootViewTest {
-    @Inject @Client("/")
+    @Inject
+    @Client("/")
     HttpClient client;
 
     @Test
