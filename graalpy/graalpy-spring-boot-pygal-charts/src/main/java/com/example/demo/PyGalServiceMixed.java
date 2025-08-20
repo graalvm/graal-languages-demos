@@ -7,12 +7,17 @@
 package com.example.demo;
 
 import com.example.demo.GraalPyContextConfiguration.GraalPyContext;
+import org.springframework.aot.hint.MemberCategory;
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 @Service
+@ImportRuntimeHints(PyGalServiceMixed.PyGalServiceMixedRuntimeHints.class)
 public class PyGalServiceMixed implements PyGalService {
     private final RenderXYFunction renderXYFunction;
 
@@ -52,5 +57,16 @@ public class PyGalServiceMixed implements PyGalService {
                 new Entry("y = -1", new double[][]{{-5, -1}, {5, -1}})
         );
         return renderXYFunction.apply(title, labelDatapointEntries);
+    }
+
+
+    static class PyGalServiceMixedRuntimeHints implements RuntimeHintsRegistrar {
+        @Override
+        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+            // Register interface as proxy for Value.as().
+            hints.proxies().registerJdkProxy(RenderXYFunction.class);
+            // Register methods of Entry for reflection so that they can be called from Python.
+            hints.reflection().registerType(Entry.class, MemberCategory.INVOKE_DECLARED_METHODS);
+        }
     }
 }

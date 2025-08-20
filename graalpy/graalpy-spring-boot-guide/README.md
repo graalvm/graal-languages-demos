@@ -53,7 +53,7 @@ public class DemoApplication {
 }
 ```
 
-### 4.2 Dependency configuration
+### 4.2. Dependency configuration
 
 Add the required dependencies for GraalPy in the dependency section of the POM build script.
 For Gradle, the GraalPy Gradle plugin that we will add in the next section will inject these
@@ -80,7 +80,7 @@ dependencies automatically.
 
 ❸ The `python-embedding` dependency provides the APIs to manage and use GraalPy from Java.
 
-### 4.3 Adding packages - GraalPy build plugin configuration
+### 4.3. Adding packages - GraalPy build plugin configuration
 
 Most Python packages are hosted on [PyPI](https://pypi.org) and can be installed via the `pip` tool.
 The Python ecosystem has conventions about the filesystem layout of installed packages that need to be kept in mind when embedding into Java.
@@ -134,7 +134,7 @@ Install and pin the `vader-sentiment` package to version `3.2.1.1`.
 
 ❸ The `vader_sentiment` package does not declare `requests` as a dependency so it has to done so manually at this place.
 
-### 4.4 Creating a Python context
+### 4.4. Creating a Python context
 
 GraalPy provides APIs to make setting up a context to load Python packages from Java as easy as possible.
 
@@ -182,7 +182,7 @@ public class GraalPyContext {
 
 ❺ Close the GraalPy context at application shutdown.
 
-### 4.5 Using a Python library from Java
+### 4.5. Using a Python library from Java
 
 After reading the [vaderSentiment](https://github.com/cjhutto/vaderSentiment) docs, you can now write the Java interface that matches the Python type and function you want to call.
 
@@ -216,11 +216,15 @@ Using this Java interface and the GraalPy context, you can now construct a bean 
 ```java
 package com.example.demo;
 
+import org.springframework.aot.hint.RuntimeHints;
+import org.springframework.aot.hint.RuntimeHintsRegistrar;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
+@ImportRuntimeHints(SentimentAnalysisService.SentimentIntensityAnalyzerRuntimeHints.class)
 public class SentimentAnalysisService {
     private final SentimentIntensityAnalyzer sentimentIntensityAnalyzer;
 
@@ -235,6 +239,13 @@ public class SentimentAnalysisService {
     public Map<String, Double> getSentimentScore(String text) {
         return sentimentIntensityAnalyzer.polarity_scores(text); // ③
     }
+
+    static class SentimentIntensityAnalyzerRuntimeHints implements RuntimeHintsRegistrar { // ④
+        @Override
+        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
+            hints.proxies().registerJdkProxy(SentimentIntensityAnalyzer.class);
+        }
+    }
 }
 ```
 
@@ -245,7 +256,9 @@ Note that the GraalPy context preserves its state and an eventual subsequent `ev
 
 ❸ Return the `sentimentIntensityAnalyzer` object.
 
-### 4.6 Index page
+❹ Register interface as proxy for `Value.as()` (see [7.1.](#71-native-executable-metadata) for more details).
+
+### 4.6. Index page
 
 The application will have a simple chat-like view, which takes text as input and return its sentiment value in form of an emoticon.
 
@@ -342,7 +355,7 @@ Create a html file, which uses *jQuery* to query an API endpoint for the sentime
 </html>
 ```
 
-### 4.7 Controller
+### 4.7. Controller
 
 To create a microservice that provides a simple sentiment analysis, you also need a controller:
 
@@ -384,7 +397,7 @@ public class DemoController {
 
 ❹ Use the `SentimentAnalysisService` component to call the `SentimentIntensityAnalyzer.polarity_scores(text)` Python function.
 
-### 4.8 Test
+### 4.8. Test
 
 Create a test to verify that when you make a GET request to `/analyze` you get the expected sentiment score response:
 
@@ -472,14 +485,7 @@ This will start the application on port 8080.
 
 The [GraalVM](https://www.graalvm.org/) Native Image compilation requires metadata to properly run code that uses [dynamic proxies](https://www.graalvm.org/latest/reference-manual/native-image/metadata/#dynamic-proxy).
 
-For the case that also a native executable has to be generated, create a proxy configuration file:
-
-`src/main/resources/META-INF/native-image/proxy-config.json`
-```json
-[
-  ["com.example.demo.SentimentIntensityAnalyzer"]
-]
-```
+To compile the application into a native executable, `SentimentAnalysisService` is annotated with `@ImportRuntimeHints` (see [4.5.](#45-using-a-python-library-from-java)) and the corresponding `SentimentIntensityAnalyzerRuntimeHints` register `SentimentIntensityAnalyzer` for proxy access.
 
 ### 7.2. Generate a Native Executable with GraalVM
 
