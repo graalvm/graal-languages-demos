@@ -16,12 +16,12 @@ import io.micronaut.views.View;
 @Controller
 public class AppController {
     @Introspected
-    public record InitialProps(String title) {
+    public record InitialProps(String title, int width, int height) {
     }
 
     @View("App")
     @Get
     public HttpResponse<?> index() {
-        return HttpResponse.ok(new InitialProps("Charts"));
+        return HttpResponse.ok(new InitialProps("Recharts Examples", 500, 300));
     }
 }

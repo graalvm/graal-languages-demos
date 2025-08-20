@@ -1,8 +1,8 @@
-import React from 'react';
-import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+/* Original Recharts example at: https://recharts.org/en-US/examples/SimpleLineChart */
 
-// Original line chart example from Recharts:
-// https://recharts.org/en-US/examples/SimpleLineChart
+import React from 'react';
+import { LineChart, Line, CartesianGrid, XAxis, YAxis } from 'recharts';
+
 const data = [
   { name: 'A', uv: 400, pv: 240 },
   { name: 'B', uv: 300, pv: 456 },
@@ -12,9 +12,9 @@ const data = [
   { name: 'F', uv: 189, pv: 480 },
 ];
 
-function SimpleLineChart() {
+function SimpleLineChart({width, height}) {
   return (
-    <LineChart width={500} height={300} data={data}>
+    <LineChart width={width} height={height} data={data}>
       <XAxis dataKey="name" />
       <YAxis />
       <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
