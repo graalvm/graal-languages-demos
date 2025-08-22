@@ -1,15 +1,7 @@
 async function main(wasmData) {
     try {
-        // Polyfill for instantiateStreaming if needed
-        if (!WebAssembly.instantiateStreaming) {
-            WebAssembly.instantiateStreaming = async (sourcePromise, importObject) => {
-                const source = await sourcePromise;
-                return await WebAssembly.instantiate(source, importObject);
-            };
-        }
-
         const go = new Go();
-        const { instance } = await WebAssembly.instantiate(
+        const {instance} = await WebAssembly.instantiate(
             new Uint8Array(wasmData),
             go.importObject
         );
@@ -19,4 +11,5 @@ async function main(wasmData) {
         console.error("Error running WebAssembly:", err);
     }
 }
+
 main(wasmData);
