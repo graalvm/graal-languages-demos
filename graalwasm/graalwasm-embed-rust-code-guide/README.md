@@ -1,29 +1,27 @@
-# Embed Rust in Java Using GraalWasm and JS
+# Embed Rust in Java Using GraalWasm
 
-The example below demonstrates how to compile a Rust function to WebAssembly and run it embedded in a Java application.
+The example below demonstrates how to compile a Rust library to WebAssembly and embed it in a Java application using [GraalWasm](https://graalvm.org/webassembly).
+For interoperability, generate JavaScript bindings for the Rust library and run them on [GraalJS](https://graalvm.org/javascript).
 
 ### Prerequisites
 
 To complete this guide, you need the following:
-- [GraalVM JDK](https://www.graalvm.org/downloads/)
-- [Rust](https://www.rust-lang.org/tools/install)
 - [Maven](https://maven.apache.org/)
+- [Rust](https://www.rust-lang.org/tools/install)
+- A bit of time to explore and experiment 
+- Your favorite IDE or text editor for coding comfortably 
+- JDK 21 or later
 
 ## 1. Setting up the Maven Project
 
-To follow this guide, generate the application from the [Maven Quickstart Archetype](https://maven.apache.org/archetypes/maven-archetype-quickstart/):
+To follow this guide, generate the application from the [Maven Quickstart Archetype](https://maven.apache.org/archetypes/maven-archetype-quickstart/) and go into the directory:
 
 ```shell
 mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.5 -DgroupId=com.example -DartifactId=demo -DinteractiveMode=false
-```
-```shell
 cd demo
 ```
 
 ### 1.1. Adding the Polyglot API and GraalWasm Dependencies
-
-The GraalVM Polyglot API can be easily added as a Maven dependency to your Java project.
-The GraalWasm artifact should be on the Java module or class path too.
 
 Add the following set of dependencies to the `<dependencies>` section of your project's _pom.xml_:
 
@@ -32,18 +30,18 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>polyglot</artifactId>
-      <version>25.0.0-SNAPSHOT</version>
+      <version>${graal.languages.version}</version>
   </dependency>
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>wasm</artifactId>
-      <version>25.0.0-SNAPSHOT</version>
+      <version>${graal.languages.version}</version>
       <type>pom</type>
   </dependency>
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>js</artifactId>
-      <version>25.0.0-SNAPSHOT</version>
+      <version>${graal.languages.version}</version>
       <type>pom</type>
   </dependency>
 <!-- </dependencies> -->
@@ -51,11 +49,11 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
 
 ## 2. Setting Up Rust Code
 
-Next, Create a Rust project and then write a Rust function and compile it into a WebAssembly module.
+Next, create a Rust project, write Rust code, and compile it into a WebAssembly module.
 
 ### 2.1  Creating Rust project
-```BASH
-cargo new --lib src/main/mywasmlib 
+```bash
+cargo new --lib src/main/rust/mywasmlib 
 
 ```
 
@@ -63,7 +61,7 @@ cargo new --lib src/main/mywasmlib
 
 Put the following  program in _mywasmlib/src/lib.rs_:
 
-```c
+```rust
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -78,7 +76,6 @@ pub struct Person {
 
 #[wasm_bindgen]
 impl Person {
-    #[wasm_bindgen]
     pub fn say_hello(&self) -> String {
         format!("Hello, {}!", self.name)
     }
@@ -88,17 +85,16 @@ impl Person {
 pub fn new_person(name: String) -> Person {
     Person { name }
 }
+
 #[wasm_bindgen]
 pub fn reverse_string(input: String) -> String {
     input.chars().rev().collect()
 }
-
-
 ```
 
 Make sure your _Cargo.toml_ looks like this :
 
-```declarative
+```toml
 [package]
 name = "mywasmlib"
 version = "0.1.0"
@@ -112,26 +108,28 @@ crate-type = ["cdylib", "rlib"]
 ```
 
 
-### 2.3. Compiling Rust Code to WebAssembly
+### 2.3. Compiling Rust to WebAssembly
 
-This configuration runs the Rust wasm-pack build command automatically during the Maven build process. It uses the Maven Exec Plugin to compile the Rust library in the mywasmlib directory to WebAssembly, ensuring the WASM and JavaScript bindings are always up-to-date whenever you build the project with Maven.
+To compile the Rust library to WebAssembly, use the `exec-maven-plugin` to invoke [`wasm-pack`](https://github.com/drager/wasm-pack) as part of the `generate-resources` Maven phase:
+
 ```xml
 <plugin>
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>exec-maven-plugin</artifactId>
-    <version>3.1.0</version>
+    <!--default configuration-->
     <executions>
         <execution>
             <id>build-rust</id>
-            <phase>compile</phase>
+            <phase>generate-resources</phase>
             <goals>
                 <goal>exec</goal>
             </goals>
             <configuration>
                 <executable>wasm-pack</executable>
-                <workingDirectory>${project.basedir}/src/main/mywasmlib</workingDirectory>
-                <arguments>
+                <workingDirectory>${project.basedir}/src/main/rust/mywasmlib</workingDirectory>
+                <arguments combine.self="override">
                     <argument>build</argument>
+                    <argument>--no-typescript</argument>
                     <argument>--target</argument>
                     <argument>bundler</argument>
                     <argument>--out-dir</argument>
@@ -142,67 +140,129 @@ This configuration runs the Rust wasm-pack build command automatically during th
     </executions>
 </plugin>
 ```
-## 3. Using the WebAssembly Module from Java using JS glue code
+
+As a result, the Wasm module becomes available as a Java resource on the class path.
+Note that `wasm-pack` also creates a _target/_ directory in _src/main/rust/mywasmlib_, which you want to add to your `.gitignore`.
+
+## 3. Using the WebAssembly Module from Java using the JavaScript Binding
 
 ### 3.1 Creating Java main class.
-Now you can embed Rust functions in a Java application.
+
+Now you can embed the Rust library in a Java application using the GraalVM Polyglot API.
+For this, you:
+1. load the JavaScript binding as a Java resource
+2. evaluate the binding as a JavaScript module in a `Context` with access to `js` and `wasm`
+3. create a Java interface for the Rust library
+3. use [`Value.as(Class)`](https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Value.html#as(java.lang.Class)) to expose the module under the Java interface
+4. program against the Java interface as usual 
+
 ```java
+package com.example;
+
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Source;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+
+
 public class App {
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        Context context = Context.newBuilder("js", "wasm")
+    private static final String MYWASMLIB_JS_RESOURCE = "/mywasmlib/mywasmlib.js";
+
+    public static void main(String[] args) throws IOException {
+        URL myWasmLibURL = App.class.getResource(MYWASMLIB_JS_RESOURCE);
+        if (myWasmLibURL == null) {
+            throw new FileNotFoundException(MYWASMLIB_JS_RESOURCE);
+        }
+        try (Context context = Context.newBuilder("js", "wasm")
                 .allowAllAccess(true)
                 .option("js.esm-eval-returns-exports", "true")
-                .option("js.webassembly", "true")
-                .option("js.text-encoding", "true").build();
-        URL myWasmLibURL = App.class.getResource("/mywasmlib/mywasmlib.js");
-        Source jsSource = Source.newBuilder("js", myWasmLibURL).mimeType("application/javascript+module").build();
-        MyWasmLib myWasmLibModule = context.eval(jsSource).as(MyWasmLib.class);
-        System.out.println(myWasmLibModule.add(2, 3));
-        System.out.println(myWasmLibModule.new_person("Anwar").say_hello());
-        System.out.println(myWasmLibModule.reverse_string("Hello There!"));
+                .option("js.text-encoding", "true")
+                .option("js.webassembly", "true").build()) {
+            Source jsSource = Source.newBuilder("js", myWasmLibURL).mimeType("application/javascript+module").build();
+            MyWasmLib myWasmLibModule = context.eval(jsSource).as(MyWasmLib.class);
+
+            System.out.println(myWasmLibModule.add(2, 3));
+            System.out.println(myWasmLibModule.new_person("Jane").say_hello());
+            System.out.println(myWasmLibModule.reverse_string("Hello There!"));
+        }
     }
 
     interface MyWasmLib {
         int add(int left, int right);
 
-        Person new_person(String name);
-
         interface Person {
             String say_hello();
         }
-        String  reverse_string (String word);
+
+        Person new_person(String name);
+
+        String reverse_string(String word);
     }
 }
-
 ```
 
 ## 4. Building and Testing the Application
 
-Compile and run this Java application with Maven:
+Compile and run the Java application with Maven:
 
 ```shell
-mvn package
-mvn exec:java -Dexec.mainClass=com.example.App
+./mvnw package
+./mvnw exec:exec
 ```
 
-The expected output should contain:
+The expected output should look like this:
 ```
 5
-Hello, Anwar!
+Hello, Jane!
 !erehT olleH
-
 ```
 
-## Conclusion
+## Compiling the Application to Native
 
-By following this guide, you have learned how to:
-* Compile Rust code to a WebAssembly module and export Rust functions as WebAssembly exports.
-* Load WebAssembly modules in Java using GraalWasm and Javascript.
-* Call functions exported from Rust in your Java application.
+To compile the Java application with GraalVM Native Image, additional [reachability metadata](https://www.graalvm.org/latest/reference-manual/native-image/metadata/) is required to register reflection, proxies, and resources.
+You can find the corresponding configuration for this Java application in [_reachability-metadata.json_](src/META-INF/native-image/com.example/app/reachability-metadata.json).
 
-### Learn More
+Afterward, add a new profile using the `native-maven-plugin` to your _pom.xml_:
 
-You can learn more at:
-* [GraalWasm Reference Manual](https://www.graalvm.org/latest/reference-manual/wasm/)
-* [GraalVM Embedding Languages Documentation](https://www.graalvm.org/jdk23/reference-manual/embed-languages/)
-* [GraalWasm on GitHub](https://github.com/oracle/graal/tree/master/wasm)
+```xml
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <executions>
+                            <execution>
+                                <id>build-native</id>
+                                <goals>
+                                    <goal>compile-no-fork</goal>
+                                </goals>
+                                <phase>package</phase>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <mainClass>com.example.App</mainClass>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+```
+
+To build the native application, run:
+
+```bash
+./mvnw -Pnative package
+```
+
+Finally, you can run the native application:
+
+```bash
+./target/demo
+```

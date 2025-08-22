@@ -20,13 +20,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Rust (stable)
-        uses: actions/checkout@v4
-        with:
-          rust-version: stable
-
-      - name: Add wasm32-wasi target
-        run: rustup target add wasm32-wasip1
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Set up GraalVM
         uses: graalvm/setup-graalvm@v1
@@ -36,8 +31,12 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
 
-      - name: Run Java with GraalVM + Wasm
+      - name: Build, test, and run 'graalwasm-embed-rust-code-guide'
         run: |
           cd graalwasm/graalwasm-embed-rust-code-guide
           ./mvnw --no-transfer-progress package
-          ./mvnw --no-transfer-progress exec:java
+          ./mvnw --no-transfer-progress exec:exec
+          # Now start fresh, build the native version, and run it
+          ./mvnw --no-transfer-progress clean
+          ./mvnw --no-transfer-progress -Pnative package
+          ./target/demo
