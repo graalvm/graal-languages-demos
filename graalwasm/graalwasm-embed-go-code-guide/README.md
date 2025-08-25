@@ -32,18 +32,18 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>polyglot</artifactId>
-      <version>25.0.0-SNAPSHOT</version>
+      <version>24.2.2</version>
   </dependency>
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>wasm</artifactId>
-      <version>25.0.0-SNAPSHOT</version>
+      <version>24.2.2</version>
       <type>pom</type>
   </dependency>
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>js</artifactId>
-      <version>25.0.0-SNAPSHOT</version>
+      <version>24.2.2</version>
       <type>pom</type>
   </dependency>
 <!-- </dependencies> -->
@@ -65,7 +65,6 @@ touch demo/src/main/go/main.go
 Put the following Go program in _main.go_:
 
 ```
-// main.go
 package main
 
 import "syscall/js"
@@ -74,11 +73,32 @@ func add(this js.Value, args []js.Value) interface{} {
     return args[0].Int() + args[1].Int()
 }
 
-func main() {
-    js.Global().Set("add", js.FuncOf(add))
-    select {}
+func reverseString(this js.Value, args []js.Value) interface{} {
+    if len(args) < 1 {
+        return js.ValueOf("")
+    }
+    s := args[0].String()
+
+    runes := []rune(s)
+    for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+        runes[i], runes[j] = runes[j], runes[i]
+    }
+    reversed := string(runes)
+    return js.ValueOf(reversed)
 }
 
+func registerMainModule() {
+    main := js.Global().Get("Object").New()
+    main.Set("add", js.FuncOf(add))
+    main.Set("reverseString", js.FuncOf(reverseString))
+    js.Global().Set("main", main)
+}
+
+func main() {
+    wait := make(chan struct{}, 0)
+    registerMainModule()
+    <-wait
+}
 
 ```
 
@@ -92,6 +112,16 @@ Add the following _exec-maven-plugin_ to your pom.xml to automatically compile y
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>exec-maven-plugin</artifactId>
     <version>3.1.0</version>
+    <configuration>
+        <executable>java</executable>
+        <arguments>
+            <argument>-classpath</argument>
+            <classpath/>
+            <argument>--enable-native-access=ALL-UNNAMED</argument>
+            <argument>--sun-misc-unsafe-memory-access=allow</argument>
+            <argument>com.example.App</argument>
+        </arguments>
+    </configuration>
     <executions>
         <execution>
             <id>build-go-wasm</id>
@@ -99,7 +129,7 @@ Add the following _exec-maven-plugin_ to your pom.xml to automatically compile y
             <goals>
                 <goal>exec</goal>
             </goals>
-            <configuration>
+            <configuration combine.self="override">
                 <executable>go</executable>
                 <environmentVariables>
                     <GOOS>js</GOOS>
@@ -108,7 +138,7 @@ Add the following _exec-maven-plugin_ to your pom.xml to automatically compile y
                 <arguments>
                     <argument>build</argument>
                     <argument>-o</argument>
-                    <argument>src/main/resources/mainw.wasm</argument>
+                    <argument>${project.build.outputDirectory}/go/main.wasm</argument>
                     <argument>src/main/go/main.go</argument>
                 </arguments>
             </configuration>
@@ -120,67 +150,128 @@ Add the following _exec-maven-plugin_ to your pom.xml to automatically compile y
 
 _wasm_exec.js_ is a JavaScript glue code file provided by the Go toolchain for running Go programs compiled to WebAssembly (WASM). By default, it is designed for browsers or Node.js and is not fully compatible with the GraalVM JavaScript environment. In this project, additional polyfills have been added to wasm_exec.js to provide missing functionality (such as crypto.getRandomValues and process.hrtime). With these polyfills, you can now use Go-generated WASM modules seamlessly in GraalVM.
 
-## 4. Implement JS logic:
-Add this in you main.js file inside your resources folder.
+## 4. Copy wasm_exec.js file into the target directory:
+Add the following _exec-maven-plugin_ to your pom.xml to automatically copy the _wasm_exec.js_ file into the target directory .
 
-```JS 
-async function main(wasmData) {
-    try {
-        // Polyfill for instantiateStreaming if needed
-        if (!WebAssembly.instantiateStreaming) {
-            WebAssembly.instantiateStreaming = async (sourcePromise, importObject) => {
-                const source = await sourcePromise;
-                return await WebAssembly.instantiate(source, importObject);
-            };
-        }
-
-        const go = new Go();
-        const { instance } = await WebAssembly.instantiate(
-            new Uint8Array(wasmData),
-            go.importObject
-        );
-        go.run(instance);
-        console.log("Sum:", global.add(1, 2));
-    } catch (err) {
-        console.error("Error running WebAssembly:", err);
-    }
-}
-
-main(wasmData);
-
+```xml
+<plugin>
+    <artifactId>maven-resources-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>copy-extra-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+                <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+                <outputDirectory>${project.build.outputDirectory}/go</outputDirectory>
+                <resources>
+                    <resource>
+                        <directory>${env.GOROOT}/lib/wasm</directory>
+                        <includes>
+                            <include>wasm_exec.js</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
 ```
+Make sure that GOROOT is Set for Maven: 
+```shell
+export GOROOT=$(go env GOROOT)
+```
+## 5. Adding the missing Polyfills.
 
-## 5. Using the WebAssembly Module from Java
-
-Now you can embed this WebAssembly function in a Java application. Make sure to move your wasm and _wasm_exec.js_ files to your resources folder _src/main/resources_ and then put the following in _src/main/java/com/example/App.java_:
-
+To be able to run Go code within a Java application, we need to add a Crypto polyfill. To achieve this, we’ll create the following class:
 ```java
 package com.example;
 
-import org.graalvm.polyglot.Context;
-import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.security.SecureRandom;
 
-public class App {
-  public static void main(String[] args) throws IOException {
-    Context context = Context.newBuilder("js","wasm")
-            .option("js.webassembly", "true")
-            .option("js.commonjs-require", "true")
-            .allowAllAccess(true)
-            .option("js.text-encoding","true").build();
-    byte [] wasmData = Files.readAllBytes(Path.of("src/main/resources/main.wasm"));
-    context.getBindings("js").putMember("wasmData",wasmData);
-    context.eval(Source.newBuilder("js",App.class.getResource("/wasm_exec.js")).build());
-    context.eval(Source.newBuilder("js",App.class.getResource("/main.js")).build());
+public class CryptoPolyfill {
+    private final SecureRandom random = new SecureRandom();
 
-  }
+    public Object getRandomValues(Value buffer) {
+        if (!buffer.hasArrayElements()) {
+            throw new IllegalArgumentException("TypeMismatchError: The data argument must be an integer-type TypedArray");
+        }
+        long arraySize = buffer.getArraySize();
+        if (arraySize > 65536) {
+            throw new IllegalArgumentException("QuotaExceededError: The requested length exceeds 65,536 bytes");
+        }
+        int size = Math.toIntExact(arraySize);
+        byte[] randomBytes = new byte[size];
+        random.nextBytes(randomBytes);
+        for (int i = 0; i < size; i++) {
+            buffer.setArrayElement(i, randomBytes[i]);
+        }
+        return buffer;
+    }
 }
 ```
 
-## 6. Building and Testing the Application
+##  6. Adding Go interface in java.
+The GoMain interface defines methods that map to corresponding Go functions. By implementing this interface, the Java application can invoke Go functionality (such as add and reverseString) directly from Java code. This setup enables seamless integration between Java and Go components.
+```java
+package com.example;
+
+interface GoMain {
+    int add(int a, int b);
+
+    String reverseString(String str);
+}
+
+```
+## 7. Using the WebAssembly Module from Java.
+Now you can embed this WebAssembly function in a Java application.
+```java
+public class App {
+    public static final String GO_MAIN_WASM = "/go/main.wasm";
+    public static final String GO_WASM_EXEC = "/go/wasm_exec.js";
+
+    public static void main(String[] args) throws IOException, URISyntaxException {
+        URL mainWasmURL = getResource(GO_MAIN_WASM);
+        byte[] wasmBytes = Files.readAllBytes(Path.of(mainWasmURL.toURI()));
+        URL wasmExecURL = getResource(GO_WASM_EXEC);
+        try (Context context = Context.newBuilder("js", "wasm")
+                .option("js.performance", "true")
+                .option("js.text-encoding", "true")
+                .option("js.webassembly", "true")
+                .allowAllAccess(true)
+                .build()) {
+            Value jsBindings = context.getBindings("js");
+            jsBindings.putMember("wasmBytes", wasmBytes);
+            jsBindings.putMember("crypto", new CryptoPolyfill());
+            context.eval(Source.newBuilder("js", wasmExecURL).build());
+            context.eval("js", """
+                    async function main(wasmBytes) {
+                        const go = new Go();
+                        const {instance} = await WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject);
+                        go.run(instance);
+                    }
+                    main(wasmBytes);
+                    """);
+            GoMain goMain = jsBindings.getMember("main").as(GoMain.class);
+            System.out.printf("3 + 4 = %s%n", goMain.add(3, 4));
+            System.out.printf("reverseString('Hello World') = %s%n", goMain.reverseString("Hello World"));
+        }
+    }
+
+    private static URL getResource(String name) throws FileNotFoundException {
+        URL url = App.class.getResource(name);
+        if (url == null) {
+            throw new FileNotFoundException(GO_MAIN_WASM);
+        }
+        return url;
+    }
+}
+```
+
+## 8. Building and Testing the Application
 
 Compile and run this Java application with Maven:
 
@@ -191,7 +282,8 @@ mvn exec:java -Dexec.mainClass=com.example.App
 
 The expected output should contain
 ```
-Sum: 3
+3 + 4 = 7
+reverseString('Hello World') = dlroW olleH
 ```
 
 ## Conclusion
