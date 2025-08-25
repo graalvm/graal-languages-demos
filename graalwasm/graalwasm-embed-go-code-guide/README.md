@@ -1,29 +1,27 @@
 # Embed Go in Java Using GraalVM and JS
 
-The example below demonstrates how to compile a Go function to WebAssembly and run it embedded in a Java application.
+The example below demonstrates how to compile Go code to WebAssembly and embed it in a Java application using [GraalWasm](https://graalvm.org/webassembly).
+To enable interoperability, generate JavaScript bindings for the Rust library and run them on [GraalJS](https://graalvm.org/javascript).
 
 ### Prerequisites
 
 To complete this guide, you need the following:
-- [GraalVM JDK](https://www.graalvm.org/downloads/)
-- [Go](https://go.dev/dl/)
 - [Maven](https://maven.apache.org/)
+- [Go](https://go.dev/) 1.25 or later
+- JDK 21 or later (e.g., [GraalVM JDK](https://www.graalvm.org/downloads/))
+- Your favorite IDE or text editor for coding comfortably 
+- A bit of time to explore and experiment 
 
-## 1. Setting up the Maven Project
+## 1. Setting Up the Maven Project
 
-To follow this guide, generate the application from the [Maven Quickstart Archetype](https://maven.apache.org/archetypes/maven-archetype-quickstart/):
+To follow this guide, generate the application from the [Maven Quickstart Archetype](https://maven.apache.org/archetypes/maven-archetype-quickstart/) and go into the directory:
 
 ```shell
 mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -DarchetypeArtifactId=maven-archetype-quickstart -DarchetypeVersion=1.5 -DgroupId=com.example -DartifactId=demo -DinteractiveMode=false
-```
-```shell
 cd demo
 ```
 
-### 1.1. Adding the Polyglot API and GraalWasm Dependencies
-
-The GraalVM Polyglot API can be easily added as a Maven dependency to your Java project.
-The GraalWasm artifact should be on the Java module or class path too.
+### 1.1. Add the Polyglot API and GraalWasm Dependencies
 
 Add the following set of dependencies to the `<dependencies>` section of your project's _pom.xml_:
 
@@ -32,39 +30,39 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>polyglot</artifactId>
-      <version>24.2.2</version>
+      <version>${graal.languages.version}</version>
   </dependency>
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>wasm</artifactId>
-      <version>24.2.2</version>
+      <version>${graal.languages.version}</version>
       <type>pom</type>
   </dependency>
   <dependency>
       <groupId>org.graalvm.polyglot</groupId>
       <artifactId>js</artifactId>
-      <version>24.2.2</version>
+      <version>${graal.languages.version}</version>
       <type>pom</type>
   </dependency>
 <!-- </dependencies> -->
 ```
 
-## 2. Setting Up Go Code
+## 2. Set Up Go Code
 
-Next, Create a Go project (_main.go_) and then write a Go function .
+Next, create a Go project (e.g., _main.go_) and add Go code.
 
-### 2.1  Creating Go project
-```BASH
-mkdir demo/src/main/go/
-touch demo/src/main/go/main.go
+### 2.1  Create a Go project
 
+```bash
+mkdir src/main/go/
+touch src/main/go/main.go
 ```
 
-### 2.2. Writing Go Code
+### 2.2. Write Go Code
 
-Put the following Go program in _main.go_:
+Add the following Go program to _main.go_:
 
-```
+```go
 package main
 
 import "syscall/js"
@@ -99,13 +97,13 @@ func main() {
     registerMainModule()
     <-wait
 }
-
 ```
 
 
-### 2.3. Compiling Go Code to WebAssembly
+### 2.3. Compile Go to WebAssembly
 
-Add the following _exec-maven-plugin_ to your pom.xml to automatically compile your go function to Wasm during the build process.
+To compile Go code to WebAssembly, ensure that the `go` compiler is installed and available on your system path.
+Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` Maven phase:
 
 ```xml
 <plugin>
@@ -146,12 +144,11 @@ Add the following _exec-maven-plugin_ to your pom.xml to automatically compile y
     </executions>
 </plugin>
 ```
-## 3.Implement JS glue code
 
-_wasm_exec.js_ is a JavaScript glue code file provided by the Go toolchain for running Go programs compiled to WebAssembly (WASM). By default, it is designed for browsers or Node.js and is not fully compatible with the GraalVM JavaScript environment. In this project, additional polyfills have been added to wasm_exec.js to provide missing functionality (such as crypto.getRandomValues and process.hrtime). With these polyfills, you can now use Go-generated WASM modules seamlessly in GraalVM.
+## 3. Copy wasm_exec.js file into the target directory:
 
-## 4. Copy wasm_exec.js file into the target directory:
-Add the following _exec-maven-plugin_ to your pom.xml to automatically copy the _wasm_exec.js_ file into the target directory .
+Running Go compiled to WebAssembly requires a _wasm_exec.js_ file with JavaScript glue code provided by the Go toolchain.
+Add the following _exec-maven-plugin_ to your _pom.xml_ to automatically copy the _wasm_exec.js_ file into the target directory.
 
 ```xml
 <plugin>
@@ -178,13 +175,19 @@ Add the following _exec-maven-plugin_ to your pom.xml to automatically copy the 
     </executions>
 </plugin>
 ```
-Make sure that GOROOT is Set for Maven: 
+
+Make sure that the `GOROOT` environment variable is set correctly before invoking Maven: 
+
 ```shell
 export GOROOT=$(go env GOROOT)
 ```
-## 5. Adding the missing Polyfills.
 
-To be able to run Go code within a Java application, we need to add a Crypto polyfill. To achieve this, we’ll create the following class:
+## 4. Implement JavaScript Polyfill
+
+By default, Go on Wasm is designed to run in the browser or on Node.js.
+To run it on GraalJS, a polyfill for `crypto.getRandomValues()` is required.
+This can be implemented using `SecureRandom` from the JDK:
+
 ```java
 package com.example;
 
@@ -214,8 +217,10 @@ public class CryptoPolyfill {
 }
 ```
 
-##  6. Adding Go interface in java.
-The GoMain interface defines methods that map to corresponding Go functions. By implementing this interface, the Java application can invoke Go functionality (such as add and reverseString) directly from Java code. This setup enables seamless integration between Java and Go components.
+##  5. Adding Go Interface in Java
+
+To enable interoperability between Java and Go, add a Java interface to your project and use [`Value.as(Class)`](https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Value.html#as(java.lang.Class)) to program against it:
+
 ```java
 package com.example;
 
@@ -224,78 +229,84 @@ interface GoMain {
 
     String reverseString(String str);
 }
-
 ```
+
 ## 7. Using the WebAssembly Module from Java.
-Now you can embed this WebAssembly function in a Java application.
+
+Now you can embed the Wasm module in a Java application:
+
 ```java
+package com.example;
+
+import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+
 public class App {
     public static final String GO_MAIN_WASM = "/go/main.wasm";
     public static final String GO_WASM_EXEC = "/go/wasm_exec.js";
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        URL mainWasmURL = getResource(GO_MAIN_WASM);
-        byte[] wasmBytes = Files.readAllBytes(Path.of(mainWasmURL.toURI()));
-        URL wasmExecURL = getResource(GO_WASM_EXEC);
+    public static void main(String[] args) throws IOException {
+        // Load Go resources
+        byte[] wasmBytes;
+        try (InputStream in = App.class.getResourceAsStream(GO_MAIN_WASM)) {
+            if (in == null) {
+                throw new FileNotFoundException(GO_MAIN_WASM);
+            }
+            wasmBytes = in.readAllBytes();
+        }
+        URL wasmExecURL = App.class.getResource(GO_WASM_EXEC);
+        if (wasmExecURL == null) {
+            throw new FileNotFoundException(GO_WASM_EXEC);
+        }
+        // Create a context with Wasm and JavaScript access
         try (Context context = Context.newBuilder("js", "wasm")
                 .option("js.performance", "true")
                 .option("js.text-encoding", "true")
                 .option("js.webassembly", "true")
                 .allowAllAccess(true)
                 .build()) {
+            // Install Wasm bytes and crypto polyfill in JS binding
             Value jsBindings = context.getBindings("js");
             jsBindings.putMember("wasmBytes", wasmBytes);
             jsBindings.putMember("crypto", new CryptoPolyfill());
+            // Evaluate wasm_exec.js file
             context.eval(Source.newBuilder("js", wasmExecURL).build());
+            // Instantiate the Wasm module and invoke go.run()
             context.eval("js", """
-                    async function main(wasmBytes) {
+                    async function run(wasmBytes) {
                         const go = new Go();
                         const {instance} = await WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject);
                         go.run(instance);
                     }
-                    main(wasmBytes);
+                    run(wasmBytes);
                     """);
+            // Access main module and interact with it through a Java interface
             GoMain goMain = jsBindings.getMember("main").as(GoMain.class);
             System.out.printf("3 + 4 = %s%n", goMain.add(3, 4));
             System.out.printf("reverseString('Hello World') = %s%n", goMain.reverseString("Hello World"));
         }
     }
-
-    private static URL getResource(String name) throws FileNotFoundException {
-        URL url = App.class.getResource(name);
-        if (url == null) {
-            throw new FileNotFoundException(GO_MAIN_WASM);
-        }
-        return url;
-    }
 }
 ```
 
-## 8. Building and Testing the Application
+## 8. Build and Test the Application
 
 Compile and run this Java application with Maven:
 
 ```shell
-mvn package
-mvn exec:java -Dexec.mainClass=com.example.App
+export GOROOT=$(go env GOROOT)
+./mvnw package
+./mvnw exec:exec
 ```
 
-The expected output should contain
+The expected output should look like this:
 ```
 3 + 4 = 7
 reverseString('Hello World') = dlroW olleH
 ```
-
-## Conclusion
-
-By following this guide, you have learned how to:
-* Compile Go code to a WebAssembly module and export Go functions as WebAssembly exports.
-* Load WebAssembly modules in Java using GraalWasm.
-* Call functions exported from Go in your Java application.
-
-### Learn More
-
-You can learn more at:
-* [GraalWasm Reference Manual](https://www.graalvm.org/latest/reference-manual/wasm/)
-* [GraalVM Embedding Languages Documentation](https://www.graalvm.org/jdk23/reference-manual/embed-languages/)
-* [GraalWasm on GitHub](https://github.com/oracle/graal/tree/master/wasm)

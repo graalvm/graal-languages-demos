@@ -8,11 +8,11 @@ To enable interoperability, generate JavaScript bindings for the Rust library an
 To complete this guide, you need the following:
 - [Maven](https://maven.apache.org/)
 - [`wasm-pack`](https://drager.github.io/wasm-pack/installer/)
-- JDK 21 or later
+- JDK 21 or later (e.g., [GraalVM JDK](https://www.graalvm.org/downloads/))
 - Your favorite IDE or text editor for coding comfortably 
 - A bit of time to explore and experiment 
 
-## 1. Setting Up the Maven Project
+## 1. Set Up the Maven Project
 
 To follow this guide, generate the application from the [Maven Quickstart Archetype](https://maven.apache.org/archetypes/maven-archetype-quickstart/) and go into the directory:
 
@@ -21,7 +21,7 @@ mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -Darchetyp
 cd demo
 ```
 
-### 1.1. Adding the Polyglot API and GraalWasm Dependencies
+### 1.1. Add the Polyglot API and GraalWasm Dependencies
 
 Add the following set of dependencies to the `<dependencies>` section of your project's _pom.xml_:
 
@@ -47,17 +47,16 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
 <!-- </dependencies> -->
 ```
 
-## 2. Setting Up Rust Code
+## 2. Set Up Rust Code
 
 Next, create a Rust project, write Rust code, and compile it into a WebAssembly module.
 
-### 2.1  Creating the Rust project
+### 2.1  Create a Rust project
 ```bash
 cargo new --lib src/main/rust/mywasmlib 
-
 ```
 
-### 2.2. Writing Rust Code
+### 2.2. Write Rust Code
 
 Add the following program to _mywasmlib/src/lib.rs_:
 
@@ -108,7 +107,7 @@ crate-type = ["cdylib", "rlib"]
 ```
 
 
-### 2.3. Compiling Rust to WebAssembly
+### 2.3. Compile Rust to WebAssembly
 
 To compile the Rust library to WebAssembly, ensure `wasm-pack` is installed and available on your system path.
 Use the `exec-maven-plugin` to invoke `wasm-pack` as part of the `generate-resources` Maven phase:
@@ -145,9 +144,9 @@ Use the `exec-maven-plugin` to invoke `wasm-pack` as part of the `generate-resou
 As a result, the Wasm module becomes available as a Java resource on the class path.
 Note that `wasm-pack` also creates a _target/_ directory in _src/main/rust/mywasmlib_, which you want to add to your `.gitignore`.
 
-## 3. Using the WebAssembly Module from Java using the JavaScript Binding
+## 3. Run the WebAssembly Module from Java using the JavaScript Binding
 
-### 3.1 Creating Java main class.
+### 3.1 Create a Java Main Class
 
 Now you can embed the Rust library in a Java application using the GraalVM Polyglot API.
 To do this:
@@ -204,7 +203,7 @@ public class App {
 }
 ```
 
-## 4. Building and Testing the Application
+## 4. Build and Test the Application
 
 Compile and run the Java application with Maven:
 
@@ -220,7 +219,7 @@ Hello, Jane!
 !erehT olleH
 ```
 
-## Compiling the Application to Native
+## Compile the Application to Native
 
 With GraalVM Native Image, this Java application can be compiled into a native executable that starts instantly, scales fast, and uses fewer compute resources.
 For this, you need additional [reachability metadata](https://www.graalvm.org/latest/reference-manual/native-image/metadata/) to register reflection, proxies, and resources.
