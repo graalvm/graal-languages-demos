@@ -1,18 +1,18 @@
 # Embed Rust in Java Using GraalWasm
 
 The example below demonstrates how to compile a Rust library to WebAssembly and embed it in a Java application using [GraalWasm](https://graalvm.org/webassembly).
-For interoperability, generate JavaScript bindings for the Rust library and run them on [GraalJS](https://graalvm.org/javascript).
+To enable interoperability, generate JavaScript bindings for the Rust library and run them on [GraalJS](https://graalvm.org/javascript).
 
 ### Prerequisites
 
 To complete this guide, you need the following:
 - [Maven](https://maven.apache.org/)
-- [Rust](https://www.rust-lang.org/tools/install)
-- A bit of time to explore and experiment 
-- Your favorite IDE or text editor for coding comfortably 
+- [`wasm-pack`](https://drager.github.io/wasm-pack/installer/)
 - JDK 21 or later
+- Your favorite IDE or text editor for coding comfortably 
+- A bit of time to explore and experiment 
 
-## 1. Setting up the Maven Project
+## 1. Setting Up the Maven Project
 
 To follow this guide, generate the application from the [Maven Quickstart Archetype](https://maven.apache.org/archetypes/maven-archetype-quickstart/) and go into the directory:
 
@@ -51,7 +51,7 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
 
 Next, create a Rust project, write Rust code, and compile it into a WebAssembly module.
 
-### 2.1  Creating Rust project
+### 2.1  Creating the Rust project
 ```bash
 cargo new --lib src/main/rust/mywasmlib 
 
@@ -59,7 +59,7 @@ cargo new --lib src/main/rust/mywasmlib
 
 ### 2.2. Writing Rust Code
 
-Put the following  program in _mywasmlib/src/lib.rs_:
+Add the following program to _mywasmlib/src/lib.rs_:
 
 ```rust
 use wasm_bindgen::prelude::*;
@@ -110,7 +110,8 @@ crate-type = ["cdylib", "rlib"]
 
 ### 2.3. Compiling Rust to WebAssembly
 
-To compile the Rust library to WebAssembly, use the `exec-maven-plugin` to invoke [`wasm-pack`](https://github.com/drager/wasm-pack) as part of the `generate-resources` Maven phase:
+To compile the Rust library to WebAssembly, ensure `wasm-pack` is installed and available on your system path.
+Use the `exec-maven-plugin` to invoke `wasm-pack` as part of the `generate-resources` Maven phase:
 
 ```xml
 <plugin>
@@ -150,11 +151,11 @@ Note that `wasm-pack` also creates a _target/_ directory in _src/main/rust/mywas
 
 Now you can embed the Rust library in a Java application using the GraalVM Polyglot API.
 For this, you:
-1. load the JavaScript binding as a Java resource
-2. evaluate the binding as a JavaScript module in a `Context` with access to `js` and `wasm`
-3. create a Java interface for the Rust library
-3. use [`Value.as(Class)`](https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Value.html#as(java.lang.Class)) to expose the module under the Java interface
-4. program against the Java interface as usual 
+1. Load the JavaScript binding as a Java resource
+2. Evaluate the binding as a JavaScript module in a `Context` with access to `js` and `wasm`
+3. Create a Java interface for the Rust library
+3. Use [`Value.as(Class)`](https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Value.html#as(java.lang.Class)) to expose the module under the Java interface
+4. Program against the Java interface as usual 
 
 ```java
 package com.example;
@@ -221,7 +222,8 @@ Hello, Jane!
 
 ## Compiling the Application to Native
 
-To compile the Java application with GraalVM Native Image, additional [reachability metadata](https://www.graalvm.org/latest/reference-manual/native-image/metadata/) is required to register reflection, proxies, and resources.
+With GraalVM Native Image, this Java application can be compiled into a native executable that starts instantly, scales fast, and uses fewer compute resources.
+For this, additional [reachability metadata](https://www.graalvm.org/latest/reference-manual/native-image/metadata/) is required to register reflection, proxies, and resources.
 You can find the corresponding configuration for this Java application in [_reachability-metadata.json_](src/META-INF/native-image/com.example/app/reachability-metadata.json).
 
 Afterward, add a new profile using the `native-maven-plugin` to your _pom.xml_:
@@ -255,14 +257,16 @@ Afterward, add a new profile using the `native-maven-plugin` to your _pom.xml_:
     </profiles>
 ```
 
-To build the native application, run:
+To build the native executable, run:
 
 ```bash
 ./mvnw -Pnative package
 ```
 
-Finally, you can run the native application:
+Finally, you can run the native executable:
 
 ```bash
 ./target/demo
 ```
+
+The output should be the same (see [here](#4-building-and-testing-the-application)), only the application starts and runs much faster and requires fewer CPU and memory resources.
