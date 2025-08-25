@@ -1,15 +1,15 @@
-async function main(wasmData) {
+async function main(wasmBytes) {
     try {
         const go = new Go();
-        const {instance} = await WebAssembly.instantiate(
-            new Uint8Array(wasmData),
-            go.importObject
-        );
+        const {instance} = await WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject);
         go.run(instance);
-        console.log("Sum:", global.add(1, 2));
+
+        // The "add" function is now available on the global object
+        const result = globalThis.add(3, 4);
+        console.log("3 + 4 =", result);
     } catch (err) {
         console.error("Error running WebAssembly:", err);
     }
 }
 
-main(wasmData);
+main(wasmBytes);
