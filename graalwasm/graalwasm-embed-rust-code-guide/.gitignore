@@ -1,0 +1,2 @@
+# Ignore Maven and Cargo build output directories
+target

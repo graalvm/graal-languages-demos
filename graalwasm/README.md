@@ -13,3 +13,4 @@ This directory contains demo applications and guides for [GraalWasm](https://www
 ## Guides
 
 - [Embed C in Java Using GraalWasm](graalwasm-embed-c-code-guide/)
+- [Embed Rust in Java Using GraalWasm](graalwasm-embed-rust-code-guide/)

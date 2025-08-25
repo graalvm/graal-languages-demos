@@ -1,0 +1,29 @@
+{
+  "reflection": [
+    {
+      "type": "com.example.App$MyWasmLib"
+    },
+    {
+      "type": "com.example.App$MyWasmLib$Person"
+    },
+    {
+      "type": {
+        "proxy": [
+          "com.example.App$MyWasmLib"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "com.example.App$MyWasmLib$Person"
+        ]
+      }
+    }
+  ],
+  "resources": [
+    {
+      "glob": "/mywasmlib/*"
+    }
+  ]
+}
