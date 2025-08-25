@@ -7,6 +7,7 @@ package com.example;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
+import org.graalvm.polyglot.Value;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,23 +19,32 @@ import java.nio.file.Path;
 public class App {
     public static final String GO_MAIN_WASM = "/go/main.wasm";
     public static final String GO_WASM_EXEC = "/go/wasm_exec.js";
-    public static final String GO_MAIN_JS = "/main.js";
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         URL mainWasmURL = getResource(GO_MAIN_WASM);
         byte[] wasmBytes = Files.readAllBytes(Path.of(mainWasmURL.toURI()));
         URL wasmExecURL = getResource(GO_WASM_EXEC);
-        URL mainJSURL = getResource(GO_MAIN_JS);
         try (Context context = Context.newBuilder("js", "wasm")
                 .option("js.performance", "true")
                 .option("js.text-encoding", "true")
                 .option("js.webassembly", "true")
                 .allowAllAccess(true)
-                .build()){
-            context.getBindings("js").putMember("wasmBytes", wasmBytes);
-            context.getBindings("js").putMember("crypto", new CryptoPolyfill());
+                .build()) {
+            Value jsBindings = context.getBindings("js");
+            jsBindings.putMember("wasmBytes", wasmBytes);
+            jsBindings.putMember("crypto", new CryptoPolyfill());
             context.eval(Source.newBuilder("js", wasmExecURL).build());
-            context.eval(Source.newBuilder("js", mainJSURL).build());
+            context.eval("js", """
+                    async function main(wasmBytes) {
+                        const go = new Go();
+                        const {instance} = await WebAssembly.instantiate(new Uint8Array(wasmBytes), go.importObject);
+                        go.run(instance);
+                    }
+                    main(wasmBytes);
+                    """);
+            GoMain goMain = jsBindings.getMember("main").as(GoMain.class);
+            System.out.printf("3 + 4 = %s%n", goMain.add(3, 4));
+            System.out.printf("reverseString('Hello World') = %s%n", goMain.reverseString("Hello World"));
         }
     }
 
