@@ -36,5 +36,6 @@ jobs:
       - name: Build, test, and run 'graalwasm-embed-go-code-guide'
         run: |
           cd graalwasm/graalwasm-embed-go-code-guide
+          export GOROOT="$(go env GOROOT)"
           ./mvnw --no-transfer-progress package
           ./mvnw --no-transfer-progress exec:exec

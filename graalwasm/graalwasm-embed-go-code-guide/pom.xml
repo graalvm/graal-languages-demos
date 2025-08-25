@@ -127,7 +127,7 @@
                             <outputDirectory>${project.build.outputDirectory}/go</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>/opt/homebrew/Cellar/go/1.24.6/libexec/lib/wasm</directory>
+                                    <directory>${env.GOROOT}/lib/wasm</directory>
                                     <includes>
                                         <include>wasm_exec.js</include>
                                     </includes>
