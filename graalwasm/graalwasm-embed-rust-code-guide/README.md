@@ -150,7 +150,7 @@ Note that `wasm-pack` also creates a _target/_ directory in _src/main/rust/mywas
 ### 3.1 Creating Java main class.
 
 Now you can embed the Rust library in a Java application using the GraalVM Polyglot API.
-For this, you:
+To do this:
 1. Load the JavaScript binding as a Java resource
 2. Evaluate the binding as a JavaScript module in a `Context` with access to `js` and `wasm`
 3. Create a Java interface for the Rust library
@@ -223,7 +223,7 @@ Hello, Jane!
 ## Compiling the Application to Native
 
 With GraalVM Native Image, this Java application can be compiled into a native executable that starts instantly, scales fast, and uses fewer compute resources.
-For this, additional [reachability metadata](https://www.graalvm.org/latest/reference-manual/native-image/metadata/) is required to register reflection, proxies, and resources.
+For this, you need additional [reachability metadata](https://www.graalvm.org/latest/reference-manual/native-image/metadata/) to register reflection, proxies, and resources.
 You can find the corresponding configuration for this Java application in [_reachability-metadata.json_](src/META-INF/native-image/com.example/app/reachability-metadata.json).
 
 Afterward, add a new profile using the `native-maven-plugin` to your _pom.xml_:
