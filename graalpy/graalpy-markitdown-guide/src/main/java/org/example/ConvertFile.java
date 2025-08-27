@@ -1,5 +1,5 @@
 package org.example;
 
-public interface ConvertFiles {
+public interface ConvertFile {
     String convert(String file);
 }

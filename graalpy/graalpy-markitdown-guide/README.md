@@ -2,8 +2,7 @@
 
 ## 1. Getting Started
 
-In this guide, we will demonstrate how to use [MarkitDown](https://github.com/microsoft/markitdown) within a Java interface.
-![img.png](img.png)
+In this guide, we will demonstrate how to use [MarkitDown](https://github.com/microsoft/markitdown) within a Java application through GraalPy.
 ## 2. What you will need
 
 To complete this guide, you will need the following:
@@ -19,12 +18,12 @@ To complete this guide, you will need the following:
 
 ## 3. Writing the application
 
-We will use Maven to run a JavaFX example application that integrates MarkitDown using GraalPy.
+We will use Maven to run a simple Java application that integrates `MarkitDown` using `GraalPy`.
 
 ### 3.1 Dependency configuration
 
 
-Add the required dependencies for GraalPy in the dependency section of the POM build script.
+Add the required dependencies for `GraalPy` in the dependency section of the POM build script.
 
 
 `pom.xml`
@@ -53,34 +52,8 @@ Add the required dependencies for GraalPy in the dependency section of the POM b
 ❸ The `python-embedding` dependency provides the APIs to manage and use GraalPy from Java.
 
 
-### 3.2 JavaFx dependencies and pluging 
 
-To build a graphical interface, we use JavaFX.
-
-`pom.xml`:
-```xml
-<dependency>
-  <groupId>org.openjfx</groupId>
-  <artifactId>javafx-controls</artifactId>  <!-- ① -->
-  <version>23.0.1</version>
-</dependency>
-```
-
-```xml
-<plugin>
-  <groupId>org.openjfx</groupId>
-  <artifactId>javafx-maven-plugin</artifactId> <!-- ② -->
-  <version>0.0.8</version>
-  <configuration>
-      <mainClass>org.example.App</mainClass>
-  </configuration>
-</plugin>
-```
-❶ The `javafx-controls` dependency contains the core UI controls (buttons, labels, text areas, etc.) needed to create our application window.
-
-❷ The `javafx-maven-plugin` plugin allows us to run JavaFX applications directly with Maven, without needing manual configuration of the JavaFX runtime.
-
-### 3.3 Adding packages - GraalPy build plugin configuration
+### 3.2 Adding packages - GraalPy build plugin configuration
 ```xml
 <plugin>
     <groupId>org.graalvm.python</groupId>
@@ -116,19 +89,13 @@ To build a graphical interface, we use JavaFX.
 
 GraalPy makes setting up a context to load Python packages from Java straightforward.
 
-`src/main/java/org/example/App.java`
+`App.java`
 
 ```java
-
-@Override
-public void start(Stage stage) {
-  context = GraalPyResources.contextBuilder()
-          .allowAllAccess(true) // ①
-          .option("python.WarnExperimentalFeatures", "false") // ②
-          .build(); // ③
-
-  setupWindow(stage);
-}
+ try (Context context = GraalPyResources.contextBuilder()
+        .allowAllAccess(true) // ①
+        .option("python.WarnExperimentalFeatures", "false") // ②
+        .build()) { // ③
 
 ```
 
@@ -147,8 +114,7 @@ We'll create a Python module in this section and bind it to a Java interface, al
 
 All Python source code should be placed in `src/main/resources/org.graalvm.python.vfs/src`
 
-`src/main/resources/org.graalvm.python.vfs/src/convert_files.py`
-
+`convert_file.py`
 
 ```python
 from markitdown import MarkItDown
@@ -168,8 +134,7 @@ def convert(file: str) -> str: # ①
 
 Define a Java interface with method signatures matching the Python functions.
 
-`src/main/java/org/example/ConvertFiles.java`
-
+`ConvertFile.java`
 
 ```java
 
@@ -180,107 +145,21 @@ public interface ConvertFiles {
 }
 
 ```
-Bind the Java interface to the Python module.
+
+
+### 3.5.2 Binding the Java interface to the Python module
+
+Once the Python function is defined, we can bind it to the Java interface so that calling the Python function feels like a normal Java method invocation:
 
 ```java
-private void convertFileWithGraalPy(File file, TextArea textArea) {
-        try {
-            textArea.setText("Converting...");
-            Value value = context.eval("python", "import convert_files; convert_files");
-            convertFiles = value.as(ConvertFiles.class);
-            String text = convertFiles.convert(file.getAbsolutePath());
-            textArea.setText(text);
-        } catch (Exception e) {
-            textArea.setText("Error: " + e.getMessage());
-        }
-    }
-```
-
-
-### 3.5.2 Creating a JavaFX Window
-
-
-The JavaFX UI allows users to drag & drop or select files to convert to text.
-
-`src/main/java/org/example/App.java`
-
-
-```java
-
-private void setupWindow(Stage stage) {
-
-  Label fileLabel = new Label("Drag file here or click to upload");
-  fileLabel.setStyle("-fx-border: 2px dashed #ccc; -fx-padding: 20; -fx-alignment: center;");
-
-  HBox fileSection = new HBox(10);
-  fileSection.getChildren().add(fileLabel);
-  fileSection.setPadding(new Insets(10));
-
-  Button convertButton = new Button("Convert to Text");
-  convertButton.setDisable(true);
-  convertButton.setPrefWidth(120);
-
-  fileLabel.setOnDragOver(event -> {
-    if (event.getDragboard().hasFiles()) {
-      event.acceptTransferModes(TransferMode.COPY);
-    }
-    event.consume();
-  });
-
-  fileLabel.setOnDragDropped(event -> {
-    Dragboard db = event.getDragboard();
-    if (db.hasFiles()) {
-      List<File> files = db.getFiles();
-      if (!files.isEmpty()) {
-        selectedFile = files.get(0);
-        fileLabel.setText("Selected: " + selectedFile.getName());
-        convertButton.setDisable(false);
-      }
-    }
-    event.consume();
-  });
-
-  fileLabel.setOnMouseClicked(e -> {
-    javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-    fileChooser.getExtensionFilters().addAll(
-            new javafx.stage.FileChooser.ExtensionFilter("Documents", "*.pdf", "*.docx", "*.pptx", "*.txt"),
-            new javafx.stage.FileChooser.ExtensionFilter("All Files", "*.*")
-    );
-
-    File file = fileChooser.showOpenDialog(stage);
-    if (file != null) {
-      selectedFile = file;
-      fileLabel.setText("Selected: " + file.getName());
-      convertButton.setDisable(false);
-    }
-  });
-  convertButton.setDisable(true);
-  convertButton.setPrefWidth(120);
-
-  TextArea textArea = new TextArea();
-  textArea.setWrapText(true);
-  textArea.setPromptText("Converted text will appear here...");
-  VBox.setVgrow(textArea, Priority.ALWAYS);
-
-  convertButton.setOnAction(e -> {
-    if (selectedFile != null) {
-      convertFileWithGraalPy(selectedFile, textArea);
-    }
-  });
-
-  VBox layout = new VBox(10);
-  layout.getChildren().addAll(fileSection, convertButton, textArea);
-  layout.setPadding(new Insets(10));
-
-  Scene scene = new Scene(layout, 600, 400);
-  stage.setScene(scene);
-  stage.setTitle("MarkitDown Demo");
-  stage.show();
-}
+Value value = context.eval("python", "import convert_file; convert_file");
+ConvertFile convertFile = value.as(ConvertFile.class);
+String text = convertFile.convert("src/main/resources/test.pdf");
+System.out.println(text);
 
 ```
 
-
+This allows Java code to call the `convert()` function from the Python module seamlessly.
 
 ### 4 Running the Application
 
@@ -288,6 +167,6 @@ If you followed along with the example, you can now compile and run your applica
 
 ```shell
 mvn compile
-mvn javafx:run
+mvn exec:java
 ```
 

@@ -29,11 +29,6 @@
             <version>${graalpy.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-controls</artifactId> <!-- ① -->
-            <version>23.0.1</version>
-        </dependency>
 
     </dependencies>
     <build>
@@ -63,16 +58,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.2.1</version>
-                <configuration>
-                    <mainClass>org.example.App</mainClass>
-                </configuration>
-            </plugin>
-
-
-            <plugin>
-                <groupId>org.openjfx</groupId>
-                <artifactId>javafx-maven-plugin</artifactId>  <!-- ② -->
-                <version>0.0.8</version>
                 <configuration>
                     <mainClass>org.example.App</mainClass>
                 </configuration>
