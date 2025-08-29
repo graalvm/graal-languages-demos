@@ -1,9 +1,17 @@
 package main
 
-import "syscall/js"
+import (
+    "fmt"
+    "runtime"
+    "syscall/js"
+)
 
 func add(this js.Value, args []js.Value) interface{} {
     return args[0].Int() + args[1].Int()
+}
+
+func compilerAndVersion(this js.Value, args []js.Value) interface{} {
+    return js.ValueOf(fmt.Sprintf("Compiler: %s, Go version: %s", runtime.Compiler, runtime.Version()))
 }
 
 func reverseString(this js.Value, args []js.Value) interface{} {
@@ -20,15 +28,16 @@ func reverseString(this js.Value, args []js.Value) interface{} {
     return js.ValueOf(reversed)
 }
 
-func registerMainModule() {
+func registerMainPackage() {
     main := js.Global().Get("Object").New()
     main.Set("add", js.FuncOf(add))
+    main.Set("compilerAndVersion", js.FuncOf(compilerAndVersion))
     main.Set("reverseString", js.FuncOf(reverseString))
     js.Global().Set("main", main)
 }
 
 func main() {
     wait := make(chan struct{}, 0)
-    registerMainModule()
+    registerMainPackage()
     <-wait
 }

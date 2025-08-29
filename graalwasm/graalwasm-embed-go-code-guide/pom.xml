@@ -114,32 +114,8 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-extra-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/go</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${env.GOROOT}/lib/wasm</directory>
-                                    <includes>
-                                        <include>wasm_exec.js</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
                 <configuration>
                     <executable>java</executable>
                     <arguments>
@@ -150,28 +126,6 @@
                         <argument>com.example.App</argument>
                     </arguments>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>build-go-wasm</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration combine.self="override">
-                            <executable>go</executable>
-                            <environmentVariables>
-                                <GOOS>js</GOOS>
-                                <GOARCH>wasm</GOARCH>
-                            </environmentVariables>
-                            <arguments>
-                                <argument>build</argument>
-                                <argument>-o</argument>
-                                <argument>${project.build.outputDirectory}/go/main.wasm</argument>
-                                <argument>src/main/go/main.go</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -182,4 +136,121 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>go</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-extra-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.outputDirectory}/go</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${env.GOROOT}/lib/wasm</directory>
+                                            <includes>
+                                                <include>wasm_exec.js</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-go-wasm</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration combine.self="override">
+                                    <executable>${env.GOROOT}/bin/go</executable>
+                                    <environmentVariables>
+                                        <GOOS>js</GOOS>
+                                        <GOARCH>wasm</GOARCH>
+                                    </environmentVariables>
+                                    <arguments>
+                                        <argument>build</argument>
+                                        <argument>-o</argument>
+                                        <argument>${project.build.outputDirectory}/go/main.wasm</argument>
+                                        <argument>src/main/go/main.go</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>tinygo</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-extra-resources</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.outputDirectory}/go</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${env.TINYGOROOT}/targets</directory>
+                                            <includes>
+                                                <include>wasm_exec.js</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>build-go-wasm</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration combine.self="override">
+                                    <executable>${env.TINYGOROOT}/bin/tinygo</executable>
+                                    <environmentVariables>
+                                        <GOOS>js</GOOS>
+                                        <GOARCH>wasm</GOARCH>
+                                    </environmentVariables>
+                                    <arguments>
+                                        <argument>build</argument>
+                                        <argument>-o</argument>
+                                        <argument>${project.build.outputDirectory}/go/main.wasm</argument>
+                                        <argument>src/main/go/main.go</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

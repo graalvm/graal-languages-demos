@@ -33,9 +33,18 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
 
-      - name: Build, test, and run 'graalwasm-embed-go-code-guide'
+      - name: Build, test, and run 'graalwasm-embed-go-code-guide' with Go
         run: |
           cd graalwasm/graalwasm-embed-go-code-guide
           export GOROOT="$(go env GOROOT)"
-          ./mvnw --no-transfer-progress package
+          ./mvnw --no-transfer-progress -Pgo package
+          ./mvnw --no-transfer-progress exec:exec
+
+      - name: Build, test, and run 'graalwasm-embed-go-code-guide' with TinyGo
+        run: |
+          cd graalwasm/graalwasm-embed-go-code-guide
+          wget https://github.com/tinygo-org/tinygo/releases/download/v0.39.0/tinygo0.39.0.linux-amd64.tar.gz
+          tar xzf tinygo0.39.0.linux-amd64.tar.gz
+          export TINYGOROOT="$(pwd)/tinygo"
+          ./mvnw --no-transfer-progress -Ptinygo package
           ./mvnw --no-transfer-progress exec:exec

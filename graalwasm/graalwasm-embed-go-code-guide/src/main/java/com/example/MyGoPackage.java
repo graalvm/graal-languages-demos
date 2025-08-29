@@ -5,8 +5,10 @@
  */
 package com.example;
 
-interface GoMain {
+interface MyGoPackage {
     int add(int a, int b);
+
+    String compilerAndVersion();
 
     String reverseString(String str);
 }

@@ -6,6 +6,8 @@
 package com.example;
 
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.HostAccess;
+import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 
@@ -33,10 +35,13 @@ public class App {
         }
         // Create a context with Wasm and JavaScript access
         try (Context context = Context.newBuilder("js", "wasm")
-                .option("js.performance", "true")
+                .option("js.global-property", "true") // experimental
+                .option("js.performance", "true") // experimental
                 .option("js.text-encoding", "true")
                 .option("js.webassembly", "true")
-                .allowAllAccess(true)
+                .allowExperimentalOptions(true)
+                .allowHostAccess(HostAccess.ALL)
+                .allowPolyglotAccess(PolyglotAccess.ALL)
                 .build()) {
             // Install Wasm bytes and crypto polyfill in JS binding
             Value jsBindings = context.getBindings("js");
@@ -53,10 +58,11 @@ public class App {
                     }
                     run(wasmBytes);
                     """);
-            // Access main module and interact with it through a Java interface
-            GoMain goMain = jsBindings.getMember("main").as(GoMain.class);
-            System.out.printf("3 + 4 = %s%n", goMain.add(3, 4));
-            System.out.printf("reverseString('Hello World') = %s%n", goMain.reverseString("Hello World"));
+            // Access main package and interact with it through a Java interface
+            MyGoPackage myGoPackage = jsBindings.getMember("main").as(MyGoPackage.class);
+            System.out.println(myGoPackage.compilerAndVersion());
+            System.out.printf("3 + 4 = %s%n", myGoPackage.add(3, 4));
+            System.out.printf("reverseString('Hello World') = %s%n", myGoPackage.reverseString("Hello World"));
         }
     }
 }

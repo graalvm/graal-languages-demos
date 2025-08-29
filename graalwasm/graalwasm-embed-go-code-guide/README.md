@@ -1,13 +1,14 @@
-# Embed Go in Java Using GraalVM and JS
+# Embed Go in Java Using GraalWasm
 
 The example below demonstrates how to compile Go code to WebAssembly and embed it in a Java application using [GraalWasm](https://graalvm.org/webassembly).
+For this, you can use the official Go compiler or TinyGo, which produces smaller Wasm modules with faster startup.
 To enable interoperability, generate JavaScript bindings for the Rust library and run them on [GraalJS](https://graalvm.org/javascript).
 
 ### Prerequisites
 
 To complete this guide, you need the following:
 - [Maven](https://maven.apache.org/)
-- [Go](https://go.dev/) 1.25 or later
+- [Go](https://go.dev/) 1.25 or later, or [TinyGo](https://tinygo.org) 0.39.0 or later
 - JDK 21 or later (e.g., [GraalVM JDK](https://www.graalvm.org/downloads/))
 - Your favorite IDE or text editor for coding comfortably 
 - A bit of time to explore and experiment 
@@ -58,17 +59,25 @@ mkdir src/main/go/
 touch src/main/go/main.go
 ```
 
-### 2.2. Write Go Code
+### 2.2. Write a Go Package
 
-Add the following Go program to _main.go_:
+Add the following Go code to _main.go_:
 
 ```go
 package main
 
-import "syscall/js"
+import (
+    "fmt"
+    "runtime"
+    "syscall/js"
+)
 
 func add(this js.Value, args []js.Value) interface{} {
     return args[0].Int() + args[1].Int()
+}
+
+func compilerAndVersion(this js.Value, args []js.Value) interface{} {
+    return js.ValueOf(fmt.Sprintf("Compiler: %s, Go version: %s", runtime.Compiler, runtime.Version()))
 }
 
 func reverseString(this js.Value, args []js.Value) interface{} {
@@ -85,16 +94,17 @@ func reverseString(this js.Value, args []js.Value) interface{} {
     return js.ValueOf(reversed)
 }
 
-func registerMainModule() {
+func registerMainPackage() {
     main := js.Global().Get("Object").New()
     main.Set("add", js.FuncOf(add))
+    main.Set("compilerAndVersion", js.FuncOf(compilerAndVersion))
     main.Set("reverseString", js.FuncOf(reverseString))
     js.Global().Set("main", main)
 }
 
 func main() {
     wait := make(chan struct{}, 0)
-    registerMainModule()
+    registerMainPackage()
     <-wait
 }
 ```
@@ -102,7 +112,13 @@ func main() {
 
 ### 2.3. Compile Go to WebAssembly
 
-To compile Go code to WebAssembly, ensure that the `go` compiler is installed and available on your system path.
+To compile Go to WebAssembly, choose between the official Go compiler or TinyGo.
+Compared with the Go compiler, TinyGo produces significantly smaller Wasm modules with faster startup, which is often preferred in embedding scenarios like this.
+For the Go code from 2.2., for example, Go produces a 2.4MB Wasm module vs. 602KB produced by TinyGo.
+
+#### 2.3.1 Use the Go Compiler
+
+To compile Go code to WebAssembly using the official Go compiler, ensure that the `go` compiler is installed on your system and that the `GOROOT` environment variable is set (e.g., via `export GOROOT=$(go env GOROOT)`).
 Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` Maven phase:
 
 ```xml
@@ -110,16 +126,7 @@ Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` M
     <groupId>org.codehaus.mojo</groupId>
     <artifactId>exec-maven-plugin</artifactId>
     <version>3.1.0</version>
-    <configuration>
-        <executable>java</executable>
-        <arguments>
-            <argument>-classpath</argument>
-            <classpath/>
-            <argument>--enable-native-access=ALL-UNNAMED</argument>
-            <argument>--sun-misc-unsafe-memory-access=allow</argument>
-            <argument>com.example.App</argument>
-        </arguments>
-    </configuration>
+    <!-- default configuration -->
     <executions>
         <execution>
             <id>build-go-wasm</id>
@@ -128,7 +135,43 @@ Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` M
                 <goal>exec</goal>
             </goals>
             <configuration combine.self="override">
-                <executable>go</executable>
+                <executable>${env.GOROOT}/bin/go</executable>
+                <environmentVariables>
+                    <GOOS>js</GOOS>
+                    <GOARCH>wasm</GOARCH>
+                </environmentVariables>
+                <arguments>
+                    <argument>build</argument>
+                    <argument>-o</argument>
+                    <argument>${project.build.outputDirectory}/go/main.wasm</argument>
+                    <argument>src/main/go/main.go</argument>
+                </arguments>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
+```
+
+#### 2.3.1 Use TinyGo
+
+To compile Go code to WebAssembly using TinyGo, ensure it is installed on your system and that the `TINYGOROOT` environment variable is set (e.g., via `export TINYGOROOT=/path/to/tinygo`).
+Use the `exec-maven-plugin` to invoke `tinygo` as part of the `generate-resources` Maven phase:
+
+```xml
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>exec-maven-plugin</artifactId>
+    <version>3.1.0</version>
+    <!-- default configuration -->
+    <executions>
+        <execution>
+            <id>build-go-wasm</id>
+            <phase>generate-resources</phase>
+            <goals>
+                <goal>exec</goal>
+            </goals>
+            <configuration combine.self="override">
+                <executable>${env.TINYGOROOT}/bin/tinygo</executable>
                 <environmentVariables>
                     <GOOS>js</GOOS>
                     <GOARCH>wasm</GOARCH>
@@ -147,8 +190,10 @@ Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` M
 
 ## 3. Copy wasm_exec.js file into the target directory:
 
-Running Go compiled to WebAssembly requires a _wasm_exec.js_ file with JavaScript glue code provided by the Go toolchain.
+Running Go compiled to WebAssembly, both using the Go compiler or TinyGo, requires a _wasm_exec.js_ file with JavaScript glue code provided by the Go toolchain.
 Add the following _exec-maven-plugin_ to your _pom.xml_ to automatically copy the _wasm_exec.js_ file into the target directory.
+
+For the official Go compiler, use:
 
 ```xml
 <plugin>
@@ -176,10 +221,32 @@ Add the following _exec-maven-plugin_ to your _pom.xml_ to automatically copy th
 </plugin>
 ```
 
-Make sure that the `GOROOT` environment variable is set correctly before invoking Maven: 
+For TinyGo, use:
 
-```shell
-export GOROOT=$(go env GOROOT)
+```xml
+<plugin>
+    <artifactId>maven-resources-plugin</artifactId>
+    <executions>
+        <execution>
+            <id>copy-extra-resources</id>
+            <phase>process-resources</phase>
+            <goals>
+                <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+                <outputDirectory>${project.build.outputDirectory}/go</outputDirectory>
+                <resources>
+                    <resource>
+                        <directory>${env.TINYGOROOT}/targets</directory>
+                        <includes>
+                            <include>wasm_exec.js</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </configuration>
+        </execution>
+    </executions>
+</plugin>
 ```
 
 ## 4. Implement JavaScript Polyfill
@@ -224,14 +291,16 @@ To enable interoperability between Java and Go, add a Java interface to your pro
 ```java
 package com.example;
 
-interface GoMain {
+interface MyGoPackage {
     int add(int a, int b);
+
+    String compilerAndVersion();
 
     String reverseString(String str);
 }
 ```
 
-## 7. Using the WebAssembly Module from Java.
+## 7. Using the WebAssembly Module from Java
 
 Now you can embed the Wasm module in a Java application:
 
@@ -239,6 +308,8 @@ Now you can embed the Wasm module in a Java application:
 package com.example;
 
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.HostAccess;
+import org.graalvm.polyglot.PolyglotAccess;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
 
@@ -266,10 +337,13 @@ public class App {
         }
         // Create a context with Wasm and JavaScript access
         try (Context context = Context.newBuilder("js", "wasm")
-                .option("js.performance", "true")
+                .option("js.global-property", "true") // experimental
+                .option("js.performance", "true") // experimental
                 .option("js.text-encoding", "true")
                 .option("js.webassembly", "true")
-                .allowAllAccess(true)
+                .allowExperimentalOptions(true)
+                .allowHostAccess(HostAccess.ALL)
+                .allowPolyglotAccess(PolyglotAccess.ALL)
                 .build()) {
             // Install Wasm bytes and crypto polyfill in JS binding
             Value jsBindings = context.getBindings("js");
@@ -286,27 +360,81 @@ public class App {
                     }
                     run(wasmBytes);
                     """);
-            // Access main module and interact with it through a Java interface
-            GoMain goMain = jsBindings.getMember("main").as(GoMain.class);
-            System.out.printf("3 + 4 = %s%n", goMain.add(3, 4));
-            System.out.printf("reverseString('Hello World') = %s%n", goMain.reverseString("Hello World"));
+            // Access main package and interact with it through a Java interface
+            MyGoPackage myGoPackage = jsBindings.getMember("main").as(MyGoPackage.class);
+            System.out.println(myGoPackage.compilerAndVersion());
+            System.out.printf("3 + 4 = %s%n", myGoPackage.add(3, 4));
+            System.out.printf("reverseString('Hello World') = %s%n", myGoPackage.reverseString("Hello World"));
         }
     }
 }
 ```
 
-## 8. Build and Test the Application
+## 8. Build and Run the Application
 
-Compile and run this Java application with Maven:
+If you want to run the application using the `exec-maven-plugin`, add the following as default configuration:
+
+```xml
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>exec-maven-plugin</artifactId>
+    <configuration>
+        <executable>java</executable>
+        <arguments>
+            <argument>-classpath</argument>
+            <classpath/>
+            <argument>--enable-native-access=ALL-UNNAMED</argument>
+            <argument>--sun-misc-unsafe-memory-access=allow</argument>
+            <argument>com.example.App</argument>
+        </arguments>
+    </configuration>
+    <!-- Executions for Go or TinyGo (see 2.3.)  -->
+</plugin>
+```
+
+Build and run the Java application with Maven:
 
 ```shell
+# Use Go compiler
 export GOROOT=$(go env GOROOT)
-./mvnw package
-./mvnw exec:exec
+# or use TinyGo
+export TINYGOROOT=/path/to/tinygo/
+
+# Package the application
+mvn package
+# Run the application
+mvn exec:exec
 ```
 
-The expected output should look like this:
+The expected program output should look like this:
 ```
+Compiler: gc, Go version: go1.25.0
 3 + 4 = 7
 reverseString('Hello World') = dlroW olleH
+```
+
+or like this when using TinyGo:
+
+```
+Compiler: tinygo, Go version: 0.39.0
+3 + 4 = 7
+reverseString('Hello World') = dlroW olleH
+```
+
+The Maven project accompanying this guide uses the Maven wrapper and profiles to switch between the Go compiler and TinyGo:
+
+```shell
+# Make Go compiler and TinyGo available
+export GOROOT=$(go env GOROOT)
+export TINYGOROOT=/path/to/tinygo
+
+# Package the application using Go compiler
+./mvnw -Pgo package
+# Run the application
+./mvnw exec:exec
+
+# or package the application using TinyGo
+./mvnw -Ptinygo package
+# Run the application
+./mvnw exec:exec
 ```
