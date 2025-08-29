@@ -219,11 +219,11 @@ Hello, Jane!
 !erehT olleH
 ```
 
-## Compile the Application to Native
+## 5. Compile the Application to Native
 
 With GraalVM Native Image, this Java application can be compiled into a native executable that starts instantly, scales fast, and uses fewer compute resources.
 For this, you need additional [reachability metadata](https://www.graalvm.org/latest/reference-manual/native-image/metadata/) to register reflection, proxies, and resources.
-You can find the corresponding configuration for this Java application in [_reachability-metadata.json_](src/META-INF/native-image/com.example/app/reachability-metadata.json).
+You can find the corresponding configuration for this Java application in [_reachability-metadata.json_](src/main/resources/META-INF/native-image/com.example/app/reachability-metadata.json).
 
 Afterward, add a new profile using the `native-maven-plugin` to your _pom.xml_:
 
