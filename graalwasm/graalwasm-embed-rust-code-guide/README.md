@@ -47,6 +47,15 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
 <!-- </dependencies> -->
 ```
 
+Be sure to add a `graal.languages.version` property with the version of GraalWasm you would like to use:
+
+```xml
+<properties>
+    <graal.languages.version>24.2.2</graal.languages.version>
+    <!-- more properties -->
+</properties>
+```
+
 ## 2. Set Up Rust Code
 
 Next, create a Rust project, write Rust code, and compile it into a WebAssembly module.
@@ -205,11 +214,31 @@ public class App {
 
 ## 4. Build and Test the Application
 
+If you want to run the application using the `exec-maven-plugin`, add the following as a default configuration:
+
+```xml
+<plugin>
+    <groupId>org.codehaus.mojo</groupId>
+    <artifactId>exec-maven-plugin</artifactId>
+    <configuration>
+        <executable>java</executable>
+        <arguments>
+            <argument>-classpath</argument>
+            <classpath/>
+            <argument>--enable-native-access=ALL-UNNAMED</argument>
+            <argument>--sun-misc-unsafe-memory-access=allow</argument>
+            <argument>com.example.App</argument>
+        </arguments>
+    </configuration>
+    <!-- Execution for build-rust (see 2.3.) -->
+</plugin>
+```
+
 Compile and run the Java application with Maven:
 
 ```shell
-./mvnw package
-./mvnw exec:exec
+mvn package
+mvn exec:exec
 ```
 
 The expected output should look like this:
@@ -259,7 +288,7 @@ Afterward, add a new profile using the `native-maven-plugin` to your _pom.xml_:
 To build the native executable, run:
 
 ```bash
-./mvnw -Pnative package
+mvn -Pnative package
 ```
 
 Finally, you can run the native executable:
