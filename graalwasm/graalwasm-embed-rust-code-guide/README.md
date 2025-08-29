@@ -8,7 +8,7 @@ To enable interoperability, generate JavaScript bindings for the Rust library an
 To complete this guide, you need the following:
 - [Maven](https://maven.apache.org/)
 - [`wasm-pack`](https://drager.github.io/wasm-pack/installer/)
-- JDK 21 or later (e.g., [GraalVM JDK](https://www.graalvm.org/downloads/))
+- JDK 21 or later (for example, [GraalVM JDK](https://www.graalvm.org/downloads/))
 - Your favorite IDE or text editor for coding comfortably 
 - A bit of time to explore and experiment 
 
@@ -21,7 +21,7 @@ mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -Darchetyp
 cd demo
 ```
 
-### 1.1. Add the Polyglot API and GraalWasm Dependencies
+### 1.1 Add the Polyglot API and GraalWasm Dependencies
 
 Add the following set of dependencies to the `<dependencies>` section of your project's _pom.xml_:
 
@@ -56,7 +56,7 @@ Next, create a Rust project, write Rust code, and compile it into a WebAssembly 
 cargo new --lib src/main/rust/mywasmlib 
 ```
 
-### 2.2. Write Rust Code
+### 2.2 Write Rust Code
 
 Add the following program to _mywasmlib/src/lib.rs_:
 
@@ -107,7 +107,7 @@ crate-type = ["cdylib", "rlib"]
 ```
 
 
-### 2.3. Compile Rust to WebAssembly
+### 2.3 Compile Rust to WebAssembly
 
 To compile the Rust library to WebAssembly, ensure `wasm-pack` is installed and available on your system path.
 Use the `exec-maven-plugin` to invoke `wasm-pack` as part of the `generate-resources` Maven phase:

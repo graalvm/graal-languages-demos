@@ -2,18 +2,18 @@
 
 The example below demonstrates how to compile Go code to WebAssembly and embed it in a Java application using [GraalWasm](https://graalvm.org/webassembly).
 For this, you can use the official Go compiler or TinyGo, which produces smaller Wasm modules with faster startup.
-To enable interoperability, generate JavaScript bindings for the Rust library and run them on [GraalJS](https://graalvm.org/javascript).
+To enable interoperability, generate JavaScript bindings for the Go package and run them on [GraalJS](https://graalvm.org/javascript).
 
 ### Prerequisites
 
 To complete this guide, you need the following:
 - [Maven](https://maven.apache.org/)
 - [Go](https://go.dev/) 1.25 or later, or [TinyGo](https://tinygo.org) 0.39.0 or later
-- JDK 21 or later (e.g., [GraalVM JDK](https://www.graalvm.org/downloads/))
+- JDK 21 or later (for example, [GraalVM JDK](https://www.graalvm.org/downloads/))
 - Your favorite IDE or text editor for coding comfortably 
 - A bit of time to explore and experiment 
 
-## 1. Setting Up the Maven Project
+## 1. Set Up the Maven Project
 
 To follow this guide, generate the application from the [Maven Quickstart Archetype](https://maven.apache.org/archetypes/maven-archetype-quickstart/) and go into the directory:
 
@@ -22,7 +22,7 @@ mvn archetype:generate -DarchetypeGroupId=org.apache.maven.archetypes -Darchetyp
 cd demo
 ```
 
-### 1.1. Add the Polyglot API and GraalWasm Dependencies
+### 1.1 Add the Polyglot API and GraalWasm Dependencies
 
 Add the following set of dependencies to the `<dependencies>` section of your project's _pom.xml_:
 
@@ -50,7 +50,7 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
 
 ## 2. Set Up Go Code
 
-Next, create a Go project (e.g., _main.go_) and add Go code.
+Next, create a Go project (for example, _main.go_) and add Go code.
 
 ### 2.1  Create a Go project
 
@@ -59,7 +59,7 @@ mkdir src/main/go/
 touch src/main/go/main.go
 ```
 
-### 2.2. Write a Go Package
+### 2.2 Write a Go Package
 
 Add the following Go code to _main.go_:
 
@@ -110,15 +110,15 @@ func main() {
 ```
 
 
-### 2.3. Compile Go to WebAssembly
+### 2.3 Compile Go to WebAssembly
 
 To compile Go to WebAssembly, choose between the official Go compiler or TinyGo.
 Compared with the Go compiler, TinyGo produces significantly smaller Wasm modules with faster startup, which is often preferred in embedding scenarios like this.
-For the Go code from 2.2., for example, Go produces a 2.4MB Wasm module vs. 602KB produced by TinyGo.
+For example, Go produced a 2.4MB Wasm module from the Go code in step 2.2 whereas TinyGo produced a 602KB module.
 
-#### 2.3.1 Use the Go Compiler
+#### Use the Go Compiler
 
-To compile Go code to WebAssembly using the official Go compiler, ensure that the `go` compiler is installed on your system and that the `GOROOT` environment variable is set (e.g., via `export GOROOT=$(go env GOROOT)`).
+To compile Go code to WebAssembly using the official Go compiler, ensure that the `go` compiler is installed on your system and that the `GOROOT` environment variable is set (for example via `export GOROOT=$(go env GOROOT)`).
 Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` Maven phase:
 
 ```xml
@@ -152,9 +152,9 @@ Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` M
 </plugin>
 ```
 
-#### 2.3.1 Use TinyGo
+#### Use TinyGo
 
-To compile Go code to WebAssembly using TinyGo, ensure it is installed on your system and that the `TINYGOROOT` environment variable is set (e.g., via `export TINYGOROOT=/path/to/tinygo`).
+To compile Go code to WebAssembly using TinyGo, ensure it is installed on your system and that the `TINYGOROOT` environment variable is set (for example via `export TINYGOROOT=/path/to/tinygo`).
 Use the `exec-maven-plugin` to invoke `tinygo` as part of the `generate-resources` Maven phase:
 
 ```xml
@@ -188,7 +188,7 @@ Use the `exec-maven-plugin` to invoke `tinygo` as part of the `generate-resource
 </plugin>
 ```
 
-## 3. Copy wasm_exec.js file into the target directory:
+## 3. Copy wasm_exec.js File Into the Target Directory
 
 Running Go compiled to WebAssembly, both using the Go compiler or TinyGo, requires a _wasm_exec.js_ file with JavaScript glue code provided by the Go toolchain.
 Add the following _exec-maven-plugin_ to your _pom.xml_ to automatically copy the _wasm_exec.js_ file into the target directory.
@@ -284,7 +284,7 @@ public class CryptoPolyfill {
 }
 ```
 
-##  5. Adding Go Interface in Java
+##  5. Add a Go Interface in Java
 
 To enable interoperability between Java and Go, add a Java interface to your project and use [`Value.as(Class)`](https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Value.html#as(java.lang.Class)) to program against it:
 
@@ -300,7 +300,7 @@ interface MyGoPackage {
 }
 ```
 
-## 7. Using the WebAssembly Module from Java
+## 6. Use the WebAssembly Module from Java
 
 Now you can embed the Wasm module in a Java application:
 
@@ -370,7 +370,7 @@ public class App {
 }
 ```
 
-## 8. Build and Run the Application
+## 7. Build and Run the Application
 
 If you want to run the application using the `exec-maven-plugin`, add the following as default configuration:
 
