@@ -61,7 +61,7 @@ public class App {
             // Access main package and interact with it through a Java interface
             MyGoPackage myGoPackage = jsBindings.getMember("main").as(MyGoPackage.class);
             System.out.println(myGoPackage.compilerAndVersion());
-            System.out.printf("3 + 4 = %s%n", myGoPackage.add(3, 4));
+            System.out.printf("3 + 4 = %d%n", myGoPackage.add(3, 4));
             System.out.printf("reverseString('Hello World') = %s%n", myGoPackage.reverseString("Hello World"));
         }
     }

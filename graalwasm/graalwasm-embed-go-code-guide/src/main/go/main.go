@@ -6,15 +6,15 @@ import (
     "syscall/js"
 )
 
-func add(this js.Value, args []js.Value) interface{} {
+func add(this js.Value, args []js.Value) any {
     return args[0].Int() + args[1].Int()
 }
 
-func compilerAndVersion(this js.Value, args []js.Value) interface{} {
+func compilerAndVersion(this js.Value, args []js.Value) any {
     return js.ValueOf(fmt.Sprintf("Compiler: %s, Go version: %s", runtime.Compiler, runtime.Version()))
 }
 
-func reverseString(this js.Value, args []js.Value) interface{} {
+func reverseString(this js.Value, args []js.Value) any {
     if len(args) < 1 {
         return js.ValueOf("")
     }

@@ -18,7 +18,7 @@ public class AppTest {
      * Rigorous Test :-)
      */
     @Test
-    public void shouldAnswerWithTrue() throws IOException {
+    public void shouldRun() throws IOException {
         App.main(new String[0]);
     }
 }

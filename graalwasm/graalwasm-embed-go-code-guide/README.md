@@ -48,6 +48,15 @@ Add the following set of dependencies to the `<dependencies>` section of your pr
 <!-- </dependencies> -->
 ```
 
+Be sure to add a `graal.languages.version` property with the version of GraalWasm you would like to use: 
+
+```xml
+<properties>
+    <graal.languages.version>24.2.2</graal.languages.version>
+    <!-- more properties -->
+</properties>
+```
+
 ## 2. Set Up Go Code
 
 Next, create a Go project (for example, _main.go_) and add Go code.
@@ -72,15 +81,15 @@ import (
     "syscall/js"
 )
 
-func add(this js.Value, args []js.Value) interface{} {
+func add(this js.Value, args []js.Value) any {
     return args[0].Int() + args[1].Int()
 }
 
-func compilerAndVersion(this js.Value, args []js.Value) interface{} {
+func compilerAndVersion(this js.Value, args []js.Value) any {
     return js.ValueOf(fmt.Sprintf("Compiler: %s, Go version: %s", runtime.Compiler, runtime.Version()))
 }
 
-func reverseString(this js.Value, args []js.Value) interface{} {
+func reverseString(this js.Value, args []js.Value) any {
     if len(args) < 1 {
         return js.ValueOf("")
     }
@@ -118,7 +127,8 @@ For example, Go produced a 2.4MB Wasm module from the Go code in step 2.2 wherea
 
 #### Use the Go Compiler
 
-To compile Go code to WebAssembly using the official Go compiler, ensure that the `go` compiler is installed on your system and that the `GOROOT` environment variable is set (for example via `export GOROOT=$(go env GOROOT)`).
+To compile Go code to WebAssembly using the official Go compiler, ensure that the `go` compiler is installed and on your system path.
+Then export the `GOROOT` environment variable via `export GOROOT=$(go env GOROOT)`.
 Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` Maven phase:
 
 ```xml
@@ -154,7 +164,8 @@ Use the `exec-maven-plugin` to invoke `go` as part of the `generate-resources` M
 
 #### Use TinyGo
 
-To compile Go code to WebAssembly using TinyGo, ensure it is installed on your system and that the `TINYGOROOT` environment variable is set (for example via `export TINYGOROOT=/path/to/tinygo`).
+To compile Go code to WebAssembly using TinyGo, ensure that `tinygo` is installed and on your system path.
+Then export the `TINYGOROOT` environment variable via `export TINYGOROOT=$(tinygo env TINYGOROOT)`.
 Use the `exec-maven-plugin` to invoke `tinygo` as part of the `generate-resources` Maven phase:
 
 ```xml
@@ -284,7 +295,7 @@ public class CryptoPolyfill {
 }
 ```
 
-##  5. Add a Go Interface in Java
+## 5. Add a Go Interface in Java
 
 To enable interoperability between Java and Go, add a Java interface to your project and use [`Value.as(Class)`](https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Value.html#as(java.lang.Class)) to program against it:
 
@@ -363,7 +374,7 @@ public class App {
             // Access main package and interact with it through a Java interface
             MyGoPackage myGoPackage = jsBindings.getMember("main").as(MyGoPackage.class);
             System.out.println(myGoPackage.compilerAndVersion());
-            System.out.printf("3 + 4 = %s%n", myGoPackage.add(3, 4));
+            System.out.printf("3 + 4 = %d%n", myGoPackage.add(3, 4));
             System.out.printf("reverseString('Hello World') = %s%n", myGoPackage.reverseString("Hello World"));
         }
     }
@@ -398,7 +409,7 @@ Build and run the Java application with Maven:
 # Use Go compiler
 export GOROOT=$(go env GOROOT)
 # or use TinyGo
-export TINYGOROOT=/path/to/tinygo
+export TINYGOROOT=$(tinygo env TINYGOROOT)
 
 # Package the application
 mvn package
@@ -426,7 +437,7 @@ The Maven project accompanying this guide uses the Maven wrapper and profiles to
 ```shell
 # Make Go compiler and TinyGo available
 export GOROOT=$(go env GOROOT)
-export TINYGOROOT=/path/to/tinygo
+export TINYGOROOT=$(tinygo env TINYGOROOT)
 
 # Package the application using Go compiler
 ./mvnw -Pgo package
