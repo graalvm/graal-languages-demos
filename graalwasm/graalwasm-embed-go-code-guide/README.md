@@ -398,7 +398,7 @@ Build and run the Java application with Maven:
 # Use Go compiler
 export GOROOT=$(go env GOROOT)
 # or use TinyGo
-export TINYGOROOT=/path/to/tinygo/
+export TINYGOROOT=/path/to/tinygo
 
 # Package the application
 mvn package
