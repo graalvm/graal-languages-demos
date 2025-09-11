@@ -9,7 +9,7 @@ package com.example;
 import org.graalvm.polyglot.Value;
 import org.graalvm.polyglot.io.ByteSequence;
 
-public record Photon(Value module, Uint8Array imageContent) {
+public record Photon(Value module, PhotonImage photonImage, Uint8Array imageContent) {
 
     boolean implementsEffect(String effectName) {
         return module.hasMember(effectName);
@@ -20,7 +20,6 @@ public record Photon(Value module, Uint8Array imageContent) {
     }
 
     PhotonImage createImage() {
-        PhotonImage photonImage = module.getMember("PhotonImage").as(PhotonImage.class);
         return photonImage.new_from_byteslice(imageContent);
     }
 
@@ -36,7 +35,7 @@ public record Photon(Value module, Uint8Array imageContent) {
         ByteSequence buffer();
     }
 
-    public static byte[] toByteArray(PhotonImage photonImage) {
-        return photonImage.get_bytes().buffer().toByteArray();
+    public static byte[] toByteArray(PhotonImage image) {
+        return image.get_bytes().buffer().toByteArray();
     }
 }

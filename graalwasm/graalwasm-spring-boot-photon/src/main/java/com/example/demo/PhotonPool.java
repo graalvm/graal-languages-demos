@@ -70,10 +70,13 @@ public class PhotonPool {
         // Load Photon module and initialize with wasm content
         Value photonModule = context.eval(photonSource);
 
+        // Fetch PhotonImage class
+        PhotonImage photonImage = photonModule.getMember("PhotonImage").as(PhotonImage.class);
+
         // Create Uint8Array with image bytes
         Uint8Array imageContent = context.getBindings("js").getMember("Uint8Array").newInstance(imageBytes).as(Uint8Array.class);
 
-        return new Photon(photonModule, imageContent);
+        return new Photon(photonModule, photonImage, imageContent);
     }
 
     static class PhotonPoolRuntimeHints implements RuntimeHintsRegistrar {

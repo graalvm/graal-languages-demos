@@ -11,7 +11,7 @@ import org.graalvm.polyglot.io.ByteSequence;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 
-public record Photon(Value module, Uint8Array imageContent) {
+public record Photon(Value module, PhotonImage photonImage, Uint8Array imageContent) {
 
     boolean implementsEffect(String effectName) {
         return module.hasMember(effectName);
@@ -22,7 +22,6 @@ public record Photon(Value module, Uint8Array imageContent) {
     }
 
     PhotonImage createImage() {
-        PhotonImage photonImage = module.getMember("PhotonImage").as(PhotonImage.class);
         return photonImage.new_from_byteslice(imageContent);
     }
 
@@ -38,14 +37,7 @@ public record Photon(Value module, Uint8Array imageContent) {
         ByteSequence buffer();
     }
 
-    public static byte[] toByteArray(PhotonImage photonImage) {
-        return photonImage.get_bytes().buffer().toByteArray();
-    }
-
-    static class PhotonRuntimeHints implements RuntimeHintsRegistrar {
-        @Override
-        public void registerHints(RuntimeHints hints, ClassLoader classLoader) {
-            hints.proxies().registerJdkProxy(PhotonImage.class);
-        }
+    public static byte[] toByteArray(PhotonImage image) {
+        return image.get_bytes().buffer().toByteArray();
     }
 }
