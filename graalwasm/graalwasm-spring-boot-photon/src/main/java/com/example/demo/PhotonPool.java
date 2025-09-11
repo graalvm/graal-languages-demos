@@ -82,7 +82,9 @@ public class PhotonPool {
             hints.resources()
                     .registerPattern("photon/*")
                     .registerPattern("daisies_fuji.jpg");
-            hints.proxies().registerJdkProxy(PhotonImage.class);
+            hints.proxies()
+                    .registerJdkProxy(PhotonImage.class)
+                    .registerJdkProxy(Uint8Array.class);
         }
     }
 }

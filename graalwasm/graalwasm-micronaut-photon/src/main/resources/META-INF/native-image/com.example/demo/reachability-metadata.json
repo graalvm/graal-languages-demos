@@ -1,0 +1,18 @@
+{
+  "reflection": [
+    {
+      "type": {
+        "proxy": [
+          "com.example.Photon$PhotonImage"
+        ]
+      }
+    },
+    {
+      "type": {
+        "proxy": [
+          "com.example.Photon$Uint8Array"
+        ]
+      }
+    }
+  ]
+}
