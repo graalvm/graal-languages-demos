@@ -13,7 +13,7 @@
         <version>4.8.2</version>
     </parent>
     <properties>
-        <graal.languages.version>24.2.2</graal.languages.version>
+        <graal.languages.version>25.0.0</graal.languages.version>
         <packaging>jar</packaging>
         <jdk.version>24</jdk.version>
         <release.version>24</release.version>

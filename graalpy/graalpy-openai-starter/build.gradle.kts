@@ -2,7 +2,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
     // Apply GraalPy plugin to add Python packages as dependencies.
-    id("org.graalvm.python") version "24.2.2"
+    id("org.graalvm.python") version "25.0.0"
 }
 
 repositories {
