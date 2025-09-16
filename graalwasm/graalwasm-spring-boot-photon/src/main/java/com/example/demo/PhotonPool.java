@@ -7,6 +7,7 @@
 package com.example.demo;
 
 import com.example.demo.Photon.PhotonImage;
+import com.example.demo.Photon.Uint8Array;
 import jakarta.annotation.PreDestroy;
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Engine;
@@ -29,14 +30,13 @@ public class PhotonPool {
     private final BlockingQueue<Photon> photons;
 
     PhotonPool() throws IOException {
-        Source photonSource = Source.newBuilder("js", new ClassPathResource("photon/photon_rs.js").getURL()).mimeType("application/javascript+module").build();
-        byte[] wasmBytes = new ClassPathResource("photon/photon_rs_bg.wasm").getContentAsByteArray();
+        Source photonSource = Source.newBuilder("js", new ClassPathResource("photon/photon.js").getURL()).mimeType("application/javascript+module").build();
         byte[] imageBytes = new ClassPathResource("daisies_fuji.jpg").getContentAsByteArray();
 
         int maxThreads = Runtime.getRuntime().availableProcessors();
         photons = new LinkedBlockingQueue<>(maxThreads);
         for (int i = 0; i < maxThreads; i++) {
-            photons.add(createPhoton(sharedEngine, photonSource, wasmBytes, imageBytes));
+            photons.add(createPhoton(sharedEngine, photonSource, imageBytes));
         }
     }
 
@@ -57,27 +57,26 @@ public class PhotonPool {
         sharedEngine.close();
     }
 
-    private static Photon createPhoton(Engine engine, Source photonSource, byte[] wasmBytes, byte[] imageBytes) {
+    private static Photon createPhoton(Engine engine, Source photonSource, Object imageBytes) {
         Context context = Context.newBuilder("js", "wasm")
                 .engine(engine)
                 .allowAllAccess(true)
                 .allowExperimentalOptions(true)
-                .option("js.webassembly", "true")
                 .option("js.esm-eval-returns-exports", "true")
+                .option("js.text-encoding", "true")
+                .option("js.webassembly", "true")
                 .build();
 
-        // Get Uint8Array class from JavaScript
-        Value uint8Array = context.eval("js", "Uint8Array");
         // Load Photon module and initialize with wasm content
         Value photonModule = context.eval(photonSource);
-        // Create Uint8Array with wasm bytes
-        Value wasmContent = uint8Array.newInstance(wasmBytes);
-        // Initialize Photon module with wasm content
-        photonModule.invokeMember("default", wasmContent);
-        // Create Uint8Array with image bytes
-        Value imageContent = uint8Array.newInstance(imageBytes);
 
-        return new Photon(photonModule, imageContent);
+        // Fetch PhotonImage class
+        PhotonImage photonImage = photonModule.getMember("PhotonImage").as(PhotonImage.class);
+
+        // Create Uint8Array with image bytes
+        Uint8Array imageContent = context.getBindings("js").getMember("Uint8Array").newInstance(imageBytes).as(Uint8Array.class);
+
+        return new Photon(photonModule, photonImage, imageContent);
     }
 
     static class PhotonPoolRuntimeHints implements RuntimeHintsRegistrar {
@@ -86,7 +85,9 @@ public class PhotonPool {
             hints.resources()
                     .registerPattern("photon/*")
                     .registerPattern("daisies_fuji.jpg");
-            hints.proxies().registerJdkProxy(PhotonImage.class);
+            hints.proxies()
+                    .registerJdkProxy(PhotonImage.class)
+                    .registerJdkProxy(Uint8Array.class);
         }
     }
 }

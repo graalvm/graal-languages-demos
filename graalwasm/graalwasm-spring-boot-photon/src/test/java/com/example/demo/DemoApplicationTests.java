@@ -19,7 +19,7 @@ class DemoApplicationTests {
 
     @Test
     void testEffectEquality() {
-        for (String effectName : new String[]{"default", "grayscale", "flipv", "fliph"}) {
+        for (String effectName : new String[]{"grayscale", "flipv", "fliph", "obsidian"}) {
             byte[] imageContent1 = photonService.processImage(effectName);
             byte[] imageContent2 = photonService.processImage(effectName);
             Assertions.assertArrayEquals(imageContent1, imageContent2, "Two processed images not identical when effect '%s' is used".formatted(effectName));

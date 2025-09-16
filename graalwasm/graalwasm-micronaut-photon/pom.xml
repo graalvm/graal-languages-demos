@@ -14,10 +14,6 @@
     </parent>
     <properties>
         <graal.languages.version>24.2.2</graal.languages.version>
-        <photon.version>0.1.30</photon.version>
-        <photon.download.url>
-            https://raw.githubusercontent.com/fineshopdesign/cf-wasm/refs/tags/%40cf-wasm/satori%40${photon.version}/packages/photon/src/lib
-        </photon.download.url>
         <packaging>jar</packaging>
         <jdk.version>24</jdk.version>
         <release.version>24</release.version>
@@ -101,51 +97,23 @@
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>wagon-maven-plugin</artifactId>
-                <version>2.0.2</version>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
                 <executions>
                     <execution>
-                        <id>download-photon-js</id>
+                        <id>build-photon</id>
                         <phase>process-resources</phase>
                         <goals>
-                            <goal>download-single</goal>
+                            <goal>exec</goal>
                         </goals>
-                        <configuration>
-                            <url>${photon.download.url}</url>
-                            <fromFile>photon_rs.js</fromFile>
-                            <toDir>${project.build.outputDirectory}/photon</toDir>
-                            <skipIfExists>true</skipIfExists>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>download-photon-wasm</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>download-single</goal>
-                        </goals>
-                        <configuration>
-                            <url>${photon.download.url}</url>
-                            <fromFile>photon_rs_bg.wasm</fromFile>
-                            <toDir>${project.build.outputDirectory}/photon</toDir>
-                            <skipIfExists>true</skipIfExists>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>download-example-image</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>download-single</goal>
-                        </goals>
-                        <configuration>
-                            <url>
-                                https://raw.githubusercontent.com/silvia-odwyer/photon/d084f6842c29bbb4838bf97bc98fd8c45b892cba/crate/examples/input_images
-                            </url>
-                            <fromFile>daisies_fuji.jpg</fromFile>
-                            <toDir>${project.build.outputDirectory}</toDir>
-                            <skipIfExists>true</skipIfExists>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <executable>bash</executable>
+                    <arguments>
+                        <argument>build-photon.sh</argument>
+                    </arguments>
+                </configuration>
             </plugin>
 
             <plugin>

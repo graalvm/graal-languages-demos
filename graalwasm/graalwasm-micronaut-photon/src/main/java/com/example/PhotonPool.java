@@ -6,6 +6,8 @@
 
 package com.example;
 
+import com.example.Photon.PhotonImage;
+import com.example.Photon.Uint8Array;
 import io.micronaut.context.annotation.Context;
 import io.micronaut.core.io.ResourceResolver;
 import jakarta.annotation.PreDestroy;
@@ -24,15 +26,14 @@ public class PhotonPool {
     private final BlockingQueue<Photon> photons;
 
     PhotonPool(ResourceResolver resourceResolve) throws IOException {
-        URL photonModuleURL = resourceResolve.getResource("classpath:photon/photon_rs.js").get();
+        URL photonModuleURL = resourceResolve.getResource("classpath:photon/photon.js").get();
         Source photonSource = Source.newBuilder("js", photonModuleURL).mimeType("application/javascript+module").build();
-        byte[] wasmBytes = resourceResolve.getResourceAsStream("classpath:photon/photon_rs_bg.wasm").get().readAllBytes();
         byte[] imageBytes = resourceResolve.getResourceAsStream("classpath:daisies_fuji.jpg").get().readAllBytes();
 
         int maxThreads = Runtime.getRuntime().availableProcessors();
         photons = new LinkedBlockingQueue<>(maxThreads);
         for (int i = 0; i < maxThreads; i++) {
-            photons.add(createPhoton(sharedEngine, photonSource, wasmBytes, imageBytes));
+            photons.add(createPhoton(sharedEngine, photonSource, imageBytes));
         }
     }
 
@@ -53,26 +54,25 @@ public class PhotonPool {
         sharedEngine.close();
     }
 
-    private static Photon createPhoton(Engine engine, Source photonSource, Object wasmBytes, Object imageBytes) {
-        org.graalvm.polyglot.Context context = org.graalvm.polyglot.Context.newBuilder("js", "wasm")
+    private static Photon createPhoton(Engine engine, Source photonSource, Object imageBytes) {
+        var context = org.graalvm.polyglot.Context.newBuilder("js", "wasm")
                 .engine(engine)
                 .allowAllAccess(true)
                 .allowExperimentalOptions(true)
-                .option("js.webassembly", "true")
                 .option("js.esm-eval-returns-exports", "true")
+                .option("js.text-encoding", "true")
+                .option("js.webassembly", "true")
                 .build();
 
-        // Get Uint8Array class from JavaScript
-        Value uint8Array = context.eval("js", "Uint8Array");
         // Load Photon module and initialize with wasm content
         Value photonModule = context.eval(photonSource);
-        // Create Uint8Array with wasm bytes
-        Value wasmContent = uint8Array.newInstance(wasmBytes);
-        // Initialize Photon module with wasm content
-        photonModule.invokeMember("default", wasmContent);
-        // Create Uint8Array with image bytes
-        Value imageContent = uint8Array.newInstance(imageBytes);
 
-        return new Photon(photonModule, imageContent);
+        // Fetch PhotonImage class
+        PhotonImage photonImage = photonModule.getMember("PhotonImage").as(PhotonImage.class);
+
+        // Create Uint8Array with image bytes
+        Uint8Array imageContent = context.getBindings("js").getMember("Uint8Array").newInstance(imageBytes).as(Uint8Array.class);
+
+        return new Photon(photonModule, photonImage, imageContent);
     }
 }
