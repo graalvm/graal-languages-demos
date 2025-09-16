@@ -8,7 +8,7 @@
 set -o errexit
 set -o nounset
 
-PHOTON_COMMIT="e95eccf886897c2efe8c2461fae9c6bf1375ff49"
+PHOTON_COMMIT="e4ef13d602828b171e04bf232741d63621dfec14"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
