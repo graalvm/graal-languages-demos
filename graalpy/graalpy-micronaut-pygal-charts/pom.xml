@@ -13,7 +13,7 @@
     <version>4.6.1</version>
   </parent>
   <properties>
-    <graalpy.version>24.2.2</graalpy.version>
+    <graalpy.version>25.0.0</graalpy.version>
     <packaging>jar</packaging>
     <jdk.version>21</jdk.version>
     <release.version>21</release.version>

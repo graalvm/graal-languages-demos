@@ -19,7 +19,7 @@
     <description>Demo project for Spring with GraalJS</description>
 
     <properties>
-        <graaljs.version>24.2.2</graaljs.version>
+        <graaljs.version>25.0.0</graaljs.version>
         <truffle.jvm.args>--enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</truffle.jvm.args>
     </properties>
 

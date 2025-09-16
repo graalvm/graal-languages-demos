@@ -5,11 +5,11 @@ In particular, this demo shows four different approaches to interact with Pygal 
 
 ## Preparation
 
-Install GraalVM for JDK 24 and set the value of `JAVA_HOME` accordingly.
+Install GraalVM 25 and set the value of `JAVA_HOME` accordingly.
 We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash
-sdk install java 24.0.2-graal
+sdk install java 25-graal
 ```
 
 ## Run the Application
