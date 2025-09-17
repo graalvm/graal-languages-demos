@@ -18,9 +18,9 @@ public class App {
     public static void main(String[] args) throws IOException {
         try (Context context = Context.create()) {
             URL wasmFile = App.class.getResource("add-two.wasm");
-            String moduleName = "main";
-            context.eval(Source.newBuilder("wasm", wasmFile).name(moduleName).build());
-            Value addTwo = context.getBindings("wasm").getMember(moduleName).getMember("addTwo");
+            Value mainModule = context.eval(Source.newBuilder("wasm", wasmFile).build());
+            Value mainInstance = mainModule.newInstance();
+            Value addTwo = mainInstance.getMember("exports").getMember("addTwo");
             System.out.println("addTwo(40, 2) = " + addTwo.execute(40, 2));
         }
     }

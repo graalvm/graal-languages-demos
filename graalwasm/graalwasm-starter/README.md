@@ -22,7 +22,7 @@ To build and test the demo, run:
 To execute the main method, run:
 
 ```bash
-./mvnw exec:java
+./mvnw exec:exec
 ```
 
 ## Run the Application Using Gradle
