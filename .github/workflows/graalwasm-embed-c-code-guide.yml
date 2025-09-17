@@ -39,4 +39,4 @@ jobs:
           source ./emsdk/emsdk_env.sh
           cd graalwasm/graalwasm-embed-c-code-guide
           ./mvnw --no-transfer-progress package
-          ./mvnw --no-transfer-progress exec:java
+          ./mvnw --no-transfer-progress exec:exec

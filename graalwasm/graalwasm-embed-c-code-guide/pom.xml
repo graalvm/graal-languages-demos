@@ -13,6 +13,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
+        <truffle.jvm.arg1>--enable-native-access=ALL-UNNAMED</truffle.jvm.arg1>
+        <truffle.jvm.arg2>--sun-misc-unsafe-memory-access=allow</truffle.jvm.arg2>
     </properties>
 
     <dependencyManagement>
@@ -95,13 +97,23 @@
                     <artifactId>maven-project-info-reports-plugin</artifactId>
                     <version>3.6.1</version>
                 </plugin>
+                <plugin>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.2.1</version>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>${truffle.jvm.arg1} ${truffle.jvm.arg2}</argLine>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
                 <executions>
                     <execution>
                         <id>create-output-directory</id>
@@ -129,7 +141,14 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <mainClass>com.example.App</mainClass>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>${truffle.jvm.arg1}</argument>
+                        <argument>${truffle.jvm.arg2}</argument>
+                        <argument>com.example.App</argument>
+                    </arguments>
                 </configuration>
             </plugin>
         </plugins>

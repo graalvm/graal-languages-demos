@@ -60,9 +60,8 @@ Put the following C program in _src/main/c/floyd.c_:
 ```c
 #include <stdio.h>
 
-void floyd() {
+void floyd(int rows) {
     int number = 1;
-    int rows = 10;
     for (int i = 1; i <= rows; i++) {
         for (int j = 1; j <= i; j++) {
             printf("%d ", number);
@@ -73,9 +72,10 @@ void floyd() {
 }
 
 int main() {
-    floyd();
+    floyd(10);
     return 0;
 }
+
 ```
 
 Note that `floyd` is defined as a separate function and can be exported.
@@ -154,23 +154,28 @@ import org.graalvm.polyglot.Value;
 
 public class App {
    public static void main(String[] args) throws IOException {
-      // Find the WebAssembly module resource
-      URL wasmFile = App.class.getResource("floyd.wasm");
+       // Find the WebAssembly module resource
+       URL wasmFile = App.class.getResource("floyd.wasm");
+       Source source = Source.newBuilder("wasm", wasmFile).name("example").build();
 
-      // Setup context
-      Context.Builder contextBuilder = Context.newBuilder("wasm").option("wasm.Builtins", "wasi_snapshot_preview1");
-      Source.Builder sourceBuilder = Source.newBuilder("wasm", wasmFile).name("example");
-      Source source = sourceBuilder.build();
-      Context context = contextBuilder.build();
+       // Create Wasm context
+       try (Context context = Context.newBuilder("wasm").option("wasm.Builtins", "wasi_snapshot_preview1").build()) {
+           // Compile and instantiate the module
+           Value module = context.eval(source);
+           Value instance = module.newInstance();
 
-      // Evaluate the WebAssembly module
-      context.eval(source);
+           // Get the exports member from the module instance
+           Value exports = instance.getMember("exports");
 
-      // Execute the floyd function
-      context.getBindings("wasm").getMember("example").getMember("_initialize").executeVoid();
-      Value mainFunction = context.getBindings("wasm").getMember("example").getMember("floyd");
-      mainFunction.execute();
-      context.close();
+           // Invoke an exported functions
+           exports.invokeMember("_initialize");
+           exports.invokeMember("floyd", 10);
+
+           // Or if you need to call a function multiple times
+           Value floyd = exports.getMember("floyd");
+           floyd.execute(4);
+           floyd.execute(8);
+       }
    }
 }
 ```
@@ -181,7 +186,7 @@ Compile and run this Java application with Maven:
 
 ```shell
 mvw package
-mvn exec:java -Dexec.mainClass=com.example.App
+mvn exec:exec
 ```
 
 The expected output should contain the first 10 lines of [Floyd's triangle](https://en.wikipedia.org/wiki/Floyd%27s_triangle), printed using the C function:
