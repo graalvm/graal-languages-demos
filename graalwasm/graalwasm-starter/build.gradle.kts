@@ -23,7 +23,14 @@ application {
     mainClass = "com.example.App"
 }
 
+val truffleJvmArgs = listOf("--enable-native-access=ALL-UNNAMED", "--sun-misc-unsafe-memory-access=allow")
+
+tasks.named<JavaExec>("run") {
+    jvmArgs = truffleJvmArgs
+}
+
 tasks.named<Test>("test") {
+    jvmArgs = truffleJvmArgs
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
