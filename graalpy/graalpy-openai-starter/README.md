@@ -25,7 +25,7 @@ To build and test the demo, run:
 To execute the main method, run:
 
 ```bash
-./mvnw exec:java -Dexec.args="'Say Hello from GraalPy'"
+./mvnw exec:exec -Duser.input="'How can I check if my code runs on GraalPy?'"
 ```
 
 ## Run the Application Using Gradle
@@ -39,7 +39,7 @@ To build and test the demo, run:
 To execute the main method, run:
 
 ```bash
-./gradlew run --args="'Say Hello from GraalPy'"
+./gradlew run --args="'How can I check if my code runs on GraalPy?'"
 ```
 
 ## Implementation Details

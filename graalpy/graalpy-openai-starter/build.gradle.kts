@@ -19,22 +19,7 @@ dependencies {
 
 graalPy {
     packages = setOf(
-        "annotated-types==0.7.0",
-        "anyio==4.6.0",
-        "certifi==2024.8.30",
-        "distro==1.9.0",
-        "h11==0.14.0",
-        "hpy==0.9.0",
-        "httpcore==1.0.5",
-        "httpx==0.27.2",
-        "idna==3.10",
-        "jiter==0.5.0", // uses a native extension
-        "openai==1.47.1",
-        "pydantic==2.4.2",
-        "pydantic_core==2.10.1", // uses a native extension
-        "sniffio==1.3.1",
-        "tqdm==4.66.5",
-        "typing_extensions==4.12.2"
+        "openai==1.107.3",
     )
 }
 
@@ -43,7 +28,14 @@ application {
     mainClass = "com.example.App"
 }
 
+val truffleJvmArgs = listOf("--enable-native-access=ALL-UNNAMED", "--sun-misc-unsafe-memory-access=allow")
+
+tasks.named<JavaExec>("run") {
+    jvmArgs = truffleJvmArgs
+}
+
 tasks.named<Test>("test") {
+    jvmArgs = truffleJvmArgs
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
