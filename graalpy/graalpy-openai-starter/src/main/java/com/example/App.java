@@ -7,17 +7,18 @@
 package com.example;
 
 import org.graalvm.polyglot.Context;
+import org.graalvm.polyglot.EnvironmentAccess;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.python.embedding.GraalPyResources;
-
-import java.util.List;
 
 public class App {
 
     public static void main(String[] args) {
-        String userInput = args.length > 0 ? args[0] : "Say this is a test";
-        try (Context context = GraalPyResources.createContext()) {
-            CreateChatCompletionFunction createChatCompletion = context.eval("python",
+        String input = args.length > 0 ? args[0] : "How can I check if my code runs on GraalPy?";
+        try (Context context = GraalPyResources.contextBuilder()
+                .allowEnvironmentAccess(EnvironmentAccess.INHERIT) // for OPENAI_API_KEY env var access
+                .build()) {
+            CreateResponseFunction createResponseFunction = context.eval("python",
                     // language=python
                     """
                             import os
@@ -28,42 +29,28 @@ public class App {
                                 api_key=os.environ.get("OPENAI_API_KEY"),
                             )
                             
-                            def create_chat_completion(user_input):
-                                return client.chat.completions.create(
-                                    messages=[
-                                        {
-                                            "role": "user",
-                                            "content": user_input,
-                                        }
-                                    ],
-                                    model="gpt-3.5-turbo",
+                            def create_response(input):
+                                return client.responses.create(
+                                    model="gpt-4o",
+                                    instructions="You are a coding assistant that talks like a pirate.",
+                                    input=input,
                                 )
                             
-                            create_chat_completion
-                            """).as(CreateChatCompletionFunction.class);
-            ChatCompletion chatCompletion = createChatCompletion.apply(userInput);
-            for (Choice choice : chatCompletion.choices()) {
-                System.out.println(choice.message().content());
-            }
+                            create_response
+                            """).as(CreateResponseFunction.class);
+            Response response = createResponseFunction.apply(input);
+            System.out.println(response.output_text());
         } catch (PolyglotException e) {
             throw new RuntimeException("Failed to run Python code. Did you set the OPENAI_API_KEY environment variable?", e);
         }
     }
 
     @FunctionalInterface
-    public interface CreateChatCompletionFunction {
-        ChatCompletion apply(String choice);
+    public interface CreateResponseFunction {
+        Response apply(String choice);
     }
 
-    public interface ChatCompletion {
-        List<Choice> choices();
-    }
-
-    public interface Choice {
-        ChatCompletionMessage message();
-    }
-
-    public interface ChatCompletionMessage {
-        String content();
+    public interface Response {
+        String output_text();
     }
 }
