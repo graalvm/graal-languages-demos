@@ -8,22 +8,36 @@ package com.example;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Map;
 
 import org.graalvm.polyglot.Context;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.Value;
+import org.graalvm.polyglot.proxy.ProxyExecutable;
+import org.graalvm.polyglot.proxy.ProxyObject;
 
 public class App {
+
+    public static Object javaIncrement(Value... v) {
+        return Value.asValue(v[0].asInt() + 1);
+    }
+
     public static void main(String[] args) throws IOException {
         // Find the WebAssembly module resource
         URL wasmFile = App.class.getResource("floyd.wasm");
         Source source = Source.newBuilder("wasm", wasmFile).name("example").build();
 
         // Create Wasm context
-        try (Context context = Context.newBuilder("wasm").option("wasm.Builtins", "wasi_snapshot_preview1").build()) {
-            // Compile and instantiate the module
+        try (Context context = Context.newBuilder("wasm")
+                .option("wasm.Builtins", "wasi_snapshot_preview1")
+                .build()) {
+            // Compile and instantiate the module with host function
             Value module = context.eval(source);
-            Value instance = module.newInstance();
+            Value instance = module.newInstance(ProxyObject.fromMap(
+                Map.of("env", ProxyObject.fromMap(
+                        Map.of("java-increment", (ProxyExecutable) App::javaIncrement)
+                ))
+            ));
 
             // Get the exports member from the module instance
             Value exports = instance.getMember("exports");

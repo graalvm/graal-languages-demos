@@ -185,8 +185,8 @@ public class App {
 Compile and run this Java application with Maven:
 
 ```shell
-mvw package
-mvn exec:exec
+./mvnw package
+./mvnw exec:exec
 ```
 
 The expected output should contain the first 10 lines of [Floyd's triangle](https://en.wikipedia.org/wiki/Floyd%27s_triangle), printed using the C function:
