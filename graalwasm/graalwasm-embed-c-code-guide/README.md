@@ -180,6 +180,69 @@ public class App {
 }
 ```
 
+## 4. Using Java functions from WebAssembly
+
+You can also call Java functions from WebAssembly by importing them in your WebAssembly modules.
+For the sake of an example, let's try to move the logic which computes the next element of the output (by doing an integer increment) to a Java function.
+
+Here is what we will need to add to our C file to declare an external function whose implementation we will provide in Java:
+
+```c
+extern int javaInc(int number)
+__attribute__((
+    __import_module__("env"),
+    __import_name__("java-increment"),
+));
+```
+
+This introduces an import in the resulting WebAssembly module.
+The import will try to pull a function named `java-increment` from the imported module `env`.
+Within our C code, this function will be available under the name `javaInc`.
+We can update our `floyd` function to use `javaInc` like so:
+
+```c
+void floyd(int rows) {
+    int number = 1;
+    for (int i = 1; i <= rows; i++) {
+        for (int j = 1; j <= i; j++) {
+            printf("%d ", number);
+            number = javaInc(number);
+        }
+        printf(".\n");
+    }
+}
+```
+
+Then, in our Java application, we pass in an import object when instantiating our WebAssembly module.
+This import object maps module names to module objects, with each module object mapping function names to function definitions.
+
+```java
+...
+import java.util.Map;
+import org.graalvm.polyglot.proxy.ProxyExecutable;
+import org.graalvm.polyglot.proxy.ProxyObject;
+
+public class App {
+
+    public static Object javaIncrement(Value... v) {
+        return Value.asValue(v[0].asInt() + 1);
+    }
+
+    public static void main(String[] args) throws IOException {
+            ...
+            // Compile and instantiate the module with host function
+            Value module = context.eval(source);
+            Value instance = module.newInstance(ProxyObject.fromMap(
+                Map.of("env", ProxyObject.fromMap(
+                        Map.of("java-increment", (ProxyExecutable) App::javaIncrement)
+                ))
+            ));
+            ...
+        }
+    }
+}
+```
+
 ## 4. Building and Testing the Application
 
 Compile and run this Java application with Maven:
