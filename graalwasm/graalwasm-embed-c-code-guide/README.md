@@ -156,7 +156,7 @@ public class App {
    public static void main(String[] args) throws IOException {
        // Find the WebAssembly module resource
        URL wasmFile = App.class.getResource("floyd.wasm");
-       Source source = Source.newBuilder("wasm", wasmFile).name("example").build();
+       Source source = Source.newBuilder("wasm", wasmFile).build();
 
        // Create Wasm context
        try (Context context = Context.newBuilder("wasm").option("wasm.Builtins", "wasi_snapshot_preview1").build()) {
