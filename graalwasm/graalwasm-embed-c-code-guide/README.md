@@ -182,10 +182,10 @@ public class App {
 
 ## 4. Using Java functions from WebAssembly
 
-You can also call Java functions from WebAssembly by importing them in your WebAssembly modules.
-For the sake of an example, let's try to move the logic which computes the next element of the output (by doing an integer increment) to a Java function.
+You can also call Java functions from WebAssembly by importing them into your WebAssembly modules.
+For this example, let's try to move the logic which computes the next element of the output (by doing an integer increment) to a Java function.
 
-Here is what we will need to add to our C file to declare an external function whose implementation we will provide in Java:
+We need to add the following to our C file to declare an external function whose implementation we will provide in Java:
 
 ```c
 extern int javaInc(int number)
@@ -196,7 +196,7 @@ __attribute__((
 ```
 
 This introduces an import in the resulting WebAssembly module.
-The import will try to pull a function named `java-increment` from the imported module `env`.
+The import will pull a function named `java-increment` from the imported module `env`.
 Within our C code, this function will be available under the name `javaInc`.
 We can update our `floyd` function to use `javaInc` like so:
 
@@ -243,7 +243,7 @@ public class App {
 }
 ```
 
-## 4. Building and Testing the Application
+## 5. Building and Testing the Application
 
 Compile and run this Java application with Maven:
 
