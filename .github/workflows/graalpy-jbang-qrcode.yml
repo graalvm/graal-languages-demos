@@ -26,4 +26,4 @@ jobs:
       - name: Run 'graalpy-jbang-qrcode' demo
         run: |
           cd graalpy/graalpy-jbang-qrcode
-          curl -Ls https://sh.jbang.dev | bash -s - run qrcode.java "Hello from GraalPy!"
+          curl -Ls https://sh.jbang.dev | bash -s - --verbose run qrcode.java "Hello from GraalPy!"

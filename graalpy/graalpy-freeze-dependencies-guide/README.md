@@ -1,6 +1,6 @@
 # Pinning Python Dependencies
 
-Python libraries can be used in and shipped with plain Java applications. 
+Python libraries can be used in and shipped with plain Java applications.
 
 The [GraalPy Maven artifacts](https://central.sonatype.com/artifact/org.graalvm.polyglot/python) and [GraalVM Polyglot APIs](https://www.graalvm.org/latest/reference-manual/embed-languages/) allow flexible integration with different project setups.
 
@@ -13,9 +13,15 @@ rather than one specific version. This can create issues during development and 
 transitive set of dependencies may change when some package publishes a new release.
 
 We recommend pinning all transitive dependencies to single version and upgrade them
-manually in a controlled fashion. This guide shows how this can be done with the
+manually in a controlled fashion.
+
+This guide shows how this can be done manually with the
 GraalPy Maven plugin. We will install package `vaderSentiment`, discover all its
 transitive dependencies and then pin them in the Maven.
+
+Starting from version 25.0.1, the GraalPy Maven and Gradle plugins provide a built-in
+support for freezing dependencies. Please refer to their
+[user manual](https://www.graalvm.org/python/docs/#locking-python-packages).
 
 ## 1. What you will need
 
@@ -68,7 +74,7 @@ For Maven, add dependency on GraalPy runtime, and configure the GraalPy Maven pl
     <dependency>
         <groupId>org.graalvm.polyglot</groupId>
         <artifactId>python</artifactId>
-        <version>25.0.0</version>
+        <version>25.0.1</version>
         <type>pom</type>
     </dependency>
 ```
@@ -80,7 +86,7 @@ For Maven, add dependency on GraalPy runtime, and configure the GraalPy Maven pl
         <plugin>
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
-            <version>25.0.0</version>
+            <version>25.0.1</version>
             <configuration>
                 <packages> <!-- ① -->
                     <package>vaderSentiment==3.3.2</package>
@@ -104,7 +110,7 @@ For Gradle, add the GraalPy plugin, configure it, and add the dependency on the 
 ```kotlin
 plugins {
     application
-    id("org.graalvm.python") version "25.0.0"
+    id("org.graalvm.python") version "25.0.1"
 }
 ```
 
@@ -178,7 +184,7 @@ If you use Maven, paste them in the `pom.xml` section of the packages and wrap t
         <plugin>
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
-            <version>25.0.0</version>
+            <version>25.0.1</version>
             <configuration>
                 <packages> <!-- ① -->
                     <package>vaderSentiment==3.3.2</package>

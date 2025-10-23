@@ -9,8 +9,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.graalvm.polyglot:polyglot:25.0.0")
-    implementation("org.graalvm.polyglot:python:25.0.0")
+    implementation("org.graalvm.polyglot:polyglot:25.0.1")
+    implementation("org.graalvm.polyglot:python:25.0.1")
 
     // Use JUnit Jupiter for testing.
     testImplementation("org.junit.jupiter:junit-jupiter:5.11.0")
