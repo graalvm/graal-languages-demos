@@ -10,7 +10,7 @@
     <name>demo</name>
 
     <properties>
-        <graal.languages.version>25.0.0</graal.languages.version>
+        <graal.languages.version>25.0.1</graal.languages.version>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <truffle.jvm.arg1>--enable-native-access=ALL-UNNAMED</truffle.jvm.arg1>

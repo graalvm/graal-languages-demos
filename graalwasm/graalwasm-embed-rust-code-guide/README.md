@@ -51,7 +51,7 @@ Be sure to add a `graal.languages.version` property with the version of GraalWas
 
 ```xml
 <properties>
-    <graal.languages.version>25.0.0</graal.languages.version>
+    <graal.languages.version>25.0.1</graal.languages.version>
     <!-- more properties -->
 </properties>
 ```

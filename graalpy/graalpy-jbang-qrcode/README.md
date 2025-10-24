@@ -8,7 +8,7 @@ Install GraalVM 25 and set the value of `JAVA_HOME` accordingly.
 We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash
-sdk install java 25-graal
+sdk install java 25.0.1-graal
 ```
 
 Afterward, [install `jbang`](https://www.jbang.dev/download/), for with:
