@@ -5,7 +5,7 @@ Each time it runs, the program increments a counter, displays the updated value,
 
 ## Preparation
 
-Install [Espresso 25.0.0](https://www.graalvm.org/latest/reference-manual/espresso/) and set the value of `JAVA_HOME` accordingly.
+Install [Espresso 25.0.1](https://www.graalvm.org/latest/reference-manual/espresso/) and set the value of `JAVA_HOME` accordingly.
 
 ## Run the Application
 

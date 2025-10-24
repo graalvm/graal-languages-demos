@@ -1,6 +1,6 @@
 plugins {
     application
-    id("org.graalvm.python") version "25.0.0"
+    id("org.graalvm.python") version "25.0.1"
 }
 
 // To make the paths of this reference solution (without 'app' subdirectory for sources)
@@ -34,7 +34,7 @@ repositories {
 }
 
 // This dependency is necessary only for the example Java code, not for building and running pip freeze:
-dependencies.add("implementation", "org.graalvm.python:python-embedding:25.0.0")
+dependencies.add("implementation", "org.graalvm.python:python-embedding:25.0.1")
 
 group = "org.example"
 version = "1.0-SNAPSHOT"

@@ -62,14 +62,14 @@ dependencies automatically.
   <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>python</artifactId> <!-- ① -->
-    <version>25.0.0</version>
+    <version>25.0.1</version>
     <type>pom</type> <!-- ② -->
   </dependency>
 
   <dependency>
     <groupId>org.graalvm.python</groupId>
     <artifactId>python-embedding</artifactId> <!-- ③ -->
-      <version>25.0.0</version>
+      <version>25.0.1</version>
   </dependency>
 </dependencies>
 ```
@@ -93,7 +93,7 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
      <plugin>
        <groupId>org.graalvm.python</groupId>
        <artifactId>graalpy-maven-plugin</artifactId>
-       <version>25.0.0</version>
+       <version>25.0.1</version>
        <configuration>
          <packages> <!-- ① -->
            <package>qrcode==7.4.2</package>
@@ -118,7 +118,7 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
 ```kotlin
 plugins {
     application
-    id("org.graalvm.python") version "25.0.0"
+    id("org.graalvm.python") version "25.0.1"
 }
 
 graalPy {

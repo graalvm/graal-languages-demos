@@ -72,13 +72,13 @@ For Gradle, the GraalPy Gradle plugin that we will add in the next section will 
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>25.0.0</version>
+  <version>25.0.1</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>25.0.0</version>
+  <version>25.0.1</version>
 </dependency>
 ```
 
@@ -101,7 +101,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 <plugin>
   <groupId>org.graalvm.python</groupId>
   <artifactId>graalpy-maven-plugin</artifactId>
-  <version>25.0.0</version>
+  <version>25.0.1</version>
   <configuration>
     <packages> <!-- ① -->
       <package>numpy==1.26.4</package> <!-- ② -->
@@ -155,7 +155,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `build.gradle.kts`
 ```
 plugins {
-    id("org.graalvm.python") version "25.0.0"
+    id("org.graalvm.python") version "25.0.1"
     // ...
 ```
 

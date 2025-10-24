@@ -39,7 +39,7 @@ jobs:
           kill $mnpid
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '25.0.0'
+          java-version: '25.0.1'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
@@ -81,7 +81,7 @@ jobs:
           kill $mnpid
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '25.0.0'
+          java-version: '25.0.1'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
