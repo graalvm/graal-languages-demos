@@ -38,7 +38,7 @@
 <body>
 
 <div class="effects-nav">
-    <a href="#" onclick="changeEffect('default')">Default</a>
+    <a href="#" onclick="changeEffect('identity')">Identity</a>
     <a href="#" onclick="changeEffect('flipv')">Flip Vertical</a>
     <a href="#" onclick="changeEffect('fliph')">Flip Horizontal</a>
     <a href="#" onclick="changeEffect('solarize')">Solarize</a>
@@ -50,7 +50,7 @@
 </div>
 
 <div id="image-container">
-    <img id="effect-image" src="/photo/default" alt="Image with effect">
+    <img id="effect-image" src="/photo/identity" alt="Image with effect">
 </div>
 <div id="load-time"></div>
 
@@ -58,7 +58,8 @@
     function changeEffect(effectName) {
         const startTime = performance.now();
         const img = document.getElementById('effect-image');
-        img.src = `/photo/${effectName}`;
+        // Append timestamp to keep browser from caching the image
+        img.src = `/photo/${effectName}?v=${Date.now()}`;
         img.onload = () => {
             const endTime = performance.now();
             const loadTime = endTime - startTime;
@@ -69,10 +70,8 @@
         };
     }
 
-    // Initially load the image with the default effect
-    document.addEventListener('DOMContentLoaded', (event) => {
-        changeEffect('default');
-    });
+    // Initially load the image with the identity effect
+    document.addEventListener('DOMContentLoaded', () => changeEffect('identity'));
 </script>
 
 </body>
