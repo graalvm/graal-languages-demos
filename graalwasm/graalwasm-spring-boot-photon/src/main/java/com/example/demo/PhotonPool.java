@@ -26,7 +26,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Configuration
 @ImportRuntimeHints(PhotonPool.PhotonPoolRuntimeHints.class)
 public class PhotonPool {
-    private final Engine sharedEngine = Engine.create();
+    private final Engine sharedEngine = Engine.newBuilder()
+            .option("dap", System.getProperty("dap", "false"))
+            .option("inspect", System.getProperty("inspect", "false"))
+            .build();
     private final BlockingQueue<Photon> photons;
 
     PhotonPool() throws IOException {

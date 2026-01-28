@@ -34,7 +34,7 @@ jobs:
       - name: Build native 'graalwasm-spring-boot-photon'
         run: |
           cd graalwasm/graalwasm-spring-boot-photon
-          ./mvnw --no-transfer-progress clean -Pnative native:compile
-          ./target/demo &
+          ./mvnw --no-transfer-progress clean -Pnative,wasm-debug native:compile
+          ./target/demo-wasm-debug &
           sleep 10
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/photo/flipv

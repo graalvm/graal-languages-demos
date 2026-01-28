@@ -34,7 +34,7 @@ jobs:
       - name: Build native 'graalwasm-micronaut-photon'
         run: |
           cd graalwasm/graalwasm-micronaut-photon
-          ./mvnw --no-transfer-progress clean package -Dpackaging=native-image
-          ./target/demo &
+          ./mvnw --no-transfer-progress clean package -Dpackaging=native-image -Pwasm-debug
+          ./target/demo-wasm-debug &
           sleep 10
           curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/photo/flipv

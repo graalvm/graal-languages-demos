@@ -17,11 +17,13 @@ sdk install java 25.0.1-graal
 To start the demo, simply run:
 
 ```bash
-./mvnw package mn:run
+./mvnw mn:run
 ```
 
 When the demo runs, open http://localhost:8080/ in a browser.
 To apply a specific effect, navigate to `http://localhost:8080/photo/<effect name>` (e.g., http://localhost:8080/photo/colorize).
+
+### Compiling with GraalVM Native Image
 
 To compile the application with GraalVM Native Image, run:
 
@@ -45,6 +47,77 @@ hey -c 8 -z 2m http://localhost:8080/photo/flipv
 ./mvnw package -Dpackaging=native-image -Ppgo
 ./target/demo-g1-pgo
 ```
+
+### Enable Wasm Debugging
+
+GraalWasm has sophisticated support for Wasm debugging based on DWARF debug info.
+When you enable debugging, you can step through and debug the Rust sources of Photon and its JavaScript binding.
+Enable the `wasm-debug` profile to recompile Photon with DWARF debug info and set the `inspect` or `dap` system property to enable the [Chrome DevTools Protocol](https://www.graalvm.org/latest/tools/chrome-debugger/) or the [Debug Adapter Protocol (DAP)](https://www.graalvm.org/latest/tools/dap/) respectively.
+
+```bash
+# Enable DWARF debug info and the Chrome DevTools Protocol
+ ./mvnw mn:run -Pwasm-debug -Dinspect=true
+ 
+ # Enable DWARF debug info and the Debug Adapter Protocol
+ ./mvnw mn:run -Pwasm-debug -Ddap=true
+```
+
+When enabling `inspect`, you should see debug sessions details after the Micronaut banner and before the application has fully started.
+Click on the link starting with `ws://` in IntelliJ Ultimate to start a debugging session, or open the link starting with `devtools://` in Chrome.
+
+```bash
+ __  __ _                                  _   
+|  \/  (_) ___ _ __ ___  _ __   __ _ _   _| |_ 
+| |\/| | |/ __| '__/ _ \| '_ \ / _` | | | | __|
+| |  | | | (__| | | (_) | | | | (_| | |_| | |_ 
+|_|  |_|_|\___|_|  \___/|_| |_|\__,_|\__,_|\__|
+Debugger listening on ws://127.0.0.1:9229/vSOlrj5WsknK3-vm0AU4c8QqaxZpMn9rQSwuS16nb_k
+For help, see: https://www.graalvm.org/tools/chrome-debugger
+E.g. in Chrome open: devtools://devtools/bundled/js_app.html?ws=127.0.0.1:9229/vSOlrj5WsknK3-vm0AU4c8QqaxZpMn9rQSwuS16nb_k
+```
+
+When enabling `dap`, you should see that "Graal DAP" is enabled and on which port it is listening:
+
+```bash
+ __  __ _                                  _   
+|  \/  (_) ___ _ __ ___  _ __   __ _ _   _| |_ 
+| |\/| | |/ __| '__/ _ \| '_ \ / _` | | | | __|
+| |  | | | (__| | | (_) | | | | (_| | |_| | |_ 
+|_|  |_|_|\___|_|  \___/|_| |_|\__,_|\__,_|\__|
+[Graal DAP] Starting server and listening on localhost/127.0.0.1:4711
+```
+
+In VS Code, use the following launch configuration (`launch.json`) to attach to the debugging server: 
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Attach",
+      "type": "node",
+      "request": "attach",
+      "debugServer": 4711
+    }
+  ]
+}
+```
+
+You can also enable the `wasm-debug` profile when compiling the application with GraalVM Native Image:
+
+```bash
+# Compile image with DWARF debug info
+./mvnw package -Dpackaging=native-image -Pwasm-debug
+
+# Run the app and enable the Chrome DevTools Protocol
+./target/demo-wasm-debug -Dinspect=true
+
+# Run the app and enable the Debug Adapter Protocol
+./target/demo-wasm-debug -Ddap=true
+```
+
+Note that the debug build of Photon has additional optimizations disabled in the Rust toolchain, causing the application to perform slower compared with the result build.
+Also note, that the DWARF debug info increases the file size of the Photon Wasm module from ~1.5M to ~26M, and with that also the file size of the JARs and native images. 
 
 ## Implementation Details
 
