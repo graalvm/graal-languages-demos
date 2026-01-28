@@ -7,12 +7,14 @@ multi-ecosystem-groups:
 
 updates:
   - package-ecosystem: 'maven'
-    directory: '/'
+    directories:
+      - '**/*'
     patterns: ['*']
     multi-ecosystem-group: 'all'
 
   - package-ecosystem: 'gradle'
-    directory: '/'
+    directories:
+      - '**/*'
     patterns: ['*']
     multi-ecosystem-group: 'all'
 
