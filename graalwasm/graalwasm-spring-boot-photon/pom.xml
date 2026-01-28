@@ -29,6 +29,8 @@
     <properties>
         <graal.languages.version>25.0.1</graal.languages.version>
         <java.version>21</java.version>
+        <dap>false</dap>
+        <inspect>false</inspect>
     </properties>
     <dependencies>
         <dependency>
@@ -47,6 +49,20 @@
         <dependency>
             <groupId>org.graalvm.polyglot</groupId>
             <artifactId>wasm</artifactId>
+            <version>${graal.languages.version}</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.graalvm.polyglot</groupId>
+            <artifactId>dap</artifactId>
+            <version>${graal.languages.version}</version>
+            <type>pom</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.graalvm.polyglot</groupId>
+            <artifactId>inspect</artifactId>
             <version>${graal.languages.version}</version>
             <type>pom</type>
         </dependency>
@@ -74,7 +90,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <optimizedLaunch>false</optimizedLaunch>
-                    <jvmArguments>--enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</jvmArguments>
+                    <jvmArguments>--enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow -Ddap=${dap} -Dinspect=${inspect}</jvmArguments>
                 </configuration>
             </plugin>
             <plugin>
@@ -92,15 +108,45 @@
                 </executions>
                 <configuration>
                     <executable>bash</executable>
-                    <arguments>
-                        <argument>build-photon.sh</argument>
-                    </arguments>
+                    <commandlineArgs>build-photon.sh --release</commandlineArgs>
                 </configuration>
             </plugin>
         </plugins>
     </build>
 
     <profiles>
+        <profile>
+            <id>wasm-debug</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>build-photon</id>
+                                <phase>process-resources</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <executable>bash</executable>
+                            <commandlineArgs>build-photon.sh --dev</commandlineArgs>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
+                        <configuration>
+                            <imageName>demo-wasm-debug</imageName>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>enable-g1gc</id>
             <activation>

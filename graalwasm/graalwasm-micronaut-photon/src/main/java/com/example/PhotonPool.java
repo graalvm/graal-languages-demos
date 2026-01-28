@@ -22,7 +22,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Context
 public class PhotonPool {
-    private final Engine sharedEngine = Engine.create();
+    private final Engine sharedEngine = Engine.newBuilder()
+            .option("dap", System.getProperty("dap", "false"))
+            .option("inspect", System.getProperty("inspect", "false"))
+            .build();
     private final BlockingQueue<Photon> photons;
 
     PhotonPool(ResourceResolver resourceResolve) throws IOException {

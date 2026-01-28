@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2025, Oracle and/or its affiliates.
+# Copyright (c) 2025, 2026, Oracle and/or its affiliates.
 #
 # Licensed under the Universal Permissive License v 1.0 as shown at https://opensource.org/license/UPL.
 #
@@ -8,14 +8,16 @@
 set -o errexit
 set -o nounset
 
-PHOTON_COMMIT="e95eccf886897c2efe8c2461fae9c6bf1375ff49"
+if [[ $# -eq 1 && ("$1" == "--release" || "$1" == "--dev") ]]; then
+    PROFILE="$1"
+else
+    echo "Usage: $0 [--release|--dev]"
+    exit 1
+fi
+
+PHOTON_COMMIT="e4ef13d602828b171e04bf232741d63621dfec14"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-
-if [[ -d "${SCRIPT_DIR}/target/classes/photon" ]]; then
-    echo "Photon already built from source. Nothing to do."
-    exit 0
-fi
 
 function ensure_command() {
     local cmd=$1
@@ -33,7 +35,7 @@ ensure_command "curl"
 ensure_command "unzip"
 ensure_command "wasm-pack"
 
-echo "Building Photon from source..."
+echo "Building Photon with '${PROFILE}' from source..."
 
 mkdir -p target/photon
 pushd target/photon > /dev/null
@@ -46,7 +48,19 @@ if [[ ! -d "photon-${PHOTON_COMMIT}" ]]; then
 fi
 pushd "photon-${PHOTON_COMMIT}" > /dev/null
 
-wasm-pack build --release --target bundler --out-name photon --out-dir "${SCRIPT_DIR}"/target/classes/photon ./crate
+if [[ "${PROFILE}" = "--dev" ]]; then
+    if ! grep -Fxq "dwarf-debug-info = true" crate/Cargo.toml; then
+      echo "Enabling DWARF debug info..."
+      cat >> crate/Cargo.toml << EOF
+
+[package.metadata.wasm-pack.profile.dev.wasm-bindgen]
+dwarf-debug-info = true
+
+EOF
+    fi
+fi
+
+wasm-pack build ${PROFILE} --target bundler --out-name photon --out-dir "${SCRIPT_DIR}"/target/classes/photon ./crate
 
 echo "Copying example image..."
 
