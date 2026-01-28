@@ -1,17 +1,22 @@
 version: 2
-updates:
 
-  - package-ecosystem: 'maven'
-    directory: '/'
+multi-ecosystem-groups:
+  all:
     schedule:
       interval: 'monthly'
+
+updates:
+  - package-ecosystem: 'maven'
+    directory: '/'
+    patterns: ['*']
+    multi-ecosystem-group: 'all'
 
   - package-ecosystem: 'gradle'
     directory: '/'
-    schedule:
-      interval: 'monthly'
+    patterns: ['*']
+    multi-ecosystem-group: 'all'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
-    schedule:
-      interval: 'monthly'
+    patterns: ['*']
+    multi-ecosystem-group: 'all'
