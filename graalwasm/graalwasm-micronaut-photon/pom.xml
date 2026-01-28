@@ -121,6 +121,7 @@
                 <artifactId>micronaut-maven-plugin</artifactId>
                 <configuration>
                     <configFile>aot-${packaging}.properties</configFile>
+                    <jvmArguments>--enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</jvmArguments>
                 </configuration>
             </plugin>
             <plugin>
