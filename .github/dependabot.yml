@@ -18,6 +18,12 @@ updates:
     patterns: ['*']
     multi-ecosystem-group: 'all'
 
+  - package-ecosystem: 'npm'
+    directories:
+      - '**/*'
+    patterns: ['*']
+    multi-ecosystem-group: 'all'
+
   - package-ecosystem: 'github-actions'
     directory: '/'
     patterns: ['*']
