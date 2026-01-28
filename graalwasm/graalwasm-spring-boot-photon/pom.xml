@@ -74,6 +74,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <optimizedLaunch>false</optimizedLaunch>
+                    <jvmArguments>--enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</jvmArguments>
                 </configuration>
             </plugin>
             <plugin>
