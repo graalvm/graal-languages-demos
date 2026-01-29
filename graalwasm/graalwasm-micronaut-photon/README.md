@@ -52,7 +52,7 @@ hey -c 8 -z 2m http://localhost:8080/photo/flipv
 
 GraalWasm has sophisticated support for Wasm debugging based on DWARF debug info.
 When you enable debugging, you can step through and debug the Rust sources of Photon and its JavaScript binding.
-Enable the `wasm-debug` profile to recompile Photon with DWARF debug info and set the `inspect` or `dap` system property to enable the [Chrome DevTools Protocol](https://www.graalvm.org/latest/tools/chrome-debugger/) or the [Debug Adapter Protocol (DAP)](https://www.graalvm.org/latest/tools/dap/) respectively.
+Enable the `wasm-debug` profile to recompile Photon with DWARF debug info and set the `inspect` or `dap` system property to enable the [Chrome DevTools Protocol](https://www.graalvm.org/latest/tools/chrome-debugger/) or the [Debug Adapter Protocol (DAP)](https://www.graalvm.org/latest/tools/dap/), respectively.
 
 ```bash
 # Enable DWARF debug info and the Chrome DevTools Protocol
@@ -62,7 +62,7 @@ Enable the `wasm-debug` profile to recompile Photon with DWARF debug info and se
  ./mvnw mn:run -Pwasm-debug -Ddap=true
 ```
 
-When enabling `inspect`, you should see debug sessions details after the Micronaut banner and before the application has fully started.
+When enabling `inspect`, you should see debugging session details after the Micronaut banner and before the application has fully started.
 Click on the link starting with `ws://` in IntelliJ Ultimate to start a debugging session, or open the link starting with `devtools://` in Chrome.
 
 ```bash
@@ -116,8 +116,15 @@ You can also enable the `wasm-debug` profile when compiling the application with
 ./target/demo-wasm-debug -Ddap=true
 ```
 
-Note that the debug build of Photon has additional optimizations disabled in the Rust toolchain, causing the application to perform slower compared with the result build.
-Also note, that the DWARF debug info increases the file size of the Photon Wasm module from ~1.5M to ~26M, and with that also the file size of the JARs and native images. 
+Once you are in a debugging session, the debugger should break in the JavaScript binding.
+You can resume execution, which will bring up the server, and set breakpoints, for example in `flipv()` or any other effect.
+When you then run code that has breakpoints set, for example by clicking on "Flip Vertical" on the landing page, execution should halt at the breakpoint positions.
+From there, you can step through the code, including stepping into calls to Wasm, which will reveal the Rust sources of Photon.
+Be aware that on the Rust side, you may need to step into an additional frame injected by wasm-bindgen and over additional code inlined by the Rust compiler.
+Check out these demo debugging sessions in [IntelliJ](https://youtu.be/YqrEqXB59rA?t=3057) and [VS Code](https://youtu.be/uefc2t9AmQI?t=2093) for more details.
+
+Note that the debug build of Photon has additional optimizations disabled in the Rust toolchain, causing the application to perform more slowly compared with the release build.
+Also note that the DWARF debug info increases the file size of the Photon Wasm module from ~1.5M to ~26M, and with that also the file size of the JARs and native images. 
 
 ## Implementation Details
 
