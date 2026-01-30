@@ -11,7 +11,7 @@
   <url>https://www.example.com</url>
 
   <properties>
-    <graalpy.version>25.0.1</graalpy.version>
+    <graalpy.version>25.0.2</graalpy.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.release>21</maven.compiler.release>
   </properties>

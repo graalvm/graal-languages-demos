@@ -4,13 +4,13 @@
  * Licensed under the Universal Permissive License v 1.0 as shown at https://opensource.org/license/UPL.
  */
 
-//DEPS org.graalvm.python:python-language:25.0.1
-//DEPS org.graalvm.python:python-launcher:25.0.1
-//DEPS org.graalvm.python:python-resources:25.0.1
-//DEPS org.graalvm.python:python-embedding:25.0.1
-//DEPS org.graalvm.python:python-embedding-tools:25.0.1
-//DEPS org.graalvm.python:jbang:25.0.1
-//DEPS org.graalvm.truffle:truffle-runtime:25.0.1
+//DEPS org.graalvm.python:python-language:25.0.2
+//DEPS org.graalvm.python:python-launcher:25.0.2
+//DEPS org.graalvm.python:python-resources:25.0.2
+//DEPS org.graalvm.python:python-embedding:25.0.2
+//DEPS org.graalvm.python:python-embedding-tools:25.0.2
+//DEPS org.graalvm.python:jbang:25.0.2
+//DEPS org.graalvm.truffle:truffle-runtime:25.0.2
 //PIP qrcode==7.4.2
 
 import org.graalvm.python.embedding.GraalPyResources;

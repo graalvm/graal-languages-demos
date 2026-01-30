@@ -19,8 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download Espresso
-        run: curl -sL -o $RUNNER_TEMP/espresso-linux-amd64.tar.gz https://gds.oracle.com/download/espresso/archive/espresso-java25-25.0.1-linux-amd64.tar.gz
-      - uses: actions/setup-java@v4
+        run: curl -sL -o $RUNNER_TEMP/espresso-linux-amd64.tar.gz https://gds.oracle.com/download/espresso/archive/espresso-java25-25.0.2-linux-amd64.tar.gz
+      - uses: actions/setup-java@v5
         with:
           java-version: '25'
           distribution: 'jdkfile'

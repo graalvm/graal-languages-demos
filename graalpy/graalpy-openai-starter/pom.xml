@@ -12,7 +12,7 @@
 
     <properties>
         <user.input>How can I check if my code runs on GraalPy?</user.input>
-        <graalpy.version>25.0.1</graalpy.version>
+        <graalpy.version>25.0.2</graalpy.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
         <truffle.jvm.arg1>--enable-native-access=ALL-UNNAMED</truffle.jvm.arg1>

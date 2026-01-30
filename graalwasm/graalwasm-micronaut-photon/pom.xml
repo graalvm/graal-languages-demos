@@ -14,7 +14,7 @@
     </parent>
     <properties>
         <photon.profile>--release</photon.profile>
-        <graal.languages.version>25.0.1</graal.languages.version>
+        <graal.languages.version>25.0.2</graal.languages.version>
         <packaging>jar</packaging>
         <jdk.version>25</jdk.version>
         <release.version>25</release.version>

@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <photon.profile>--release</photon.profile>
-        <graal.languages.version>25.0.1</graal.languages.version>
+        <graal.languages.version>25.0.2</graal.languages.version>
         <java.version>21</java.version>
         <dap>false</dap>
         <inspect>false</inspect>
