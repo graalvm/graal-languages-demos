@@ -23,6 +23,8 @@
         <micronaut.aot.enabled>false</micronaut.aot.enabled>
         <micronaut.aot.packageName>com.example.aot.generated</micronaut.aot.packageName>
         <exec.mainClass>com.example.Application</exec.mainClass>
+        <!-- For https://github.com/micronaut-projects/micronaut-maven-plugin/pull/1541, remove in the future -->
+        <micronaut-maven-plugin.version>4.11.6</micronaut-maven-plugin.version>
     </properties>
 
     <repositories>
