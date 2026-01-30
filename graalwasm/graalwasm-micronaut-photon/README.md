@@ -54,14 +54,12 @@ GraalWasm has sophisticated support for Wasm debugging based on DWARF debug info
 When you enable debugging, you can step through and debug the Rust sources of Photon and its JavaScript binding.
 Enable the `wasm-debug` profile to recompile Photon with DWARF debug info and set the `inspect` or `dap` system property to enable the [Chrome DevTools Protocol](https://www.graalvm.org/latest/tools/chrome-debugger/) or the [Debug Adapter Protocol (DAP)](https://www.graalvm.org/latest/tools/dap/), respectively.
 
-Due to a bug in Micronaut's Maven plugin, you need to run `./mvnw clean` whenever you turn the `wasm-debug` profile on.
-
 ```bash
 # Enable DWARF debug info and the Chrome DevTools Protocol
- ./mvnw clean mn:run -Pwasm-debug -Dinspect=true
+ ./mvnw mn:run -Pwasm-debug -Dinspect=true
  
  # Enable DWARF debug info and the Debug Adapter Protocol
- ./mvnw clean mn:run -Pwasm-debug -Ddap=true
+ ./mvnw mn:run -Pwasm-debug -Ddap=true
 ```
 
 When enabling `inspect`, you should see debugging session details after the Micronaut banner and before the application has fully started.
@@ -109,7 +107,7 @@ You can also enable the `wasm-debug` profile when compiling the application with
 
 ```bash
 # Compile image with DWARF debug info
-./mvnw clean package -Dpackaging=native-image -Pwasm-debug
+./mvnw package -Dpackaging=native-image -Pwasm-debug
 
 # Run the app and enable the Chrome DevTools Protocol
 ./target/demo-wasm-debug -Dinspect=true
