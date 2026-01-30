@@ -21,6 +21,12 @@ SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PHOTON_SOURCE_DIR="${SCRIPT_DIR}/target/photon"
 PHOTON_TARGET_DIR="${SCRIPT_DIR}/target/classes/photon"
 
+# Work around until https://github.com/micronaut-projects/micronaut-maven-plugin/pull/1541 has shipped
+if [[ -d "${PHOTON_TARGET_DIR}" ]]; then
+    echo "Photon already built from source. Nothing to do. Run './mvnw clean' when turning on the 'wasm-debug' profile."
+    exit 0
+fi
+
 function ensure_command() {
     local cmd=$1
     if ! command -v "${cmd}" > /dev/null; then
