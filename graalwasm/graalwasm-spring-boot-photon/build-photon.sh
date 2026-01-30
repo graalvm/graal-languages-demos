@@ -18,6 +18,8 @@ fi
 PHOTON_COMMIT="e4ef13d602828b171e04bf232741d63621dfec14"
 
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PHOTON_SOURCE_DIR="${SCRIPT_DIR}/target/photon"
+PHOTON_TARGET_DIR="${SCRIPT_DIR}/target/classes/photon"
 
 function ensure_command() {
     local cmd=$1
@@ -37,10 +39,10 @@ ensure_command "wasm-pack"
 
 echo "Building Photon with '${PROFILE}' from source..."
 
-mkdir -p target/photon
-pushd target/photon > /dev/null
+mkdir -p "${PHOTON_SOURCE_DIR}"
+pushd "${PHOTON_SOURCE_DIR}" > /dev/null
 
-if [[ ! -f photon-src.zip ]]; then
+if [[ ! -f "photon-src.zip" ]]; then
     curl -sL -o photon-src.zip "https://github.com/silvia-odwyer/photon/archive/${PHOTON_COMMIT}.zip"
 fi
 if [[ ! -d "photon-${PHOTON_COMMIT}" ]]; then
@@ -60,11 +62,11 @@ EOF
     fi
 fi
 
-wasm-pack build ${PROFILE} --target bundler --out-name photon --out-dir "${SCRIPT_DIR}"/target/classes/photon ./crate
+wasm-pack build "${PROFILE}" --target bundler --out-name photon --out-dir "${PHOTON_TARGET_DIR}" "$(pwd)/crate"
 
 echo "Copying example image..."
 
-cp crate/examples/input_images/daisies_fuji.jpg "${SCRIPT_DIR}"/target/classes
+cp "$(pwd)/crate/examples/input_images/daisies_fuji.jpg" "${SCRIPT_DIR}/target/classes"
 
 popd > /dev/null
 popd > /dev/null
