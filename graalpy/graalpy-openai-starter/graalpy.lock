@@ -6,7 +6,7 @@
 # 
 # This file contains a list of all required Python packages with their specific versions,
 # based on the packages defined in the plugin configuration and their dependencies.
-# graalpy-version: 25.0.1
+# graalpy-version: 25.0.2
 # input-packages: openai==1.107.3
 annotated-types==0.7.0
 anyio==4.10.0

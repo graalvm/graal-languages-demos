@@ -64,13 +64,13 @@ dependencies automatically.
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>25.0.1</version>
+  <version>25.0.2</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>25.0.1</version>
+  <version>25.0.2</version>
 </dependency>
 ```
 
@@ -93,7 +93,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 <plugin>
     <groupId>org.graalvm.python</groupId>
     <artifactId>graalpy-maven-plugin</artifactId>
-    <version>25.0.1</version>
+    <version>25.0.2</version>
     <configuration>
         <packages> <!-- ① -->
             <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
@@ -113,7 +113,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `build.gradle`
 ```
 plugins {
-  id 'org.graalvm.python' version '25.0.1'
+  id 'org.graalvm.python' version '25.0.2'
   // ...
 ```
 

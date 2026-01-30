@@ -10,8 +10,8 @@ application {
     mainClass = 'com.example.App'
 }
 dependencies {
-    implementation 'org.graalvm.polyglot:polyglot:25.0.1'
-    implementation 'org.graalvm.polyglot:js:25.0.1'
+    implementation 'org.graalvm.polyglot:polyglot:25.0.2'
+    implementation 'org.graalvm.polyglot:js:25.0.2'
 
     testImplementation platform('org.junit:junit-bom:5.11.0')
     testImplementation 'org.junit.jupiter:junit-jupiter-api'

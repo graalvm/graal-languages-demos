@@ -8,7 +8,7 @@ Install GraalVM 25 and set the value of `JAVA_HOME` accordingly.
 We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash
-sdk install java 25.0.1-graal
+sdk install java 25.0.2-graal
 ```
 
 This project also requires that an OpenAI API key is set via the `OPENAI_API_KEY` environment variable.
