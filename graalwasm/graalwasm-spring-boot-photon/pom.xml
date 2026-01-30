@@ -27,6 +27,7 @@
         <url/>
     </scm>
     <properties>
+        <photon.profile>--release</photon.profile>
         <graal.languages.version>25.0.1</graal.languages.version>
         <java.version>21</java.version>
         <dap>false</dap>
@@ -108,7 +109,7 @@
                 </executions>
                 <configuration>
                     <executable>bash</executable>
-                    <commandlineArgs>build-photon.sh --release</commandlineArgs>
+                    <commandlineArgs>build-photon.sh ${photon.profile}</commandlineArgs>
                 </configuration>
             </plugin>
         </plugins>
@@ -117,26 +118,11 @@
     <profiles>
         <profile>
             <id>wasm-debug</id>
+            <properties>
+                <photon.profile>--dev</photon.profile>
+            </properties>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>3.5.0</version>
-                        <executions>
-                            <execution>
-                                <id>build-photon</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                        <configuration>
-                            <executable>bash</executable>
-                            <commandlineArgs>build-photon.sh --dev</commandlineArgs>
-                        </configuration>
-                    </plugin>
                     <plugin>
                         <groupId>org.graalvm.buildtools</groupId>
                         <artifactId>native-maven-plugin</artifactId>
