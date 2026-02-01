@@ -17,14 +17,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: graalvm/setup-graalvm@v1
         with:
           java-version: '25.0.2'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: 'graalpy-25.0'
       - name: Build, test, and run 'graalpy-custom-venv-guide' using Maven

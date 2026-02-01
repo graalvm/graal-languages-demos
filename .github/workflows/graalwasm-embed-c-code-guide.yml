@@ -17,9 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Checkout emscripten-core/emsdk
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: emscripten-core/emsdk
           path: emsdk
