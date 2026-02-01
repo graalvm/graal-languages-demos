@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download Espresso
         run: curl -sL -o $RUNNER_TEMP/espresso-linux-amd64.tar.gz https://gds.oracle.com/download/espresso/archive/espresso-java25-25.0.2-linux-amd64.tar.gz
       - uses: actions/setup-java@v5
