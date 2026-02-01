@@ -8,7 +8,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.4.3</version>
+        <version>4.0.2</version>
         <relativePath/>
     </parent>
 
@@ -82,7 +82,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.12.1</version>
+                <version>2.0.0</version>
                 <configuration>
                     <nodeVersion>v22.14.0</nodeVersion>
                     <workingDirectory>src/main/js</workingDirectory>
