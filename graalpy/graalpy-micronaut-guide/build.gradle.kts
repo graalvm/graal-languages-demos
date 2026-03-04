@@ -1,7 +1,7 @@
 plugins {
     id("org.graalvm.python") version "25.0.2"
     // ...
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.gradleup.shadow") version "9.3.2"
     id("io.micronaut.application") version "4.6.2"
     id("io.micronaut.aot") version "4.6.2"
 }

@@ -161,14 +161,14 @@ plugins {
 
 `build.gradle.kts`
 ```
-packages = setOf( // ①
+packages = setOf(
     "numpy==1.26.4", // ②
     "--no-binary=numpy", // ③
     mapOf( // ④
         "linux" to "patchelf==0.17.2.2",
         "windows" to "delvewheel==1.10.0",
         "mac" to "delocate==0.13.0"
-    )[System.getProperty("os.name").split(" ")[0].toLowerCase()]
+    ).getValue(System.getProperty("os.name").split(" ")[0].lowercase())
 )
 ```
 
