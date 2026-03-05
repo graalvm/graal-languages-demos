@@ -168,7 +168,7 @@ packages = setOf( // ①
         "linux" to "patchelf==0.17.2.2",
         "windows" to "delvewheel==1.10.0",
         "mac" to "delocate==0.13.0"
-    )[System.getProperty("os.name").split(" ")[0].toLowerCase()]
+    ).getValue(System.getProperty("os.name").split(" ")[0].lowercase())
 )
 ```
 

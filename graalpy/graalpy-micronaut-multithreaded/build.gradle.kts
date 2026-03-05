@@ -1,9 +1,9 @@
 plugins {
     id("org.graalvm.python") version "25.0.2"
     // ...
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.micronaut.application") version "4.6.1"
-    id("io.micronaut.aot") version "4.6.1"
+    id("com.gradleup.shadow") version "9.3.2"
+    id("io.micronaut.application") version "4.6.2"
+    id("io.micronaut.aot") version "4.6.2"
 }
 
 graalPy {
@@ -14,7 +14,7 @@ graalPy {
             "linux" to "patchelf==0.17.2.2",
             "windows" to "delvewheel==1.10.0",
             "mac" to "delocate==0.13.0"
-        )[System.getProperty("os.name").split(" ")[0].toLowerCase()]
+        ).getValue(System.getProperty("os.name").split(" ")[0].lowercase())
     )
 }
 
