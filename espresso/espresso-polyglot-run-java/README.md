@@ -36,6 +36,8 @@ Or execute the packaged app jar with the copied polyglot dependencies on the mod
 
 ```bash
 $JAVA_HOME/bin/java \
+    --enable-native-access=org.graalvm.truffle \
+    --sun-misc-unsafe-memory-access=allow \
     --module-path target/polyglot-libs \
     --add-modules=org.graalvm.polyglot \
     -cp target/espresso-polyglot-run-java-1.0-SNAPSHOT.jar \
@@ -46,6 +48,8 @@ Pass a custom name to the guest Java code:
 
 ```bash
 $JAVA_HOME/bin/java \
+    --enable-native-access=org.graalvm.truffle \
+    --sun-misc-unsafe-memory-access=allow \
     --module-path target/polyglot-libs \
     --add-modules=org.graalvm.polyglot \
     -cp target/espresso-polyglot-run-java-1.0-SNAPSHOT.jar \
@@ -53,6 +57,8 @@ $JAVA_HOME/bin/java \
 ```
 
 The Maven command runs `$JAVA_HOME/bin/java` against `target/classes` with the GraalVM dependencies on the module path. The direct `java` command runs the packaged application JAR with the copied dependencies on the module path. In both cases, the host application resolves its own code source and passes that location to `java.Classpath`.
+
+On JDK 24 and later, Truffle requires native access to avoid JDK warnings. For module-path launches, GraalVM recommends `--enable-native-access=org.graalvm.truffle`, and the JDK’s `--sun-misc-unsafe-memory-access=allow` option suppresses the `sun.misc.Unsafe` warning. For background and discussion, see [oracle/graal#12782](https://github.com/oracle/graal/issues/12782).
 
 Note: this demo does not run *on* Espresso. It runs on a GraalVM JDK and embeds Espresso through the Polyglot API. The Espresso language runtime is pulled in by Maven as project dependencies. This is different from `espresso-continuations`, which requires launching the application on an Espresso-enabled Java runtime.
 
