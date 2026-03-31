@@ -1,0 +1,44 @@
+name: Test Espresso Polyglot Run Java
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'espresso/espresso-polyglot-run-java/**'
+      - '.github/workflows/espresso-polyglot-run-java.yml'
+  pull_request:
+    paths:
+      - 'espresso/espresso-polyglot-run-java/**'
+      - '.github/workflows/espresso-polyglot-run-java.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'espresso-polyglot-run-java (${{ matrix.platform }})'
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-slim
+            platform: linux-amd64
+    steps:
+      - uses: actions/checkout@v6
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25.0.2'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+      - name: Build, test, and run 'espresso-polyglot-run-java' using Maven and java
+        run: |
+          cd espresso/espresso-polyglot-run-java
+          ./mvnw --no-transfer-progress test
+          ./mvnw --no-transfer-progress -DskipTests package exec:exec -Ddemo.args="Duke"
+          $JAVA_HOME/bin/java \
+            --module-path target/polyglot-libs \
+            --add-modules=org.graalvm.polyglot \
+            -cp target/espresso-polyglot-run-java-1.0-SNAPSHOT.jar \
+            com.example.App Espresso
