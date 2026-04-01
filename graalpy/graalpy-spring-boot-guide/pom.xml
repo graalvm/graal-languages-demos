@@ -67,7 +67,8 @@
                 <configuration>
                     <packages> <!-- ① -->
                         <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-                        <package>requests</package> <!-- ③ -->
+                        <package>requests==2.32.5</package> <!-- ③ -->
+                        <package>charset_normalizer==3.4.5</package>
                     </packages>
                 </configuration>
                 <executions>
