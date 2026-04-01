@@ -9,7 +9,8 @@ plugins {
 graalPy {
     packages = setOf( // ①
         "vader-sentiment==3.2.1.1", // ②
-        "requests" // ③
+        "requests==2.32.5", // ③
+        "charset_normalizer==3.4.5"
     )
 }
 

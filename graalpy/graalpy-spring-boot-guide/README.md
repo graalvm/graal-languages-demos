@@ -97,7 +97,8 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
     <configuration>
         <packages> <!-- ① -->
             <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
-            <package>requests</package> <!-- ③ -->
+            <package>requests==2.32.5</package> <!-- ③ -->
+            <package>charset_normalizer==3.4.5</package>
         </packages>
     </configuration>
     <executions>
@@ -122,7 +123,8 @@ plugins {
 graalPy {
     packages = [ // ①
         'vader-sentiment==3.2.1.1', // ②
-        'requests' // ③
+        'requests==2.32.5', // ③
+        'charset_normalizer==3.4.5'
     ]
 }
 ```
@@ -132,7 +134,7 @@ graalPy {
 ❷ Python packages and their versions can be specified as if used with pip.
 Install and pin the `vader-sentiment` package to version `3.2.1.1`.
 
-❸ The `vader_sentiment` package does not declare `requests` as a dependency so it has to done so manually at this place.
+❸ The `vader_sentiment` package does not declare `requests` as a dependency so it has to done so manually at this place. Pin `requests` and `charset_normalizer` to known-good versions to keep the embedded GraalPy environment reproducible.
 
 ### 4.4. Creating a Python context
 
