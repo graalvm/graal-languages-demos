@@ -1,0 +1,107 @@
+name: Test GraalPy OracleDB Connect Guide
+on:
+  push:
+    paths:
+      - 'graalpy/graalpy-oracledb-connect-guide/**'
+      - '.github/workflows/graalpy-oracledb-connect-guide.yml'
+  pull_request:
+    paths:
+      - 'graalpy/graalpy-oracledb-connect-guide/**'
+      - '.github/workflows/graalpy-oracledb-connect-guide.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    name: 'graalpy-oracledb-connect-guide'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      oracle:
+        image: container-registry.oracle.com/database/free:latest
+        ports:
+          - 1521:1521
+        env:
+          ORACLE_PWD: oraclepwd
+          APP_USER: appuser
+          APP_USER_PASSWORD: apppassword
+    steps:
+      - uses: actions/checkout@v6
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25.0.2'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          native-image-job-reports: 'true'
+      - uses: actions/setup-python@v6
+        with:
+          python-version: 'graalpy-25.0'
+          cache: 'pip'
+          cache-dependency-path: 'graalpy/graalpy-oracledb-connect-guide/requirements.txt'
+      - name: Wait for Oracle Database Free readiness
+        env:
+          ORACLE_CONTAINER: ${{ job.services.oracle.id }}
+        run: |
+          for attempt in $(seq 1 60); do
+            if docker logs "$ORACLE_CONTAINER" 2>&1 | grep -q 'DATABASE IS READY TO USE!'; then
+              exit 0
+            fi
+            sleep 20
+          done
+          docker logs "$ORACLE_CONTAINER"
+          exit 1
+      - name: Create application user
+        env:
+          ORACLE_CONTAINER: ${{ job.services.oracle.id }}
+        run: |
+          docker exec -i "$ORACLE_CONTAINER" sqlplus system/oraclepwd@FREEPDB1 < graalpy/graalpy-oracledb-connect-guide/create-app-user.sql
+      - name: Run graalpy-oracledb-connect-guide
+        shell: bash
+        run: |
+          cd graalpy/graalpy-oracledb-connect-guide
+          graalpy -m venv target/venv
+          target/venv/bin/graalpy -m pip install -r requirements.txt
+          target/venv/bin/graalpy app.py > /tmp/graalpy-oracledb-source.log 2>&1 &
+          app_pid="$!"
+          cleanup() {
+            kill "$app_pid" || true
+            wait "$app_pid" || true
+          }
+          trap cleanup EXIT
+          for _ in {1..30}; do
+            response="$(curl --silent --show-error --fail-with-body http://127.0.0.1:8080/ || true)"
+            if grep -F '"message":"Hello from Oracle"' <<< "$response" >/dev/null; then
+              echo "$response"
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/graalpy-oracledb-source.log
+          exit 1
+      - name: Build a standalone application
+        shell: bash
+        run: |
+          cd graalpy/graalpy-oracledb-connect-guide
+          rm -rf target
+          ./build-native.sh
+      - name: Run native 'graalpy-oracledb-connect-guide'
+        shell: bash
+        run: |
+          cd graalpy/graalpy-oracledb-connect-guide
+          ./target/standalone-app > /tmp/graalpy-oracledb-native.log 2>&1 &
+          app_pid="$!"
+          cleanup() {
+            kill "$app_pid" || true
+            wait "$app_pid" || true
+          }
+          trap cleanup EXIT
+          for _ in {1..30}; do
+            response="$(curl --silent --show-error --fail-with-body http://127.0.0.1:8080/ || true)"
+            if grep -F '"message":"Hello from Oracle"' <<< "$response" >/dev/null; then
+              echo "$response"
+              exit 0
+            fi
+            sleep 2
+          done
+          cat /tmp/graalpy-oracledb-native.log
+          exit 1

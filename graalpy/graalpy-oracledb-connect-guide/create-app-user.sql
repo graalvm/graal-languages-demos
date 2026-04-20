@@ -1,0 +1,4 @@
+CREATE USER appuser IDENTIFIED BY apppassword;
+GRANT CONNECT TO appuser;
+GRANT CREATE SESSION TO appuser;
+EXIT;
