@@ -1,4 +1,4 @@
-# Oracle Database Local Connection (GraalPy + python-oracledb) Native Demo
+# Building a Standalone GraalPy Application with Oracle Database Connectivity
 
 This demo shows a small [Flask](https://flask.palletsprojects.com/) application running on **GraalPy** and connecting to a local [Oracle Database Free](https://www.oracle.com/database/free/get-started/) instance using the **python-oracledb** driver.
 
@@ -78,7 +78,7 @@ Default values for `ORACLE_USER`, `ORACLE_PASSWORD`, `ORACLE_DSN`, and `PORT` ar
 
 ## Build a Native Standalone Executable
 
-For building a Python standalone application, native executable, set `JAVA_HOME` and `PATH` to the required GraalVM version.
+For building a Python standalone application, native executable, ensure `JAVA_HOME` and `PATH` are set to the necessary GraalVM version.
 
 The GraalPy command to build a standalone executable is:
 ```bash
@@ -88,7 +88,7 @@ graalpy -m standalone native \
   --venv target/venv
 ```
 
-For convenience, the script _build-native.sh_ is provided for you: it creates a virtual environment in _target/venv_ installs Flask and other required libraries, and builds a native standalone executable.
+For convenience, the script _build-native.sh_ is provided for you: it creates a virtual environment in _target/venv_, installs Flask and other required libraries, and builds a native standalone executable.
 
 1. Run it:
    ```bash
@@ -107,6 +107,7 @@ For convenience, the script _build-native.sh_ is provided for you: it creates a 
    curl http://localhost:8080/
    ```
 
-## Summary
+## Next Steps
 
-This demo showcases a Flask application packaged as a GraalPy native executable, connecting to Oracle Database using the `python-oracledb` driver.
+This demo showed a Flask application packaged as a GraalPy native executable, connecting to Oracle Database using the `python-oracledb` driver.
+Next, you can extend it by adding CRUD endpoints, implementing database interactions with parameterized queries, and introducing connection pooling for more realistic usage.
