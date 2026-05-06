@@ -16,6 +16,12 @@
     <maven.compiler.release>21</maven.compiler.release>
   </properties>
 
+  <repositories>
+  </repositories>
+
+  <pluginRepositories>
+  </pluginRepositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>

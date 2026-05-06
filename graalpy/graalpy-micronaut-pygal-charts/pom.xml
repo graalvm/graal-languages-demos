@@ -31,6 +31,9 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+  </pluginRepositories>
+
   <dependencies>
     <dependency>
       <groupId>org.graalvm.polyglot</groupId>

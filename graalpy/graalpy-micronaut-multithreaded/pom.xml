@@ -30,6 +30,9 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+  </pluginRepositories>
+
   <dependencies>
     <dependency>
       <groupId>org.graalvm.python</groupId>

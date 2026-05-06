@@ -30,6 +30,13 @@
         <graalpy.version>25.0.2</graalpy.version>
         <java.version>21</java.version>
     </properties>
+
+    <repositories>
+    </repositories>
+
+    <pluginRepositories>
+    </pluginRepositories>
+
     <dependencies>
         <dependency>
             <groupId>org.graalvm.polyglot</groupId>
