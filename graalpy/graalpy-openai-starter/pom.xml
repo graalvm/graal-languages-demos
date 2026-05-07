@@ -19,12 +19,6 @@
         <truffle.jvm.arg2>--sun-misc-unsafe-memory-access=allow</truffle.jvm.arg2>
     </properties>
 
-    <repositories>
-    </repositories>
-
-    <pluginRepositories>
-    </pluginRepositories>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

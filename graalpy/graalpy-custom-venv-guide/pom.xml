@@ -13,12 +13,6 @@
     <maven.compiler.release>17</maven.compiler.release>
   </properties>
 
-  <repositories>
-  </repositories>
-
-  <pluginRepositories>
-  </pluginRepositories>
-
   <dependencies>
     <dependency>
       <groupId>org.graalvm.polyglot</groupId>

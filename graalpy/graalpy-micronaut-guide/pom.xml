@@ -30,9 +30,6 @@
     </repository>
   </repositories>
 
-  <pluginRepositories>
-  </pluginRepositories>
-
   <dependencies>
     <!-- GraalPy -->
     <dependency>

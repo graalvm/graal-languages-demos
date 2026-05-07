@@ -12,7 +12,7 @@ if [[ -z "$new_version" ]]; then
     exit 2
 fi
 
-if [[ -n "$local_repo" && "$local_repo" != file://* ]]; then
+if [[ -n "$local_repo" && "$local_repo" != file://* && "$local_repo" != http://* && "$local_repo" != https://* ]]; then
     local_repo="file://$(realpath "$local_repo")"
 fi
 
@@ -25,34 +25,72 @@ function patch_version() {
 function add_maven_repo() {
     [[ -z "$local_repo" ]] && return
 
-    sed -i "/<repositories>/a\\
-    <repository>\\
-      <id>local-graalpy-repo</id>\\
-      <url>$local_repo</url>\\
-    </repository>" pom.xml
+    # look for pre-existing <repositories> - we must insert into it, otherwise look for "</modelVersion>"
+    local indent
+    if grep -q "<repositories>" pom.xml; then
+        indent="$(sed -n 's/^\([[:space:]]*\)<repositories>.*/\1/p' pom.xml | head -n 1)"
+        sed -i "/<repositories>/a\\
+$indent  <repository>\\
+$indent    <id>local-graalpy-repo</id>\\
+$indent    <url>$local_repo</url>\\
+$indent  </repository>" pom.xml
 
-    sed -i "/<pluginRepositories>/a\\
-    <pluginRepository>\\
-      <id>local-graalpy-plugin-repo</id>\\
-      <url>$local_repo</url>\\
-    </pluginRepository>" pom.xml
+        sed -i "/<\\/repositories>/a\\
+\\
+$indent<pluginRepositories>\\
+$indent  <pluginRepository>\\
+$indent    <id>local-graalpy-plugin-repo</id>\\
+$indent    <url>$local_repo</url>\\
+$indent  </pluginRepository>\\
+$indent</pluginRepositories>" pom.xml
+    else
+        indent="$(sed -n 's/^\([[:space:]]*\)<modelVersion>.*/\1/p' pom.xml)"
+        sed -i "/<\\/modelVersion>/a\\
+$indent<repositories>\\
+$indent  <repository>\\
+$indent    <id>local-graalpy-repo</id>\\
+$indent    <url>$local_repo</url>\\
+$indent  </repository>\\
+$indent</repositories>\\
+\\
+$indent<pluginRepositories>\\
+$indent  <pluginRepository>\\
+$indent    <id>local-graalpy-plugin-repo</id>\\
+$indent    <url>$local_repo</url>\\
+$indent  </pluginRepository>\\
+$indent</pluginRepositories>" pom.xml
+    fi
 }
 
 function add_gradle_repo() {
     [[ -z "$local_repo" ]] && return
 
     if [[ -f settings.gradle.kts ]]; then
-        sed -i "/repositories[[:space:]]*{/a\\
+        sed -i "1i\\
+pluginManagement {\\
+    repositories {\\
         maven {\\
             url = uri(\"$local_repo\")\\
-        }" settings.gradle.kts
+        }\\
+        gradlePluginPortal()\\
+        mavenCentral()\\
+    }\\
+}\\
+" settings.gradle.kts
     fi
 
     if [[ -f settings.gradle ]]; then
-        sed -i "/repositories[[:space:]]*{/a\\
+        sed -i "1i\\
+pluginManagement {\\
+  repositories {\\
     maven {\\
       url = uri('$local_repo')\\
-    }" settings.gradle
+    }\\
+    gradlePluginPortal()\\
+    mavenCentral()\\
+  }\\
+}\\
+" settings.gradle
     fi
 
     if [[ -f build.gradle.kts ]]; then

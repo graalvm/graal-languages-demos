@@ -15,12 +15,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <repositories>
-    </repositories>
-
-    <pluginRepositories>
-    </pluginRepositories>
-
     <dependencies>
         <dependency>
             <groupId>org.graalvm.polyglot</groupId>
