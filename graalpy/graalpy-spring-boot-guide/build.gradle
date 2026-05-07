@@ -1,5 +1,5 @@
 plugins {
-  id 'org.graalvm.python' version '25.0.2'
+  id 'org.graalvm.python' version '25.0.3'
   // ...
   id 'java'
   id 'org.springframework.boot' version '4.0.3'
