@@ -19,7 +19,7 @@ This guide shows how this can be done manually with the
 GraalPy Maven plugin. We will install package `vaderSentiment`, discover all its
 transitive dependencies and then pin them in the Maven.
 
-Starting from version 25.0.3, the GraalPy Maven and Gradle plugins provide a built-in
+Starting from version 25.0, the GraalPy Maven and Gradle plugins provide a built-in
 support for freezing dependencies. Please refer to their
 [user manual](https://www.graalvm.org/python/docs/#locking-python-packages).
 

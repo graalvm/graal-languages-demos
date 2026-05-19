@@ -1,8 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Updates version references in all GraalPy demos and optionally adds a local Maven repository.
-current_version=25.0.2
+# Updates version references in all GraalPy demos in both code and markdown guides.
+#
+# Usage:
+#   ./upgrade-version.sh NEW_VERSION [LOCAL_MAVEN_REPO]
+#
+# Run this script from the graalpy directory. NEW_VERSION replaces current_version
+# in the demo sources. LOCAL_MAVEN_REPO is optional; when provided, the script
+# adds Maven, Gradle, and JBang repository configuration for testing unreleased
+# artifacts. Manually update the current_version variable below if commiting the
+# changes.
+current_version=25.0.3
 new_version="${1:-}"
 local_repo="${2:-}"
 
