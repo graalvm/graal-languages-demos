@@ -1,0 +1,48 @@
+plugins {
+    id 'org.graalvm.python' version '24.2.1'
+    // ...
+    id 'application'
+    id 'java'
+}
+
+group = 'com.example'
+version = '1.0-SNAPSHOT'
+description = 'graalpy-apache-arrow-guide'
+
+graalPy {
+    community = true
+    packages = [ // ①
+                 'pandas==2.2.3', // ②
+                 'pyarrow==19.0.0' // ③
+    ]
+}
+
+repositories {
+    maven {
+        url = uri('file:///tmp/local_repo')
+    }
+    mavenCentral()
+}
+
+compileJava {
+    options.compilerArgs << '--enable-preview'
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs = ['--enable-preview', '--add-opens=java.base/java.nio=org.apache.arrow.memory.core,ALL-UNNAMED']
+}
+
+dependencies {
+    // Apache Arrow
+    implementation "org.apache.arrow:arrow-vector:17.0.0" // ①
+    implementation "org.apache.arrow:arrow-memory-unsafe:17.0.0" // ②
+
+    // GraalPy
+    implementation "org.graalvm.python:python-community:24.2.1" // ①
+    implementation "org.graalvm.python:python-embedding:24.2.1" // ③
+}
+
+application {
+    // Define the main class for the application.
+    mainClass = 'com.example.Main'
+}
