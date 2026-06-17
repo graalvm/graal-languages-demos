@@ -6,4 +6,5 @@ This directory contains demo applications for [Espresso](https://www.graalvm.org
 
 ## Demos
 
+- [Run Java code through the Polyglot API with Espresso](espresso-polyglot-run-java/)
 - [Suspend and resume Java applications using Espresso's Continuation API](espresso-continuations/)
