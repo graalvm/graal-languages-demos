@@ -33,15 +33,17 @@ jobs:
           ./mvnw --no-transfer-progress clean test -Dspring.mvc.async.request-timeout=60000
           ./mvnw --no-transfer-progress spring-boot:run &
           sbpid="$!"
-          sleep 30
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/java
+          trap 'kill $sbpid' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/java; do sleep 2; done'
           kill $sbpid
+          trap - EXIT
       - name: Build and run native 'graalpy-spring-boot-pygal-charts' using Maven
         run: |
           cd graalpy/graalpy-spring-boot-pygal-charts
           ./mvnw --no-transfer-progress clean -DskipTests -Pnative native:compile
           ./target/demo &
           sbpid="$!"
-          sleep 20
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/python
+          trap 'kill $sbpid' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/python; do sleep 2; done'
           kill $sbpid
+          trap - EXIT
