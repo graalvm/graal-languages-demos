@@ -34,9 +34,10 @@ jobs:
           ./mvnw --no-transfer-progress clean test -Dspring.mvc.async.request-timeout=60000
           ./mvnw --no-transfer-progress spring-boot:run &
           sbpid="$!"
-          sleep 30
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          trap 'kill $sbpid' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/; do sleep 2; done'
           kill $sbpid
+          trap - EXIT
       - name: Build and run native 'graalpy-spring-boot-guide'
         run: |
           cd graalpy/graalpy-spring-boot-guide
@@ -44,9 +45,10 @@ jobs:
           ./mvnw --no-transfer-progress clean -DskipTests -Pnative native:compile
           ./target/graalpy-springboot &
           sbpid="$!"
-          sleep 20
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          trap 'kill $sbpid' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/; do sleep 2; done'
           kill $sbpid
+          trap - EXIT
   gradle:
     name: 'graalpy-spring-boot-guide on Gradle'
     runs-on: ubuntu-latest
@@ -67,16 +69,18 @@ jobs:
           ./gradlew test -Dspring.mvc.async.request-timeout=60000
           ./gradlew bootRun &
           sbpid="$!"
-          sleep 30
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          trap 'kill $sbpid' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/; do sleep 2; done'
           kill $sbpid
-      - name: Build and run native 'graalpy-mispring-boot-guide'
+          trap - EXIT
+      - name: Build and run native 'graalpy-spring-boot-guide'
         run: |
           cd graalpy/graalpy-spring-boot-guide
           git clean -fdx
           ./gradlew nativeCompile
           ./build/native/nativeCompile/demo &
           sbpid="$!"
-          sleep 20
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          trap 'kill $sbpid' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/; do sleep 2; done'
           kill $sbpid
+          trap - EXIT
