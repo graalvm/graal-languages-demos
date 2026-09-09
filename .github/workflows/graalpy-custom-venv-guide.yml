@@ -26,7 +26,7 @@ jobs:
           cache: 'maven'
       - uses: actions/setup-python@v6
         with:
-          python-version: 'graalpy-25.0'
+          python-version: 'graalpy-25.3'
       - name: Build, test, and run 'graalpy-custom-venv-guide' using Maven
         shell: bash
         run: |
