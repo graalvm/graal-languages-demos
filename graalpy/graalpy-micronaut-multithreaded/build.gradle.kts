@@ -8,7 +8,7 @@ plugins {
 
 graalPy {
     packages = setOf( // ①
-        "numpy==1.26.4", // ②
+        "numpy==2.4.4", // ②
         "--no-binary=numpy", // ③
         mapOf( // ④
             "linux" to "patchelf==0.17.2.2",

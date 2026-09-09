@@ -139,7 +139,7 @@
         <version>25.3.4.1</version>
         <configuration>
           <packages> <!-- ① -->
-            <package>numpy==1.26.4</package> <!-- ② -->
+            <package>numpy==2.4.4</package> <!-- ② -->
             <package>--no-binary=numpy</package> <!-- ③ -->
             <package>${patchpkg}</package> <!-- ④ -->
           </packages>

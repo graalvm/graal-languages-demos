@@ -104,7 +104,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
   <version>25.3.4.1</version>
   <configuration>
     <packages> <!-- ① -->
-      <package>numpy==1.26.4</package> <!-- ② -->
+      <package>numpy==2.4.4</package> <!-- ② -->
       <package>--no-binary=numpy</package> <!-- ③ -->
       <package>${patchpkg}</package> <!-- ④ -->
     </packages>
@@ -162,7 +162,7 @@ plugins {
 `build.gradle.kts`
 ```
 packages = setOf( // ①
-    "numpy==1.26.4", // ②
+    "numpy==2.4.4", // ②
     "--no-binary=numpy", // ③
     mapOf( // ④
         "linux" to "patchelf==0.17.2.2",
@@ -175,7 +175,7 @@ packages = setOf( // ①
 ❶ The `packages` section lists all Python packages optionally with [requirement specifiers](https://pip.pypa.io/en/stable/reference/requirement-specifiers/).
 
 ❷ Python packages and their versions can be specified as if used with pip.
-Install and pin the `numpy` package to version `1.26.4`.
+Install and pin the `numpy` package to version `2.4.4`.
 
 ❸ Currently the support for isolating native modules and loading them multiple times relies on packages built from source on the target system.
 Until this limitation is lifted, we must force the plugins to build `numpy` from source.
