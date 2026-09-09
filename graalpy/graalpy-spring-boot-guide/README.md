@@ -512,7 +512,7 @@ For Gradle, add this to the `plugins` block:
 
 `build.gradle`
 ```
-  id 'org.graalvm.buildtools.native' version '0.11.4'
+  id 'org.graalvm.buildtools.native' version '1.1.8'
 ```
 
 Make sure that the `JAVA_HOME` environmental variable is set to the location of a GraalVM installation.
