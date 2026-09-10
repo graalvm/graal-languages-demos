@@ -20,13 +20,13 @@ jobs:
       - uses: actions/checkout@v6
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '25.0.2'
+          version: '25.3.4.1'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
       - uses: actions/setup-python@v6
         with:
-          python-version: 'graalpy-25.0'
+          python-version: 'graalpy-25.3'
       - name: Build, test, and run 'graalpy-custom-venv-guide' using Maven
         shell: bash
         run: |

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>4.0.3</version>
+        <version>4.1.1</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.example</groupId>
@@ -15,7 +15,7 @@
     <description>Demo project for Spring with GraalPy</description>
 
     <properties>
-        <java.version>21</java.version>
+        <java.version>25</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -32,13 +32,13 @@
         <dependency>
             <groupId>org.graalvm.python</groupId>
             <artifactId>python</artifactId> <!-- ① -->
-            <version>25.0.3</version>
+            <version>25.3.4.1</version>
             <type>pom</type> <!-- ② -->
         </dependency>
         <dependency>
             <groupId>org.graalvm.python</groupId>
             <artifactId>python-embedding</artifactId> <!-- ③ -->
-            <version>25.0.3</version>
+            <version>25.3.4.1</version>
         </dependency>
 
         <dependency>
@@ -63,7 +63,7 @@
             <plugin>
                 <groupId>org.graalvm.python</groupId>
                 <artifactId>graalpy-maven-plugin</artifactId>
-                <version>25.0.3</version>
+                <version>25.3.4.1</version>
                 <configuration>
                     <packages> <!-- ① -->
                         <package>vader-sentiment==3.2.1.1</package> <!-- ② -->

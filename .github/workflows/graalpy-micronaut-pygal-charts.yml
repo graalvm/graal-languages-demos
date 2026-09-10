@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v6
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '25.0.2'
+          version: '25.3.4.1'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
@@ -33,15 +33,17 @@ jobs:
           ./mvnw --no-transfer-progress clean test -Dmicronaut.http.client.read-timeout=1m
           ./mvnw --no-transfer-progress mn:run &
           mnpid="$!"
-          sleep 30
-          curl --fail-with-body --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/java
+          trap 'kill $mnpid' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/java; do sleep 2; done'
           kill $mnpid
+          trap - EXIT
       - name: Build and run native 'graalpy-micronaut-pygal-charts' using Maven
         run: |
           cd graalpy/graalpy-micronaut-pygal-charts
           ./mvnw --no-transfer-progress clean package -DskipTests -Dpackaging=native-image
           ./target/demo &
           mnpid="$!"
-          sleep 20
-          curl --fail-with-body --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/python
+          trap 'kill $mnpid' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/python; do sleep 2; done'
           kill $mnpid
+          trap - EXIT

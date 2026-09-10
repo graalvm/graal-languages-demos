@@ -64,13 +64,13 @@ dependencies automatically.
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>25.0.3</version>
+  <version>25.3.4.1</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>25.0.3</version>
+  <version>25.3.4.1</version>
 </dependency>
 ```
 
@@ -93,7 +93,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 <plugin>
     <groupId>org.graalvm.python</groupId>
     <artifactId>graalpy-maven-plugin</artifactId>
-    <version>25.0.3</version>
+    <version>25.3.4.1</version>
     <configuration>
         <packages> <!-- ① -->
             <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
@@ -114,7 +114,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 `build.gradle`
 ```
 plugins {
-  id 'org.graalvm.python' version '25.0.3'
+  id 'org.graalvm.python' version '25.3.4.1'
   // ...
 ```
 
@@ -512,7 +512,7 @@ For Gradle, add this to the `plugins` block:
 
 `build.gradle`
 ```
-  id 'org.graalvm.buildtools.native' version '0.11.4'
+  id 'org.graalvm.buildtools.native' version '1.1.8'
 ```
 
 Make sure that the `JAVA_HOME` environmental variable is set to the location of a GraalVM installation.

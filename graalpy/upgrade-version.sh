@@ -11,7 +11,7 @@ set -euo pipefail
 # adds Maven, Gradle, and JBang repository configuration for testing unreleased
 # artifacts. Manually update the current_version variable below if commiting the
 # changes.
-current_version=25.0.3
+current_version=25.3.4.1
 new_version="${1:-}"
 local_repo="${2:-}"
 

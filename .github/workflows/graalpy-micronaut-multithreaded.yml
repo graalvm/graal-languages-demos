@@ -22,10 +22,11 @@ jobs:
       - uses: actions/checkout@v6
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21.0.8'
+          version: '25.3.4.1'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'maven'
+          native-image-job-reports: 'true'
       - name: Build, test, and run 'graalpy-micronaut-multithreaded'
         run: |
           cd graalpy/graalpy-micronaut-multithreaded
@@ -33,18 +34,11 @@ jobs:
           ./mvnw --no-transfer-progress clean test -Dmicronaut.http.client.read-timeout=1m
           ./mvnw --no-transfer-progress mn:run &
           mnpid="$!"
-          sleep 30
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          trap 'kill "$mnpid" 2>/dev/null || true' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/; do sleep 2; done'
           curl 'http://localhost:8080/data_analysis' -H 'Content-Type: multipart/form-data; boundary=???' --data-raw $'--???\r\nContent-Disposition: form-data; name="poolSize"\r\n\r\n3\r\n--???\r\nContent-Disposition: form-data; name="file"; filename="py.csv"\r\nContent-Type: text/csv\r\n\r\n1.3,0,99.25\n0.5,2,0.00\n3.0,1,33.33\n\r\n--???--\r\n'
-          kill $mnpid
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '25.0.2'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache: 'maven'
-          set-java-home: false # keep using previous JAVA_HOME, but use different GRAALVM_HOME for generating native image
-          native-image-job-reports: 'true'
+          kill "$mnpid" 2>/dev/null || true
+          trap - EXIT
       - name: Build and run native 'graalpy-micronaut-multithreaded'
         run: |
           cd graalpy/graalpy-micronaut-multithreaded
@@ -52,10 +46,11 @@ jobs:
           ./mvnw --no-transfer-progress clean package -DskipTests -Dpackaging=native-image
           ./target/demo &
           mnpid="$!"
-          sleep 20
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          trap 'kill "$mnpid" 2>/dev/null || true' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/; do sleep 2; done'
           curl 'http://localhost:8080/data_analysis' -H 'Content-Type: multipart/form-data; boundary=???' --data-raw $'--???\r\nContent-Disposition: form-data; name="poolSize"\r\n\r\n3\r\n--???\r\nContent-Disposition: form-data; name="file"; filename="py.csv"\r\nContent-Type: text/csv\r\n\r\n1.3,0,99.25\n0.5,2,0.00\n3.0,1,33.33\n\r\n--???--\r\n'
-          kill $mnpid
+          kill "$mnpid" 2>/dev/null || true
+          trap - EXIT
   gradle:
     name: 'graalpy-micronaut-multithreaded on Gradle'
     runs-on: ubuntu-latest
@@ -64,10 +59,11 @@ jobs:
       - uses: actions/checkout@v6
       - uses: graalvm/setup-graalvm@v1
         with:
-          java-version: '21.0.8'
+          version: '25.3.4.1'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
           cache: 'gradle'
+          native-image-job-reports: 'true'
       - name: Build, test, and run 'graalpy-micronaut-multithreaded'
         run: |
           cd graalpy/graalpy-micronaut-multithreaded
@@ -75,18 +71,11 @@ jobs:
           ./gradlew test -Dmicronaut.http.client.read-timeout=1m
           ./gradlew run &
           mnpid="$!"
-          sleep 30
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          trap 'kill "$mnpid" 2>/dev/null || true' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/; do sleep 2; done'
           curl 'http://localhost:8080/data_analysis' -H 'Content-Type: multipart/form-data; boundary=???' --data-raw $'--???\r\nContent-Disposition: form-data; name="poolSize"\r\n\r\n3\r\n--???\r\nContent-Disposition: form-data; name="file"; filename="py.csv"\r\nContent-Type: text/csv\r\n\r\n1.3,0,99.25\n0.5,2,0.00\n3.0,1,33.33\n\r\n--???--\r\n'
-          kill $mnpid
-      - uses: graalvm/setup-graalvm@v1
-        with:
-          java-version: '25.0.2'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          cache: 'gradle'
-          set-java-home: false # keep using previous JAVA_HOME, but use different GRAALVM_JAVA_HOME for generating native image
-          native-image-job-reports: 'true'
+          kill "$mnpid" 2>/dev/null || true
+          trap - EXIT
       - name: Build and run native 'graalpy-micronaut-multithreaded'
         run: |
           cd graalpy/graalpy-micronaut-multithreaded
@@ -94,7 +83,8 @@ jobs:
           ./gradlew nativeCompile
           ./build/native/nativeCompile/demo &
           mnpid="$!"
-          sleep 20
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
+          trap 'kill "$mnpid" 2>/dev/null || true' EXIT
+          timeout 120 bash -c 'until curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/; do sleep 2; done'
           curl 'http://localhost:8080/data_analysis' -H 'Content-Type: multipart/form-data; boundary=???' --data-raw $'--???\r\nContent-Disposition: form-data; name="poolSize"\r\n\r\n3\r\n--???\r\nContent-Disposition: form-data; name="file"; filename="py.csv"\r\nContent-Type: text/csv\r\n\r\n1.3,0,99.25\n0.5,2,0.00\n3.0,1,33.33\n\r\n--???--\r\n'
-          kill $mnpid
+          kill "$mnpid" 2>/dev/null || true
+          trap - EXIT

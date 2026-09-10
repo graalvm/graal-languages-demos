@@ -1,5 +1,5 @@
 plugins {
-    id("org.graalvm.python") version "25.0.3"
+    id("org.graalvm.python") version "25.3.4.1"
     // ...
     id("com.gradleup.shadow") version "9.3.2"
     id("io.micronaut.application") version "4.6.2"
@@ -8,7 +8,7 @@ plugins {
 
 graalPy {
     packages = setOf( // ①
-        "numpy==1.26.4", // ②
+        "numpy==2.4.4", // ②
         "--no-binary=numpy", // ③
         mapOf( // ④
             "linux" to "patchelf==0.17.2.2",

@@ -74,7 +74,7 @@ For Maven, add dependency on GraalPy runtime, and configure the GraalPy Maven pl
     <dependency>
         <groupId>org.graalvm.polyglot</groupId>
         <artifactId>python</artifactId>
-        <version>25.0.3</version>
+        <version>25.3.4.1</version>
         <type>pom</type>
     </dependency>
 ```
@@ -86,7 +86,7 @@ For Maven, add dependency on GraalPy runtime, and configure the GraalPy Maven pl
         <plugin>
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
-            <version>25.0.3</version>
+            <version>25.3.4.1</version>
             <configuration>
                 <packages> <!-- ① -->
                     <package>vaderSentiment==3.3.2</package>
@@ -110,7 +110,7 @@ For Gradle, add the GraalPy plugin, configure it, and add the dependency on the 
 ```kotlin
 plugins {
     application
-    id("org.graalvm.python") version "25.0.3"
+    id("org.graalvm.python") version "25.3.4.1"
 }
 ```
 
@@ -184,7 +184,7 @@ If you use Maven, paste them in the `pom.xml` section of the packages and wrap t
         <plugin>
             <groupId>org.graalvm.python</groupId>
             <artifactId>graalpy-maven-plugin</artifactId>
-            <version>25.0.3</version>
+            <version>25.3.4.1</version>
             <configuration>
                 <packages> <!-- ① -->
                     <package>vaderSentiment==3.3.2</package>
