@@ -1,0 +1,41 @@
+name: Test GraalJS React SSR with Micronaut
+
+on:
+  push:
+    paths:
+      - 'graaljs/graaljs-micronaut-react-ssr/**'
+      - '.github/workflows/graaljs-micronaut-react-ssr.yml'
+  pull_request:
+    paths:
+      - 'graaljs/graaljs-micronaut-react-ssr/**'
+      - '.github/workflows/graaljs-micronaut-react-ssr.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  run:
+    name: 'graaljs-micronaut-react-ssr'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '24.0.2'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          cache: 'maven'
+
+      - name: Build, test, and run Micronaut app
+        run: |
+          cd graaljs/graaljs-micronaut-react-ssr
+          ./mvnw --no-transfer-progress clean package
+          ./mvnw --no-transfer-progress mn:run &
+          mnpid="$!"
+          sleep 30
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080
+          kill $mnpid
