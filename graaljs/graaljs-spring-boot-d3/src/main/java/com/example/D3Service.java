@@ -12,6 +12,7 @@ import org.graalvm.polyglot.Engine;
 import org.graalvm.polyglot.PolyglotException;
 import org.graalvm.polyglot.Source;
 import org.graalvm.polyglot.io.IOAccess;
+import org.graalvm.polyglot.proxy.ProxyExecutable;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.context.annotation.ImportRuntimeHints;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -41,6 +44,7 @@ public class D3Service {
         renderChordFunctionPool = new LinkedBlockingQueue<>(maxThreads);
         for (int i = 0; i < maxThreads; i++) {
             Context context = createContext();
+            installAtobPolyfill(context);
             context.eval(d3ChordBundleSource);
             RenderChordFunction renderChordFunction =
                     context.getBindings("js").getMember("renderChord").as(RenderChordFunction.class);
@@ -70,6 +74,11 @@ public class D3Service {
                 .engine(sharedEngine)
                 .allowIO(IOAccess.newBuilder().allowHostFileAccess(true).build())
                 .build();
+    }
+
+    private static void installAtobPolyfill(Context context) {
+        context.getBindings("js").putMember("atob", (ProxyExecutable) arguments -> new String(
+                Base64.getDecoder().decode(arguments[0].asString()), StandardCharsets.ISO_8859_1));
     }
 
     /**

@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './d3-chord.js',
@@ -21,4 +22,11 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      // The GraalJS context installs atob before evaluating the bundle.
+      // This lets webpack remove the unreachable Node.js Buffer fallback.
+      'typeof atob': JSON.stringify('function'),
+    }),
+  ],
 };

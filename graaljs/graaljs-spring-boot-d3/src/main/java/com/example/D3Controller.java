@@ -19,7 +19,7 @@ public class D3Controller {
         this.d3Service = d3Service;
     }
 
-    @GetMapping("/d3-chord")
+    @GetMapping("/")
     public String renderChord(Model model) {
         return d3Service.renderChord(model);
     }

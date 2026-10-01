@@ -39,7 +39,7 @@ Before starting, make sure you have the following:
     ./mvnw spring-boot:run
     ```
 
-3. Open [http://localhost:8080/d3-chord](http://localhost:8080/d3-chord) and you'll see an SVG chord diagram rendered **server-side** with no client JS required.
+3. Open [http://localhost:8080/](http://localhost:8080/) and you'll see an SVG chord diagram rendered **server-side** with no client JS required.
 
 ---
 
@@ -71,12 +71,28 @@ Use webpack to bundle the code into a single file:
 
 ```js
 // webpack.config.js
-entry: './d3-chord.js',
-output: {
-  filename: 'd3-chord.bundle.js',
-  libraryTarget: 'umd'
-}
+const webpack = require('webpack');
+
+module.exports = {
+    entry: './d3-chord.js',
+    output: {
+        filename: 'd3-chord.bundle.js',
+        libraryTarget: 'umd',
+        // ...
+    },
+    plugins: [
+        new webpack.DefinePlugin({
+            'typeof atob': JSON.stringify('function'),
+        }),
+    ],
+    // ...
+};
 ```
+
+One of `linkedom`'s transitive dependencies uses `atob` in browser environments to decode Base64 data, but embedded GraalJS does not provide this Web API by default.
+`D3Service.java` therefore installs an `atob` polyfill in every GraalJS context before evaluating the bundle.
+The `DefinePlugin` configuration tells webpack that `atob` is available.
+In the production build, webpack can then remove the unreachable Node.js `Buffer` fallback from the generated bundle.
 
 ### 3. Java Backend with GraalJS
 
