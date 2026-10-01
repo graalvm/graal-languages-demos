@@ -19,7 +19,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v7
       with:
-        python-version: graalpy-24.1
+        python-version: graalpy-25.4.4
     - name: Install dependencies
       run: |
         python -m pip install -r .github/scripts/requirements.txt
