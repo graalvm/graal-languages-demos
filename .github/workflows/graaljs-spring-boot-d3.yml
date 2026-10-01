@@ -38,4 +38,4 @@ jobs:
           ./mvnw --no-transfer-progress clean -Pnative native:compile
           ./target/graaljs-spring-boot-d3 &
           sleep 10
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/d3-chord
+          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
