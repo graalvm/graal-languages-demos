@@ -82,8 +82,8 @@ plugins {
 }
 
 node { // ②
-    version = '22.14.0'
-    npmVersion = '10.9.2'
+    version = '24.21.0'
+    npmVersion = '11.19.0'
     download = true
     workDir = file("<span class="math-inline">\{project\.buildDir\}/node"\)
     npmWorkDir \= file\("</span>{project.buildDir}/npm")
@@ -164,10 +164,10 @@ _pom.xml_
     <plugin>
         <groupId>com.github.eirslett</groupId>
         <artifactId>frontend-maven-plugin</artifactId>
-        <version>1.15.0</version>
+        <version>2.0.2</version>
 
         <configuration>
-            <nodeVersion>v21.7.2</nodeVersion>
+            <nodeVersion>24.21.0</nodeVersion>
             <workingDirectory>src/main/js</workingDirectory>
             <installDirectory>target</installDirectory>
         </configuration>
@@ -237,9 +237,9 @@ _package.json_
   "main": "main.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode=production --node-env=production",
+    "build": "webpack --mode=production --config-node-env=production",
     "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production --node-env=production",
+    "build:prod": "webpack --mode=production --config-node-env=production",
     "watch": "webpack --watch"
   },
   "dependencies": {

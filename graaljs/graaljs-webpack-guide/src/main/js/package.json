@@ -7,9 +7,9 @@
   "license": "UPL",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack --mode=production --node-env=production",
+    "build": "webpack --mode=production --config-node-env=production",
     "build:dev": "webpack --mode=development",
-    "build:prod": "webpack --mode=production --node-env=production",
+    "build:prod": "webpack --mode=production --config-node-env=production",
     "watch": "webpack --watch"
   },
   "dependencies": {

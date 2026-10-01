@@ -84,7 +84,7 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>2.0.2</version>
                 <configuration>
-                    <nodeVersion>v22.14.0</nodeVersion>
+                    <nodeVersion>v24.21.0</nodeVersion>
                     <workingDirectory>src/main/js</workingDirectory>
                     <installDirectory>target</installDirectory>
                 </configuration>
