@@ -2,7 +2,7 @@ plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
     // Apply GraalPy plugin to add Python packages as dependencies.
-    id("org.graalvm.python") version "25.3.4.1"
+    id("org.graalvm.python") version "25.4.4.1.1"
 }
 
 repositories {
@@ -12,7 +12,7 @@ repositories {
 
 dependencies {
     // Use JUnit Jupiter for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }

@@ -10,7 +10,7 @@
   <parent>
     <groupId>io.micronaut.platform</groupId>
     <artifactId>micronaut-parent</artifactId>
-    <version>4.10.9</version>
+    <version>5.2.0</version>
   </parent>
   <properties>
     <packaging>jar</packaging>
@@ -34,13 +34,13 @@
     <dependency>
       <groupId>org.graalvm.python</groupId>
       <artifactId>python</artifactId> <!-- ① -->
-      <version>25.3.4.1</version>
+      <version>25.4.4.1.1</version>
       <type>pom</type> <!-- ② -->
     </dependency>
     <dependency>
       <groupId>org.graalvm.python</groupId>
       <artifactId>python-embedding</artifactId> <!-- ③ -->
-      <version>25.3.4.1</version>
+      <version>25.4.4.1.1</version>
     </dependency>
 
     <dependency>
@@ -136,7 +136,7 @@
       <plugin>
         <groupId>org.graalvm.python</groupId>
         <artifactId>graalpy-maven-plugin</artifactId>
-        <version>25.3.4.1</version>
+        <version>25.4.4.1.1</version>
         <configuration>
           <packages> <!-- ① -->
             <package>numpy==2.4.4</package> <!-- ② -->

@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <graalpy.version>25.3.4.1</graalpy.version>
+        <graalpy.version>25.4.4.1.1</graalpy.version>
         <java.version>25</java.version>
     </properties>
     <dependencies>

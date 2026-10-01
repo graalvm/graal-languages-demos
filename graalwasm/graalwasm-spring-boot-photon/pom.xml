@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <photon.profile>--release</photon.profile>
-        <graal.languages.version>25.3.4.1</graal.languages.version>
+        <graal.languages.version>25.4.4.1.1</graal.languages.version>
         <java.version>21</java.version>
         <dap>false</dap>
         <inspect>false</inspect>
@@ -97,7 +97,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.6.3</version>
+                <version>3.6.4</version>
                 <executions>
                     <execution>
                         <id>build-photon</id>
