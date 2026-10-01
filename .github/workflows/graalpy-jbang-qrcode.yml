@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: graalvm/setup-graalvm@v1
         with:
-          version: '25.3.4.1'
+          version: '25.4'
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run 'graalpy-jbang-qrcode' demo

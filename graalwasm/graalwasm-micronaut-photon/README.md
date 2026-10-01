@@ -9,7 +9,7 @@ Install GraalVM 25 and set the value of `JAVA_HOME` accordingly.
 We recommend using [SDKMAN!](https://sdkman.io/). (For other download options, see [GraalVM Downloads](https://www.graalvm.org/downloads/).)
 
 ```bash
-sdk install java 25.3.4+1.r25-graal
+sdk install java 25.4.4+1-graal
 ```
 
 ## Run the Application
