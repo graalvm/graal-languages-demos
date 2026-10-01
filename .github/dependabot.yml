@@ -27,4 +27,5 @@ updates:
   - package-ecosystem: 'github-actions'
     directory: '/'
     patterns: ['*']
-    multi-ecosystem-group: 'all'
+    schedule:
+      interval: 'monthly'
