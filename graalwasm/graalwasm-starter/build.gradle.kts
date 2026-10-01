@@ -9,11 +9,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.graalvm.polyglot:polyglot:25.3.4.1")
-    implementation("org.graalvm.polyglot:wasm:25.3.4.1")
+    implementation("org.graalvm.polyglot:polyglot:25.4.4.1.1")
+    implementation("org.graalvm.polyglot:wasm:25.4.4.1.1")
 
     // Use JUnit Jupiter for testing.
-    testImplementation("org.junit.jupiter:junit-jupiter:6.0.3")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
