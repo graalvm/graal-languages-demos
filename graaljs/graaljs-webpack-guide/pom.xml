@@ -62,7 +62,7 @@
         <version>2.0.2</version>
 
         <configuration>
-          <nodeVersion>v21.7.3</nodeVersion>
+          <nodeVersion>v24.21.0</nodeVersion>
           <workingDirectory>src/main/js</workingDirectory>
           <installDirectory>target</installDirectory>
         </configuration>

@@ -21,8 +21,8 @@ test {
     useJUnitPlatform()
 }
 node {
-    version = '22.14.0'
-    npmVersion = '10.9.2'
+    version = '24.21.0'
+    npmVersion = '11.19.0'
     download = true
     workDir = file("${project.buildDir}/node")
     npmWorkDir = file("${project.buildDir}/npm")
