@@ -1,0 +1,62 @@
+version: "3.8"
+
+services:
+  db:
+    image: container-registry.oracle.com/database/free:latest
+    container_name: oracle-db
+    environment:
+      - ORACLE_ALLOW_REMOTE=true
+    ports:
+      - "1521:1521"
+      - "8443:8443"
+    volumes:
+      - oracle-data:/opt/oracle/oradata
+      - ./oracledb/init.sql:/opt/oracle/scripts/startup/init.sql:ro
+    networks:
+      - app-network
+
+  ollama:
+    build:
+      context: ./ollama
+      dockerfile: Dockerfile
+    image: ollama
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: backend
+    container_name: backend
+    depends_on:
+      - db
+      - ollama
+    env_file: .env
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: frontend
+    container_name: frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+
+volumes:
+  oracle-data:
+
+networks:
+  app-network:
+    driver: bridge

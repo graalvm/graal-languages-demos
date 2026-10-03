@@ -1,0 +1,121 @@
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+/* Improved code block styling */
+pre {
+  border-radius: 0.5rem;
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+}
+
+code {
+  font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
+  font-size: 0.95rem;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.3);
+}
+
+textarea {
+  overflow-y: auto;
+}
+
+
+.prose pre {
+  background-color: #282c34;
+}
+
+.dark .prose pre {
+  background-color: #1e1e1e;
+}
+
+/* Improve table styling */
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.prose th, .prose td {
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem;
+}
+
+.dark .prose th, .dark .prose td {
+  border-color: #4b5563;
+}
+
+/* Link styles - EXCLUDE sidebar links */
+a:not(.sidebar-container a):not(.url-link) {
+  color: #3a86ff;
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s ease;
+  font-weight: 500;
+}
+
+a:not(.sidebar-container a):not(.url-link):hover {
+  color: #4361ee;
+}
+
+a:not(.sidebar-container a):not(.url-link)::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  bottom: -2px;
+  left: 0;
+  background-color: #4361ee;
+  transform: scaleX(0);
+  transform-origin: bottom right;
+  transition: transform 0.3s ease;
+}
+
+a:not(.sidebar-container a):not(.url-link):hover::after {
+  transform: scaleX(1);
+  transform-origin: bottom left;
+}
+
+/* Style for visited links - EXCLUDE sidebar */
+a:not(.sidebar-container a):not(.url-link):visited {
+  color: #7209b7;
+}
+
+a:not(.sidebar-container a):not(.url-link):visited:hover::after {
+  background-color: #7209b7;
+}
+
+/* Style for active state when clicking - EXCLUDE sidebar */
+a:not(.sidebar-container a):not(.url-link):active {
+  color: #f72585;
+}
+
+/* Remove outline but keep it for keyboard navigation - EXCLUDE sidebar */
+a:not(.sidebar-container a):not(.url-link):focus {
+  outline: none;
+}
+
+a:not(.sidebar-container a):not(.url-link):focus-visible {
+  outline: 2px solid #4361ee;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
