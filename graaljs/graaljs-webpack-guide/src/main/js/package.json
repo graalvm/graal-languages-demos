@@ -21,11 +21,11 @@
     "util": "^0.12.5"
   },
   "devDependencies": {
-    "@babel/core": "^8.0.6",
-    "@babel/preset-env": "^8.0.6",
+    "@babel/core": "^8.0.10",
+    "@babel/preset-env": "^8.0.7",
     "@webpack-cli/generators": "^3.0.7",
     "babel-loader": "^10.1.1",
-    "webpack": "^5.111.1",
+    "webpack": "^5.112.2",
     "webpack-cli": "^7.2.3"
   }
 }
