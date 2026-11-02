@@ -1,7 +1,13 @@
 version: 2
 
 multi-ecosystem-groups:
-  all:
+  jvm:
+    schedule:
+      interval: 'monthly'
+  npm:
+    schedule:
+      interval: 'monthly'
+  gha:
     schedule:
       interval: 'monthly'
 
@@ -10,22 +16,21 @@ updates:
     directories:
       - '**/*'
     patterns: ['*']
-    multi-ecosystem-group: 'all'
+    multi-ecosystem-group: 'jvm'
 
   - package-ecosystem: 'gradle'
     directories:
       - '**/*'
     patterns: ['*']
-    multi-ecosystem-group: 'all'
+    multi-ecosystem-group: 'jvm'
 
   - package-ecosystem: 'npm'
     directories:
       - '**/*'
     patterns: ['*']
-    multi-ecosystem-group: 'all'
+    multi-ecosystem-group: 'npm'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
     patterns: ['*']
-    schedule:
-      interval: 'monthly'
+    multi-ecosystem-group: 'gha'
