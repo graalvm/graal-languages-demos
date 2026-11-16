@@ -11,7 +11,7 @@
     <url>https://www.example.com</url>
 
     <properties>
-        <graal.languages.version>25.4.4.1.1</graal.languages.version>
+        <graal.languages.version>25.5.5.0.3</graal.languages.version>
         <maven.compiler.release>21</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <truffle.jvm.arg1>--enable-native-access=ALL-UNNAMED</truffle.jvm.arg1>
@@ -108,7 +108,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>3.6.4</version>
+                    <version>3.7.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
