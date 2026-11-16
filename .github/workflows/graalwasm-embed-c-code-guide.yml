@@ -17,9 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/checkout@v7.0.1
       - name: Checkout emscripten-core/emsdk
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
         with:
           repository: emscripten-core/emsdk
           path: emsdk
@@ -28,7 +28,7 @@ jobs:
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
-      - uses: graalvm/setup-graalvm@d6eca2595046623d69d636041513c80abf745406 # v1.6.9
+      - uses: graalvm/setup-graalvm@v1.6.9
         with:
           version: '25.4'
           distribution: 'graalvm'
