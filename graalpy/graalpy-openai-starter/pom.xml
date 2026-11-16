@@ -12,7 +12,7 @@
 
     <properties>
         <user.input>How can I check if my code runs on GraalPy?</user.input>
-        <graalpy.version>25.4.4.1.1</graalpy.version>
+        <graalpy.version>25.5.5.0.3</graalpy.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>21</maven.compiler.release>
         <truffle.jvm.arg1>--enable-native-access=ALL-UNNAMED</truffle.jvm.arg1>
@@ -128,7 +128,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>exec-maven-plugin</artifactId>
-                    <version>3.6.4</version>
+                    <version>3.7.0</version>
                     <executions>
                         <execution>
                             <goals>
