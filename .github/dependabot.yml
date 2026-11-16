@@ -17,20 +17,28 @@ updates:
       - '**/*'
     patterns: ['*']
     multi-ecosystem-group: 'jvm'
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: 'gradle'
     directories:
       - '**/*'
     patterns: ['*']
     multi-ecosystem-group: 'jvm'
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: 'npm'
     directories:
       - '**/*'
     patterns: ['*']
     multi-ecosystem-group: 'npm'
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: 'github-actions'
     directory: '/'
     patterns: ['*']
     multi-ecosystem-group: 'gha'
+    cooldown:
+      default-days: 7
