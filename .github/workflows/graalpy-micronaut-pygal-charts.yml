@@ -5,6 +5,9 @@ on:
       - 'graalpy/graalpy-micronaut-pygal-charts/**'
       - '.github/workflows/graalpy-micronaut-pygal-charts.yml'
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
 permissions:
   contents: read
 env:
