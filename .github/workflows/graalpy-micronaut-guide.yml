@@ -4,10 +4,12 @@ on:
     paths:
       - 'graalpy/graalpy-micronaut-guide/**'
       - '.github/workflows/graalpy-micronaut-guide.yml'
+      - '.github/scripts/wait-for-http.sh'
   pull_request:
     paths:
       - 'graalpy/graalpy-micronaut-guide/**'
       - '.github/workflows/graalpy-micronaut-guide.yml'
+      - '.github/scripts/wait-for-http.sh'
   workflow_dispatch:
 permissions:
   contents: read
@@ -34,9 +36,8 @@ jobs:
           ./mvnw --no-transfer-progress clean test -Dmicronaut.http.client.read-timeout=1m
           ./mvnw --no-transfer-progress mn:run &
           mnpid="$!"
-          sleep 45
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
-          kill $mnpid
+          trap 'kill "$mnpid" 2>/dev/null || true' EXIT
+          "$GITHUB_WORKSPACE/.github/scripts/wait-for-http.sh" "$mnpid" http://localhost:8080/ 120
       - name: Build and run native 'graalpy-micronaut-guide'
         run: |
           cd graalpy/graalpy-micronaut-guide
@@ -44,9 +45,8 @@ jobs:
           ./mvnw --no-transfer-progress clean package -DskipTests -Dpackaging=native-image
           ./target/graalpy-micronaut &
           mnpid="$!"
-          sleep 20
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
-          kill $mnpid
+          trap 'kill "$mnpid" 2>/dev/null || true' EXIT
+          "$GITHUB_WORKSPACE/.github/scripts/wait-for-http.sh" "$mnpid" http://localhost:8080/ 120
   gradle:
     name: 'graalpy-micronaut-guide on Gradle'
     runs-on: ubuntu-latest
@@ -67,9 +67,8 @@ jobs:
           ./gradlew test -Dmicronaut.http.client.read-timeout=1m
           ./gradlew run &
           mnpid="$!"
-          sleep 45
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
-          kill $mnpid
+          trap 'kill "$mnpid" 2>/dev/null || true' EXIT
+          "$GITHUB_WORKSPACE/.github/scripts/wait-for-http.sh" "$mnpid" http://localhost:8080/ 120
       - name: Build and run native 'graalpy-micronaut-guide'
         run: |
           cd graalpy/graalpy-micronaut-guide
@@ -77,6 +76,5 @@ jobs:
           ./gradlew nativeCompile
           ./build/native/nativeCompile/demo &
           mnpid="$!"
-          sleep 20
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/
-          kill $mnpid
+          trap 'kill "$mnpid" 2>/dev/null || true' EXIT
+          "$GITHUB_WORKSPACE/.github/scripts/wait-for-http.sh" "$mnpid" http://localhost:8080/ 120

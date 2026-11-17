@@ -4,10 +4,12 @@ on:
     paths:
       - 'graalwasm/graalwasm-micronaut-photon/**'
       - '.github/workflows/graalwasm-micronaut-photon.yml'
+      - '.github/scripts/wait-for-http.sh'
   pull_request:
     paths:
       - 'graalwasm/graalwasm-micronaut-photon/**'
       - '.github/workflows/graalwasm-micronaut-photon.yml'
+      - '.github/scripts/wait-for-http.sh'
   workflow_dispatch:
 permissions:
   contents: read
@@ -36,5 +38,6 @@ jobs:
           cd graalwasm/graalwasm-micronaut-photon
           ./mvnw --no-transfer-progress clean package -Dpackaging=native-image -Pwasm-debug
           ./target/demo-wasm-debug &
-          sleep 10
-          curl --fail-with-body --silent --dump-header - -o /dev/null http://localhost:8080/photo/flipv
+          apppid="$!"
+          trap 'kill "$apppid" 2>/dev/null || true' EXIT
+          "$GITHUB_WORKSPACE/.github/scripts/wait-for-http.sh" "$apppid" http://localhost:8080/photo/flipv 120
