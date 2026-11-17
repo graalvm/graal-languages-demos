@@ -260,42 +260,7 @@ For TinyGo, use:
 </plugin>
 ```
 
-## 4. Implement JavaScript Polyfill
-
-By default, Go on Wasm is designed to run in the browser or on Node.js.
-To run it on GraalJS, a polyfill for `crypto.getRandomValues()` is required.
-This can be implemented using `SecureRandom` from the JDK:
-
-```java
-package com.example;
-
-import org.graalvm.polyglot.Value;
-
-import java.security.SecureRandom;
-
-public class CryptoPolyfill {
-    private final SecureRandom random = new SecureRandom();
-
-    public Object getRandomValues(Value buffer) {
-        if (!buffer.hasArrayElements()) {
-            throw new IllegalArgumentException("TypeMismatchError: The data argument must be an integer-type TypedArray");
-        }
-        long arraySize = buffer.getArraySize();
-        if (arraySize > 65536) {
-            throw new IllegalArgumentException("QuotaExceededError: The requested length exceeds 65,536 bytes");
-        }
-        int size = Math.toIntExact(arraySize);
-        byte[] randomBytes = new byte[size];
-        random.nextBytes(randomBytes);
-        for (int i = 0; i < size; i++) {
-            buffer.setArrayElement(i, randomBytes[i]);
-        }
-        return buffer;
-    }
-}
-```
-
-## 5. Add a Go Interface in Java
+## 4. Add a Go Interface in Java
 
 To enable interoperability between Java and Go, add a Java interface to your project and use [`Value.as(Class)`](https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Value.html#as(java.lang.Class)) to program against it:
 
@@ -311,7 +276,7 @@ interface MyGoPackage {
 }
 ```
 
-## 6. Use the WebAssembly Module from Java
+## 5. Use the WebAssembly Module from Java
 
 Now you can embed the Wasm module in a Java application:
 
@@ -348,6 +313,7 @@ public class App {
         }
         // Create a context with Wasm and JavaScript access
         try (Context context = Context.newBuilder("js", "wasm")
+                .option("js.crypto", "true") // experimental
                 .option("js.global-property", "true") // experimental
                 .option("js.performance", "true") // experimental
                 .option("js.text-encoding", "true")
@@ -356,10 +322,9 @@ public class App {
                 .allowHostAccess(HostAccess.ALL)
                 .allowPolyglotAccess(PolyglotAccess.ALL)
                 .build()) {
-            // Install Wasm bytes and crypto polyfill in JS binding
+            // Install Wasm bytes in JS binding
             Value jsBindings = context.getBindings("js");
             jsBindings.putMember("wasmBytes", wasmBytes);
-            jsBindings.putMember("crypto", new CryptoPolyfill());
             // Evaluate wasm_exec.js file
             context.eval(Source.newBuilder("js", wasmExecURL).build());
             // Instantiate the Wasm module and invoke go.run()
@@ -381,7 +346,7 @@ public class App {
 }
 ```
 
-## 7. Build and Run the Application
+## 6. Build and Run the Application
 
 If you want to run the application using the `exec-maven-plugin`, add the following as default configuration:
 
