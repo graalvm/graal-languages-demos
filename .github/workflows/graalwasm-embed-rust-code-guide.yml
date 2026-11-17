@@ -1,9 +1,5 @@
 name: Test GraalWasm Embed Rust in Java Guide
 on:
-  push:
-    paths:
-      - 'graalwasm/graalwasm-embed-rust-code-guide/**'
-      - '.github/workflows/graalwasm-embed-rust-code-guide.yml'
   pull_request:
     paths:
       - 'graalwasm/graalwasm-embed-rust-code-guide/**'

@@ -1,9 +1,5 @@
 name: Test GraalPy Spring Pygal Charts
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-spring-boot-pygal-charts/**'
-      - '.github/workflows/graalpy-spring-boot-pygal-charts.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-spring-boot-pygal-charts/**'

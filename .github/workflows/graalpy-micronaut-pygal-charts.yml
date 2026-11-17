@@ -1,9 +1,5 @@
 name: Test GraalPy Micronaut Pygal Charts
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-micronaut-pygal-charts/**'
-      - '.github/workflows/graalpy-micronaut-pygal-charts.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-micronaut-pygal-charts/**'

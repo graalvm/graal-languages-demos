@@ -1,9 +1,5 @@
 name: Test GraalPy Native Extensions Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-native-extensions-guide/**'
-      - '.github/workflows/graalpy-native-extensions-guide.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-native-extensions-guide/**'

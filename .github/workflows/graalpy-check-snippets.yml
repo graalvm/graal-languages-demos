@@ -1,9 +1,5 @@
 name: Check Snippets in GraalPy Guides
 on:
-  push:
-    paths:
-      - 'graalpy/**'
-      - '.github/workflows/graalpy-check-snippets.yml'
   pull_request:
     paths:
       - 'graalpy/**'

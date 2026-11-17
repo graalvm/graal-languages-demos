@@ -1,9 +1,5 @@
 name: Test GraalPy Spring Boot Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-spring-boot-guide/**'
-      - '.github/workflows/graalpy-spring-boot-guide.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-spring-boot-guide/**'

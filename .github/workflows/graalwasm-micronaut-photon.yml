@@ -1,10 +1,5 @@
 name: Test GraalWasm Micronaut Photon Demo
 on:
-  push:
-    paths:
-      - 'graalwasm/graalwasm-micronaut-photon/**'
-      - '.github/workflows/graalwasm-micronaut-photon.yml'
-      - '.github/scripts/wait-for-http.sh'
   pull_request:
     paths:
       - 'graalwasm/graalwasm-micronaut-photon/**'

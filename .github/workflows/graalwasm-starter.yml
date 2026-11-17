@@ -1,9 +1,5 @@
 name: Test GraalWasm Starter
 on:
-  push:
-    paths:
-      - 'graalwasm/graalwasm-starter/**'
-      - '.github/workflows/graalwasm-starter.yml'
   pull_request:
     paths:
       - 'graalwasm/graalwasm-starter/**'

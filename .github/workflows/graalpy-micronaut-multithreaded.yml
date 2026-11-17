@@ -1,9 +1,5 @@
 name: Test GraalPy Micronaut Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-micronaut-multithreaded/**'
-      - '.github/workflows/graalpy-micronaut-multithreaded.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-micronaut-multithreaded/**'

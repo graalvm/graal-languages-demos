@@ -1,9 +1,5 @@
 name: Test GraalPy Scripts Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-scripts-debug/**'
-      - '.github/workflows/graalpy-scripts-debug.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-scripts-debug/**'

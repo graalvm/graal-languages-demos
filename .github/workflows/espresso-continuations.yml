@@ -1,9 +1,5 @@
 name: Test Espresso Continuations
 on:
-  push:
-    paths:
-      - 'espresso/espresso-continuations/**'
-      - '.github/workflows/espresso-continuations.yml'
   pull_request:
     paths:
       - 'espresso/espresso-continuations/**'

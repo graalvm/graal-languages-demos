@@ -1,9 +1,5 @@
 name: Test GraalPy Custom Venv Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-custom-venv-guide/**'
-      - '.github/workflows/graalpy-custom-venv-guide.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-custom-venv-guide/**'

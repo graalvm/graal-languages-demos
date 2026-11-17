@@ -1,9 +1,5 @@
 name: Test GraalPy Jython Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-jython-guide/**'
-      - '.github/workflows/graalpy-jython-guide.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-jython-guide/**'
