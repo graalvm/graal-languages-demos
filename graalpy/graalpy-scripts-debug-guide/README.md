@@ -87,18 +87,18 @@ Add the required dependencies for GraalPy in the `<dependencies>` section of the
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>python</artifactId> <!-- ① -->
-    <version>25.4.4.1.1</version>
+    <version>25.5.5.0.3</version>
     <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
     <groupId>org.graalvm.polyglot</groupId>
     <artifactId>polyglot</artifactId> <!-- ③ -->
-    <version>25.4.4.1.1</version>
+    <version>25.5.5.0.3</version>
 </dependency>
 <dependency>
     <groupId>org.graalvm.tools</groupId>
     <artifactId>dap-tool</artifactId> <!-- ④ -->
-    <version>25.4.4.1.1</version>
+    <version>25.5.5.0.3</version>
 </dependency>
 ```
 

@@ -64,13 +64,13 @@ dependencies automatically.
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python</artifactId> <!-- ① -->
-  <version>25.4.4.1.1</version>
+  <version>25.5.5.0.3</version>
   <type>pom</type> <!-- ② -->
 </dependency>
 <dependency>
   <groupId>org.graalvm.python</groupId>
   <artifactId>python-embedding</artifactId> <!-- ③ -->
-  <version>25.4.4.1.1</version>
+  <version>25.5.5.0.3</version>
 </dependency>
 ```
 
@@ -93,7 +93,7 @@ Add the `graalpy-maven-plugin` configuration into the plugins section of the POM
 <plugin>
     <groupId>org.graalvm.python</groupId>
     <artifactId>graalpy-maven-plugin</artifactId>
-    <version>25.4.4.1.1</version>
+    <version>25.5.5.0.3</version>
     <configuration>
         <packages> <!-- ① -->
             <package>vader-sentiment==3.2.1.1</package> <!-- ② -->
