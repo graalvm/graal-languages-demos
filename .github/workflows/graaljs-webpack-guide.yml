@@ -7,6 +7,9 @@ on:
       - '.github/workflows/graaljs-webpack-guide.yml'
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

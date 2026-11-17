@@ -5,6 +5,9 @@ on:
       - 'graalpy/graalpy-micronaut-multithreaded/**'
       - '.github/workflows/graalpy-micronaut-multithreaded.yml'
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
 permissions:
   contents: read
 env:

@@ -4,6 +4,9 @@ on:
     paths:
       - 'graalpy/**'
       - '.github/workflows/graalpy-check-snippets.yml'
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
 permissions:
   contents: read
 

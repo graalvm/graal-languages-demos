@@ -5,6 +5,9 @@ on:
       - 'graalwasm/graalwasm-embed-c-code-guide/**'
       - '.github/workflows/graalwasm-embed-c-code-guide.yml'
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow_ref }}-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
