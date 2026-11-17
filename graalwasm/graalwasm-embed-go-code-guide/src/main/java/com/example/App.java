@@ -35,6 +35,7 @@ public class App {
         }
         // Create a context with Wasm and JavaScript access
         try (Context context = Context.newBuilder("js", "wasm")
+                .option("js.crypto", "true") // experimental
                 .option("js.global-property", "true") // experimental
                 .option("js.performance", "true") // experimental
                 .option("js.text-encoding", "true")
@@ -43,10 +44,9 @@ public class App {
                 .allowHostAccess(HostAccess.ALL)
                 .allowPolyglotAccess(PolyglotAccess.ALL)
                 .build()) {
-            // Install Wasm bytes and crypto polyfill in JS binding
+            // Install Wasm bytes in JS binding
             Value jsBindings = context.getBindings("js");
             jsBindings.putMember("wasmBytes", wasmBytes);
-            jsBindings.putMember("crypto", new CryptoPolyfill());
             // Evaluate wasm_exec.js file
             context.eval(Source.newBuilder("js", wasmExecURL).build());
             // Instantiate the Wasm module and invoke go.run()
