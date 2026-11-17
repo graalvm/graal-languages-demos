@@ -105,9 +105,9 @@ Add the required dependencies for GraalPy in the `<dependencies>` section of the
 `build.gradle.kts`
 ```kotlin
 dependencies {
-    implementation("org.graalvm.polyglot:python:25.4.4.1.1") // ①
-    implementation("org.graalvm.polyglot:polyglot:25.4.4.1.1") // ③
-    implementation("org.graalvm.tools:dap-tool:25.4.4.1.1") // ④
+    implementation("org.graalvm.polyglot:python:25.5.5.0.3") // ①
+    implementation("org.graalvm.polyglot:polyglot:25.5.5.0.3") // ③
+    implementation("org.graalvm.tools:dap-tool:25.5.5.0.3") // ④
 }
 ```
 

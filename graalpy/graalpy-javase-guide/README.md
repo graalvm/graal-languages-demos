@@ -118,7 +118,7 @@ You can use the GraalPy plugins for Maven or Gradle to manage Python packages fo
 ```kotlin
 plugins {
     application
-    id("org.graalvm.python") version "25.4.4.1.1"
+    id("org.graalvm.python") version "25.5.5.0.3"
 }
 
 graalPy {
