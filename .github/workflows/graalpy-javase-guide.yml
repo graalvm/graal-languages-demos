@@ -1,9 +1,5 @@
 name: Test GraalPy Java SE Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-javase-guide/**'
-      - '.github/workflows/graalpy-javase-guide.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-javase-guide/**'

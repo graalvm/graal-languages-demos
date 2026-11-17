@@ -1,9 +1,5 @@
 name: Test GraalJS Starter
 on:
-  push:
-    paths:
-      - 'graaljs/graaljs-starter/**'
-      - '.github/workflows/graaljs-starter.yml'
   pull_request:
     paths:
       - 'graaljs/graaljs-starter/**'

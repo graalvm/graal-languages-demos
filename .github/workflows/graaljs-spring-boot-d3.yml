@@ -1,10 +1,5 @@
 name: Test GraalJS Spring Boot D3
 on:
-  push:
-    paths:
-      - 'graaljs/graaljs-spring-boot-d3/**'
-      - '.github/workflows/graaljs-spring-boot-d3.yml'
-      - '.github/scripts/wait-for-http.sh'
   pull_request:
     paths:
       - 'graaljs/graaljs-spring-boot-d3/**'

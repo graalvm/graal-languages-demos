@@ -1,10 +1,5 @@
 name: Test GraalPy Micronaut Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-micronaut-guide/**'
-      - '.github/workflows/graalpy-micronaut-guide.yml'
-      - '.github/scripts/wait-for-http.sh'
   pull_request:
     paths:
       - 'graalpy/graalpy-micronaut-guide/**'

@@ -1,10 +1,6 @@
 name: Test GraalJS Gradle and Maven Webpack Guide
 
 on:
-  push:
-    paths:
-      - 'graaljs/graaljs-webpack-guide/**'
-      - '.github/workflows/graaljs-webpack-guide.yml'
   pull_request:
     paths:
       - 'graaljs/graaljs-webpack-guide/**'

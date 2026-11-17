@@ -1,9 +1,5 @@
 name: Test GraalPy Starter
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-starter/**'
-      - '.github/workflows/graalpy-starter.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-starter/**'

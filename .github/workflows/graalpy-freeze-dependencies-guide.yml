@@ -1,9 +1,5 @@
 name: Test GraalPy Freeze Dependencies Guide
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-freeze-dependencies-guide/**'
-      - '.github/workflows/graalpy-freeze-dependencies-guide.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-freeze-dependencies-guide/**'

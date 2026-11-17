@@ -1,9 +1,5 @@
 name: Test GraalPy JBang QRCode Demo
 on:
-  push:
-    paths:
-      - 'graalpy/graalpy-jbang-qrcode/**'
-      - '.github/workflows/graalpy-jbang-qrcode.yml'
   pull_request:
     paths:
       - 'graalpy/graalpy-jbang-qrcode/**'
